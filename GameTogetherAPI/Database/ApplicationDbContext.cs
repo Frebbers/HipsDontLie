@@ -9,13 +9,14 @@ namespace GameTogetherAPI.Database {
         public DbSet<Game> Games { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
-            modelBuilder.Entity<User>()
-                .HasMany(u => u.Games)
-                .WithOne(g => g.Owner)
-                .HasForeignKey(g => g.OwnerId)
-                .OnDelete(DeleteBehavior.Cascade); // This will delete games if user is deleted
+            // Define Many-to-Many relationship between Games and Users
+            modelBuilder.Entity<Game>()
+                .HasMany(g => g.Users)
+                .WithMany(u => u.Games)
+                .UsingEntity(j => j.ToTable("GamesWithUsers"));
 
             base.OnModelCreating(modelBuilder);
         }
+
     }
 }

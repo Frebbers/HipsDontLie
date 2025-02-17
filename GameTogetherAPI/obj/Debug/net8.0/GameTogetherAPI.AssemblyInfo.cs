@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GameTogetherAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7722a4bb0c03ed57ccdd10b82aabea51e5013eab")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b31f4588ded3ad8763a33e693270f29c45587e11")]
 [assembly: System.Reflection.AssemblyProductAttribute("GameTogetherAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GameTogetherAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

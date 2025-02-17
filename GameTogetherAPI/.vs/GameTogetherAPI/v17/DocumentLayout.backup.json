@@ -1,7 +1,80 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Development\\School\\2025 Full Stack Development\\GameTogether-BackEnd\\GameTogetherAPI\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{C38B7511-4307-4C1A-BD36-510A5F1D11D8}|GameTogetherAPI.csproj|c:\\development\\school\\2025 full stack development\\gametogether-backend\\gametogetherapi\\controllers\\gamecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C38B7511-4307-4C1A-BD36-510A5F1D11D8}|GameTogetherAPI.csproj|solutionrelative:controllers\\gamecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C38B7511-4307-4C1A-BD36-510A5F1D11D8}|GameTogetherAPI.csproj|c:\\development\\school\\2025 full stack development\\gametogether-backend\\gametogetherapi\\models\\dtos\\userdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C38B7511-4307-4C1A-BD36-510A5F1D11D8}|GameTogetherAPI.csproj|solutionrelative:models\\dtos\\userdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C38B7511-4307-4C1A-BD36-510A5F1D11D8}|GameTogetherAPI.csproj|c:\\development\\school\\2025 full stack development\\gametogether-backend\\gametogetherapi\\models\\dtos\\gamedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C38B7511-4307-4C1A-BD36-510A5F1D11D8}|GameTogetherAPI.csproj|solutionrelative:models\\dtos\\gamedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C38B7511-4307-4C1A-BD36-510A5F1D11D8}|GameTogetherAPI.csproj|c:\\development\\school\\2025 full stack development\\gametogether-backend\\gametogetherapi\\models\\game.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C38B7511-4307-4C1A-BD36-510A5F1D11D8}|GameTogetherAPI.csproj|solutionrelative:models\\game.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C38B7511-4307-4C1A-BD36-510A5F1D11D8}|GameTogetherAPI.csproj|c:\\development\\school\\2025 full stack development\\gametogether-backend\\gametogetherapi\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C38B7511-4307-4C1A-BD36-510A5F1D11D8}|GameTogetherAPI.csproj|solutionrelative:models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C38B7511-4307-4C1A-BD36-510A5F1D11D8}|GameTogetherAPI.csproj|c:\\development\\school\\2025 full stack development\\gametogether-backend\\gametogetherapi\\services\\gameservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C38B7511-4307-4C1A-BD36-510A5F1D11D8}|GameTogetherAPI.csproj|solutionrelative:services\\gameservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C38B7511-4307-4C1A-BD36-510A5F1D11D8}|GameTogetherAPI.csproj|c:\\development\\school\\2025 full stack development\\gametogether-backend\\gametogetherapi\\repository\\gamerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C38B7511-4307-4C1A-BD36-510A5F1D11D8}|GameTogetherAPI.csproj|solutionrelative:repository\\gamerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C38B7511-4307-4C1A-BD36-510A5F1D11D8}|GameTogetherAPI.csproj|c:\\development\\school\\2025 full stack development\\gametogether-backend\\gametogetherapi\\services\\userservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C38B7511-4307-4C1A-BD36-510A5F1D11D8}|GameTogetherAPI.csproj|solutionrelative:services\\userservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C38B7511-4307-4C1A-BD36-510A5F1D11D8}|GameTogetherAPI.csproj|c:\\development\\school\\2025 full stack development\\gametogether-backend\\gametogetherapi\\repository\\userrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C38B7511-4307-4C1A-BD36-510A5F1D11D8}|GameTogetherAPI.csproj|solutionrelative:repository\\userrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C38B7511-4307-4C1A-BD36-510A5F1D11D8}|GameTogetherAPI.csproj|c:\\development\\school\\2025 full stack development\\gametogether-backend\\gametogetherapi\\repository\\iuserrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C38B7511-4307-4C1A-BD36-510A5F1D11D8}|GameTogetherAPI.csproj|solutionrelative:repository\\iuserrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C38B7511-4307-4C1A-BD36-510A5F1D11D8}|GameTogetherAPI.csproj|c:\\development\\school\\2025 full stack development\\gametogether-backend\\gametogetherapi\\repository\\igamerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C38B7511-4307-4C1A-BD36-510A5F1D11D8}|GameTogetherAPI.csproj|solutionrelative:repository\\igamerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C38B7511-4307-4C1A-BD36-510A5F1D11D8}|GameTogetherAPI.csproj|c:\\development\\school\\2025 full stack development\\gametogether-backend\\gametogetherapi\\services\\iuserservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C38B7511-4307-4C1A-BD36-510A5F1D11D8}|GameTogetherAPI.csproj|solutionrelative:services\\iuserservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C38B7511-4307-4C1A-BD36-510A5F1D11D8}|GameTogetherAPI.csproj|c:\\development\\school\\2025 full stack development\\gametogether-backend\\gametogetherapi\\services\\igameservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C38B7511-4307-4C1A-BD36-510A5F1D11D8}|GameTogetherAPI.csproj|solutionrelative:services\\igameservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C38B7511-4307-4C1A-BD36-510A5F1D11D8}|GameTogetherAPI.csproj|c:\\development\\school\\2025 full stack development\\gametogether-backend\\gametogetherapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{C38B7511-4307-4C1A-BD36-510A5F1D11D8}|GameTogetherAPI.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C38B7511-4307-4C1A-BD36-510A5F1D11D8}|GameTogetherAPI.csproj|c:\\development\\school\\2025 full stack development\\gametogether-backend\\gametogetherapi\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C38B7511-4307-4C1A-BD36-510A5F1D11D8}|GameTogetherAPI.csproj|solutionrelative:controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C38B7511-4307-4C1A-BD36-510A5F1D11D8}|GameTogetherAPI.csproj|c:\\development\\school\\2025 full stack development\\gametogether-backend\\gametogetherapi\\database\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C38B7511-4307-4C1A-BD36-510A5F1D11D8}|GameTogetherAPI.csproj|solutionrelative:database\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C38B7511-4307-4C1A-BD36-510A5F1D11D8}|GameTogetherAPI.csproj|c:\\development\\school\\2025 full stack development\\gametogether-backend\\gametogetherapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C38B7511-4307-4C1A-BD36-510A5F1D11D8}|GameTogetherAPI.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C38B7511-4307-4C1A-BD36-510A5F1D11D8}|GameTogetherAPI.csproj|c:\\development\\school\\2025 full stack development\\gametogether-backend\\gametogetherapi\\appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{C38B7511-4307-4C1A-BD36-510A5F1D11D8}|GameTogetherAPI.csproj|solutionrelative:appsettings.development.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -9,7 +82,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 10,
           "Children": [
             {
               "$type": "Bookmark",
@@ -22,6 +95,240 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "GameDTO.cs",
+              "DocumentMoniker": "C:\\Development\\School\\2025 Full Stack Development\\GameTogether-BackEnd\\GameTogetherAPI\\Models\\DTOs\\GameDTO.cs",
+              "RelativeDocumentMoniker": "Models\\DTOs\\GameDTO.cs",
+              "ToolTip": "C:\\Development\\School\\2025 Full Stack Development\\GameTogether-BackEnd\\GameTogetherAPI\\Models\\DTOs\\GameDTO.cs",
+              "RelativeToolTip": "Models\\DTOs\\GameDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-17T20:36:17.195Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "GameService.cs",
+              "DocumentMoniker": "C:\\Development\\School\\2025 Full Stack Development\\GameTogether-BackEnd\\GameTogetherAPI\\Services\\GameService.cs",
+              "RelativeDocumentMoniker": "Services\\GameService.cs",
+              "ToolTip": "C:\\Development\\School\\2025 Full Stack Development\\GameTogether-BackEnd\\GameTogetherAPI\\Services\\GameService.cs",
+              "RelativeToolTip": "Services\\GameService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAGIAAAArAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-17T17:01:29.553Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "User.cs",
+              "DocumentMoniker": "C:\\Development\\School\\2025 Full Stack Development\\GameTogether-BackEnd\\GameTogetherAPI\\Models\\User.cs",
+              "RelativeDocumentMoniker": "Models\\User.cs",
+              "ToolTip": "C:\\Development\\School\\2025 Full Stack Development\\GameTogether-BackEnd\\GameTogetherAPI\\Models\\User.cs",
+              "RelativeToolTip": "Models\\User.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAzAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-17T16:53:57.517Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "UserDTO.cs",
+              "DocumentMoniker": "C:\\Development\\School\\2025 Full Stack Development\\GameTogether-BackEnd\\GameTogetherAPI\\Models\\DTOs\\UserDTO.cs",
+              "RelativeDocumentMoniker": "Models\\DTOs\\UserDTO.cs",
+              "ToolTip": "C:\\Development\\School\\2025 Full Stack Development\\GameTogether-BackEnd\\GameTogetherAPI\\Models\\DTOs\\UserDTO.cs",
+              "RelativeToolTip": "Models\\DTOs\\UserDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-17T20:24:39.115Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "UserService.cs",
+              "DocumentMoniker": "C:\\Development\\School\\2025 Full Stack Development\\GameTogether-BackEnd\\GameTogetherAPI\\Services\\UserService.cs",
+              "RelativeDocumentMoniker": "Services\\UserService.cs",
+              "ToolTip": "C:\\Development\\School\\2025 Full Stack Development\\GameTogether-BackEnd\\GameTogetherAPI\\Services\\UserService.cs",
+              "RelativeToolTip": "Services\\UserService.cs",
+              "ViewState": "AgIAAAQAAAAAAAAAAAAAwBcAAAADAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-17T17:01:39.316Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Game.cs",
+              "DocumentMoniker": "C:\\Development\\School\\2025 Full Stack Development\\GameTogether-BackEnd\\GameTogetherAPI\\Models\\Game.cs",
+              "RelativeDocumentMoniker": "Models\\Game.cs",
+              "ToolTip": "C:\\Development\\School\\2025 Full Stack Development\\GameTogether-BackEnd\\GameTogetherAPI\\Models\\Game.cs",
+              "RelativeToolTip": "Models\\Game.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAA5AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-17T16:54:17.676Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "GameRepository.cs",
+              "DocumentMoniker": "C:\\Development\\School\\2025 Full Stack Development\\GameTogether-BackEnd\\GameTogetherAPI\\Repository\\GameRepository.cs",
+              "RelativeDocumentMoniker": "Repository\\GameRepository.cs",
+              "ToolTip": "C:\\Development\\School\\2025 Full Stack Development\\GameTogether-BackEnd\\GameTogetherAPI\\Repository\\GameRepository.cs",
+              "RelativeToolTip": "Repository\\GameRepository.cs",
+              "ViewState": "AgIAACYAAAAAAAAAAAAqwH0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-17T17:00:58.025Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "GameController.cs",
+              "DocumentMoniker": "C:\\Development\\School\\2025 Full Stack Development\\GameTogether-BackEnd\\GameTogetherAPI\\Controllers\\GameController.cs",
+              "RelativeDocumentMoniker": "Controllers\\GameController.cs",
+              "ToolTip": "C:\\Development\\School\\2025 Full Stack Development\\GameTogether-BackEnd\\GameTogetherAPI\\Controllers\\GameController.cs",
+              "RelativeToolTip": "Controllers\\GameController.cs",
+              "ViewState": "AgIAADcAAAAAAAAAAAAYwEMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-17T17:01:42.075Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "UserRepository.cs",
+              "DocumentMoniker": "C:\\Development\\School\\2025 Full Stack Development\\GameTogether-BackEnd\\GameTogetherAPI\\Repository\\UserRepository.cs",
+              "RelativeDocumentMoniker": "Repository\\UserRepository.cs",
+              "ToolTip": "C:\\Development\\School\\2025 Full Stack Development\\GameTogether-BackEnd\\GameTogetherAPI\\Repository\\UserRepository.cs",
+              "RelativeToolTip": "Repository\\UserRepository.cs",
+              "ViewState": "AgIAAEkAAAAAAAAAAAAkwBYAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-17T17:01:25.975Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "IUserService.cs",
+              "DocumentMoniker": "C:\\Development\\School\\2025 Full Stack Development\\GameTogether-BackEnd\\GameTogetherAPI\\Services\\IUserService.cs",
+              "RelativeDocumentMoniker": "Services\\IUserService.cs",
+              "ToolTip": "C:\\Development\\School\\2025 Full Stack Development\\GameTogether-BackEnd\\GameTogetherAPI\\Services\\IUserService.cs",
+              "RelativeToolTip": "Services\\IUserService.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAABgAAABIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-17T17:01:34.685Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "IUserRepository.cs",
+              "DocumentMoniker": "C:\\Development\\School\\2025 Full Stack Development\\GameTogether-BackEnd\\GameTogetherAPI\\Repository\\IUserRepository.cs",
+              "RelativeDocumentMoniker": "Repository\\IUserRepository.cs",
+              "ToolTip": "C:\\Development\\School\\2025 Full Stack Development\\GameTogether-BackEnd\\GameTogetherAPI\\Repository\\IUserRepository.cs",
+              "RelativeToolTip": "Repository\\IUserRepository.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-17T17:01:23.232Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "IGameRepository.cs",
+              "DocumentMoniker": "C:\\Development\\School\\2025 Full Stack Development\\GameTogether-BackEnd\\GameTogetherAPI\\Repository\\IGameRepository.cs",
+              "RelativeDocumentMoniker": "Repository\\IGameRepository.cs",
+              "ToolTip": "C:\\Development\\School\\2025 Full Stack Development\\GameTogether-BackEnd\\GameTogetherAPI\\Repository\\IGameRepository.cs",
+              "RelativeToolTip": "Repository\\IGameRepository.cs",
+              "ViewState": "AgIAAA0AAAAAAAAAAAAQwCMAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-17T17:01:20.077Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "IGameService.cs",
+              "DocumentMoniker": "C:\\Development\\School\\2025 Full Stack Development\\GameTogether-BackEnd\\GameTogetherAPI\\Services\\IGameService.cs",
+              "RelativeDocumentMoniker": "Services\\IGameService.cs",
+              "ToolTip": "C:\\Development\\School\\2025 Full Stack Development\\GameTogether-BackEnd\\GameTogetherAPI\\Services\\IGameService.cs",
+              "RelativeToolTip": "Services\\IGameService.cs",
+              "ViewState": "AgIAABEAAAAAAAAAAAAQwCQAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-17T17:01:31.984Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Development\\School\\2025 Full Stack Development\\GameTogether-BackEnd\\GameTogetherAPI\\appsettings.json",
+              "RelativeDocumentMoniker": "appsettings.json",
+              "ToolTip": "C:\\Development\\School\\2025 Full Stack Development\\GameTogether-BackEnd\\GameTogetherAPI\\appsettings.json",
+              "RelativeToolTip": "appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-02-17T17:34:07.143Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "ApplicationDbContext.cs",
+              "DocumentMoniker": "C:\\Development\\School\\2025 Full Stack Development\\GameTogether-BackEnd\\GameTogetherAPI\\Database\\ApplicationDbContext.cs",
+              "RelativeDocumentMoniker": "Database\\ApplicationDbContext.cs",
+              "ToolTip": "C:\\Development\\School\\2025 Full Stack Development\\GameTogether-BackEnd\\GameTogetherAPI\\Database\\ApplicationDbContext.cs",
+              "RelativeToolTip": "Database\\ApplicationDbContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-17T17:28:29.054Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "UserController.cs",
+              "DocumentMoniker": "C:\\Development\\School\\2025 Full Stack Development\\GameTogether-BackEnd\\GameTogetherAPI\\Controllers\\UserController.cs",
+              "RelativeDocumentMoniker": "Controllers\\UserController.cs",
+              "ToolTip": "C:\\Development\\School\\2025 Full Stack Development\\GameTogether-BackEnd\\GameTogetherAPI\\Controllers\\UserController.cs",
+              "RelativeToolTip": "Controllers\\UserController.cs",
+              "ViewState": "AgIAAB4AAAAAAAAAAAAYwCgAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-17T19:29:06.735Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Development\\School\\2025 Full Stack Development\\GameTogether-BackEnd\\GameTogetherAPI\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "C:\\Development\\School\\2025 Full Stack Development\\GameTogether-BackEnd\\GameTogetherAPI\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAACAAAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-17T17:26:52.306Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "appsettings.Development.json",
+              "DocumentMoniker": "C:\\Development\\School\\2025 Full Stack Development\\GameTogether-BackEnd\\GameTogetherAPI\\appsettings.Development.json",
+              "RelativeDocumentMoniker": "appsettings.Development.json",
+              "ToolTip": "C:\\Development\\School\\2025 Full Stack Development\\GameTogether-BackEnd\\GameTogetherAPI\\appsettings.Development.json",
+              "RelativeToolTip": "appsettings.Development.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-02-17T18:41:34.024Z",
+              "EditorCaption": ""
             }
           ]
         }

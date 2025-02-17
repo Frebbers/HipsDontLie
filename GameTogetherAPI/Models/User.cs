@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace GameTogetherAPI.Models
-{
-    public class User
-    {
+namespace GameTogetherAPI.Models {
+    public class User {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
         [Required, EmailAddress]
