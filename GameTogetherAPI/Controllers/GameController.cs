@@ -33,9 +33,13 @@ namespace GameTogetherAPI.Controllers {
                 var ownerExists = await _userService.GetUserByIdAsync(game.OwnerId);
                 if (ownerExists == null)
                     return BadRequest(new { error = "Owner does not exist." });
+            
+                var createResult = await _gameService.CreateGameAsync(game);
+                if (!createResult) return BadRequest(new { error = "Could not create game." });
 
-                var result = await _gameService.CreateGameAsync(game);
-                if (!result) return BadRequest(new { error = "Could not create game." });
+                var joinResult = await _gameService.JoinGameAsync(game.Id, game.OwnerId);
+                if (!joinResult)
+                    return BadRequest(new { error = "Owner could not join  game." });
 
                 return Ok(new { message = "Game created successfully" });
             }
