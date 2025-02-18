@@ -1,5 +1,4 @@
 ﻿using GameTogetherAPI.Models;
-using GameTogetherAPI.Models.DTOs;
 using GameTogetherAPI.Repository;
 
 namespace GameTogetherAPI.Services {
@@ -19,7 +18,7 @@ namespace GameTogetherAPI.Services {
         /// <exception cref="Exception">Thrown when an unexpected error occurs.</exception>
         public async Task<bool> CreateUserAsync(User user) {
             try {
-                return await _userRepository.AddUserAsync(user);
+                return await _userRepository.CreateUserAsync(user);
             }
             catch (InvalidOperationException) {
                 throw;
@@ -34,21 +33,9 @@ namespace GameTogetherAPI.Services {
         /// </summary>
         /// <returns>A list of users with limited information.</returns>
         /// <exception cref="Exception">Thrown when an unexpected error occurs.</exception>
-        public async Task<IEnumerable<UserDTO>> GetAllUsersAsync() {
+        public async Task<IEnumerable<User>> GetAllUsersAsync() {
             try {
-                var users = await _userRepository.GetAllUsersAsync();
-
-                return users.Select(user => new UserDTO {
-                    Id = user.Id,
-                    Email = user.Email,
-                    ProfilePicture = user.ProfilePicture,
-                    Description = user.Description,
-                    Region = user.Region,
-                    Games = user.Games.Select(game => new GameDTO {
-                        Id = game.Id,
-                        OwnerId = game.OwnerId
-                    }).ToList()
-                }).ToList();
+                return await _userRepository.GetAllUsersAsync();
             }
             catch (Exception ex) {
                 throw new Exception("An error occurred while retrieving users.", ex);
@@ -62,22 +49,12 @@ namespace GameTogetherAPI.Services {
         /// <returns>The user DTO if found.</returns>
         /// <exception cref="KeyNotFoundException">Thrown if the user is not found.</exception>
         /// <exception cref="Exception">Thrown when an unexpected error occurs.</exception>
-        public async Task<UserDTO> GetUserByIdAsync(string userId) {
+        public async Task<User> GetUserByIdAsync(string userId) {
             try {
                 var user = await _userRepository.GetUserByIdAsync(userId);
                 if (user == null) throw new KeyNotFoundException($"User with ID '{userId}' not found.");
 
-                return new UserDTO {
-                    Id = user.Id,
-                    Email = user.Email,
-                    ProfilePicture = user.ProfilePicture,
-                    Description = user.Description,
-                    Region = user.Region,
-                    Games = user.Games.Select(game => new GameDTO {
-                        Id = game.Id,
-                        OwnerId = game.OwnerId
-                    }).ToList()
-                };
+                return user;
             }
             catch (KeyNotFoundException) {
                 throw;

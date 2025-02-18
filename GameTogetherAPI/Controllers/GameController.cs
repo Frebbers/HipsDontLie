@@ -1,6 +1,4 @@
-﻿using GameTogetherAPI.Models;
-using GameTogetherAPI.Models.DTOs;
-using GameTogetherAPI.Services;
+﻿using GameTogetherAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GameTogetherAPI.Controllers {
@@ -34,12 +32,8 @@ namespace GameTogetherAPI.Controllers {
                 if (ownerExists == null)
                     return BadRequest(new { error = "Owner does not exist." });
             
-                var createResult = await _gameService.CreateGameAsync(game);
-                if (!createResult) return BadRequest(new { error = "Could not create game." });
-
-                var joinResult = await _gameService.JoinGameAsync(game.Id, game.OwnerId);
-                if (!joinResult)
-                    return BadRequest(new { error = "Owner could not join  game." });
+                var result = await _gameService.CreateGameAsync(game);
+                if (!result) return BadRequest(new { error = "Could not create game." });
 
                 return Ok(new { message = "Game created successfully" });
             }
@@ -120,7 +114,7 @@ namespace GameTogetherAPI.Controllers {
         /// <returns>A list of game DTOs.</returns>
         /// <response code="200">Returns the list of games.</response>
         /// <response code="500">If an unexpected error occurs.</response>
-        public async Task<ActionResult<IEnumerable<GameDTO>>> GetAllGames() {
+        public async Task<ActionResult<IEnumerable<Game>>> GetAllGames() {
             try {
                 var games = await _gameService.GetAllGamesAsync();
                 return Ok(games);
@@ -139,7 +133,7 @@ namespace GameTogetherAPI.Controllers {
         /// <response code="200">Returns the game.</response>
         /// <response code="404">If the game is not found.</response>
         /// <response code="500">If an unexpected error occurs.</response>
-        public async Task<ActionResult<GameDTO>> GetGameById(string gameId) {
+        public async Task<ActionResult<Game>> GetGameById(string gameId) {
             try {
                 var game = await _gameService.GetGameByIdAsync(gameId);
                 if (game == null) return NotFound(new { error = "Game not found." });

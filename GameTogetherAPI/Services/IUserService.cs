@@ -1,5 +1,4 @@
 ﻿using GameTogetherAPI.Models;
-using GameTogetherAPI.Models.DTOs;
 
 namespace GameTogetherAPI.Services {
     /// <summary>
@@ -17,13 +16,13 @@ namespace GameTogetherAPI.Services {
         /// Retrieves all users.
         /// </summary>
         /// <returns>A list of users.</returns>
-        Task<IEnumerable<UserDTO>> GetAllUsersAsync();
+        Task<IEnumerable<User>> GetAllUsersAsync();
 
         /// <summary>
         /// Retrieves a user by their ID.
         /// </summary>
         /// <param name="userId">The ID of the user to retrieve.</param>
         /// <returns>The user object if found.</returns>
-        Task<UserDTO> GetUserByIdAsync(string userId);
+        Task<User> GetUserByIdAsync(string userId);
     }
 }

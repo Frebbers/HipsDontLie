@@ -1,5 +1,4 @@
 ﻿using GameTogetherAPI.Models;
-using GameTogetherAPI.Models.DTOs;
 using GameTogetherAPI.Repository;
 
 namespace GameTogetherAPI.Services {
@@ -82,24 +81,18 @@ namespace GameTogetherAPI.Services {
         /// </summary>
         /// <returns>A list of game DTOs.</returns>
         /// <exception cref="Exception">Thrown when an unexpected error occurs.</exception>
-        public async Task<IEnumerable<GameDTO>> GetAllGamesAsync() {
+        public async Task<IEnumerable<Game>> GetAllGamesAsync() {
             try {
-                var games = await _gameRepository.GetAllGamesAsync();
-
-                return games.Select(game => new GameDTO {
-                    Id = game.Id,
-                    OwnerId = game.OwnerId,
-                    Users = game.Users.Select(user => new UserDTO {
-                        Id = user.Id,
-                        Email = user.Email,
-                        ProfilePicture = user.ProfilePicture,
-                        Description = user.Description,
-                        Region = user.Region
-                    }).ToList()
-                }).ToList();
+                return await _gameRepository.GetAllGamesAsync();
+            }
+            catch (KeyNotFoundException) {
+                throw;
+            }
+            catch (InvalidOperationException) {
+                throw;
             }
             catch (Exception ex) {
-                throw new Exception("An error occurred while retrieving games.", ex);
+                throw new Exception("An error occurred while getting all games.", ex);
             }
         }
 
@@ -110,28 +103,18 @@ namespace GameTogetherAPI.Services {
         /// <returns>The game DTO if found.</returns>
         /// <exception cref="KeyNotFoundException">Thrown if the game is not found.</exception>
         /// <exception cref="Exception">Thrown when an unexpected error occurs.</exception>
-        public async Task<GameDTO> GetGameByIdAsync(string gameId) {
+        public async Task<Game> GetGameByIdAsync(string gameId) {
             try {
-                var game = await _gameRepository.GetGameByIdAsync(gameId);
-                if (game == null) throw new KeyNotFoundException($"Game with ID '{gameId}' not found.");
-
-                return new GameDTO {
-                    Id = game.Id,
-                    OwnerId = game.OwnerId,
-                    Users = game.Users.Select(user => new UserDTO {
-                        Id = user.Id,
-                        Email = user.Email,
-                        ProfilePicture = user.ProfilePicture,
-                        Description = user.Description,
-                        Region = user.Region
-                    }).ToList()
-                };
+                return await _gameRepository.GetGameByIdAsync(gameId);
             }
             catch (KeyNotFoundException) {
                 throw;
             }
+            catch (InvalidOperationException) {
+                throw;
+            }
             catch (Exception ex) {
-                throw new Exception($"An error occurred while retrieving the game with ID '{gameId}'.", ex);
+                throw new Exception("An error occurred while fetching the specific game.", ex);
             }
         }
     }

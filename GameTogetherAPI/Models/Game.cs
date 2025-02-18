@@ -11,5 +11,5 @@ public class Game {
     [Required]
     public required string OwnerId { get; set; }
 
-    public ICollection<User> Users { get; set; } = new List<User>();
+    public List<String> UserIDs { get; set; } = new List<String>();
 }

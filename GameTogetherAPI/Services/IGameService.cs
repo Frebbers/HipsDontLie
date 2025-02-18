@@ -1,5 +1,4 @@
 ﻿using GameTogetherAPI.Models;
-using GameTogetherAPI.Models.DTOs;
 
 namespace GameTogetherAPI.Services {
     /// <summary>
@@ -36,14 +35,14 @@ namespace GameTogetherAPI.Services {
         /// Retrieves all games.
         /// </summary>
         /// <returns>A list of all games.</returns>
-        Task<IEnumerable<GameDTO>> GetAllGamesAsync();
+        Task<IEnumerable<Game>> GetAllGamesAsync();
 
         /// <summary>
         /// Retrieves a game by its ID.
         /// </summary>
         /// <param name="gameId">The ID of the game to retrieve.</param>
         /// <returns>The game object if found.</returns>
-        Task<GameDTO> GetGameByIdAsync(string gameId);
+        Task<Game> GetGameByIdAsync(string gameId);
 
     }
 }

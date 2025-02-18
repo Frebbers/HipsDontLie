@@ -24,6 +24,12 @@ namespace GameTogetherAPI.Repository {
                 if (owner == null)
                     throw new InvalidOperationException($"Cannot create game. Owner with ID '{game.OwnerId}' does not exist.");
 
+                // Add the owner to the game
+                game.UserIDs.Add(owner.Id);
+
+                // Add the game to the owner's game list
+                owner.GameIDs.Add(game.Id);
+
                 _context.Games.Add(game);
                 return await _context.SaveChangesAsync() > 0;
             }
@@ -47,9 +53,7 @@ namespace GameTogetherAPI.Repository {
         public async Task<bool> JoinGameAsync(string gameId, string userId) {
             try {
                 // Find the game
-                var game = await _context.Games
-                    .Include(g => g.Users)
-                    .FirstOrDefaultAsync(g => g.Id == gameId);
+                var game = await _context.Games.FirstOrDefaultAsync(g => g.Id == gameId);
 
                 if (game == null)
                     throw new KeyNotFoundException($"Game with ID '{gameId}' not found.");
@@ -60,11 +64,14 @@ namespace GameTogetherAPI.Repository {
                     throw new KeyNotFoundException($"User with ID '{userId}' not found.");
 
                 // Check if the user is already in the game
-                if (game.Users.Any(p => p.Id == userId))
+                if (game.UserIDs.Any(p => p == userId))
                     throw new InvalidOperationException("User is already in the game.");
 
-                // Add the user to the game's players
-                game.Users.Add(user);
+                // Add the user to the game's player list
+                game.UserIDs.Add(user.Id);
+
+                // Add the game to the user's game list
+                user.GameIDs.Add(game.Id);
 
                 // Save changes
                 return await _context.SaveChangesAsync() > 0;
@@ -92,9 +99,7 @@ namespace GameTogetherAPI.Repository {
         public async Task<bool> LeaveGameAsync(string gameId, string userId) {
             try {
                 // Find the game
-                var game = await _context.Games
-                    .Include(g => g.Users)
-                    .FirstOrDefaultAsync(g => g.Id == gameId);
+                var game = await _context.Games.FirstOrDefaultAsync(g => g.Id == gameId);
 
                 if (game == null)
                     throw new KeyNotFoundException($"Game with ID '{gameId}' not found.");
@@ -105,11 +110,14 @@ namespace GameTogetherAPI.Repository {
                     throw new KeyNotFoundException($"User with ID '{userId}' not found.");
 
                 // Check if the user is part of the game
-                if (!game.Users.Any(p => p.Id == userId))
+                if (!game.UserIDs.Any(p => p == userId))
                     throw new InvalidOperationException("User is not in the game.");
 
                 // Remove the user from the game's player list
-                game.Users.Remove(user);
+                game.UserIDs.Remove(user.Id);
+
+                // Remove the game from the user's game list
+                user.GameIDs.Remove(game.Id);
 
                 // Save changes
                 return await _context.SaveChangesAsync() > 0;
@@ -132,9 +140,7 @@ namespace GameTogetherAPI.Repository {
         /// <exception cref="Exception">Thrown when an error occurs while fetching games.</exception>
         public async Task<IEnumerable<Game>> GetAllGamesAsync() {
             try {
-                return await _context.Games
-                    .Include(g => g.Users)
-                    .ToListAsync();
+                return await _context.Games.ToListAsync();
             }
             catch (Exception ex) {
                 throw new Exception("An error occurred while retrieving games.", ex);
@@ -150,9 +156,7 @@ namespace GameTogetherAPI.Repository {
         /// <exception cref="Exception">Thrown when an unexpected error occurs.</exception>
         public async Task<Game> GetGameByIdAsync(string gameId) {
             try {
-                var game = await _context.Games
-                    .Include(g => g.Users)
-                    .FirstOrDefaultAsync(g => g.Id == gameId);
+                var game = await _context.Games.FirstOrDefaultAsync(g => g.Id == gameId);
 
                 if (game == null)
                     throw new KeyNotFoundException($"Game with ID '{gameId}' not found.");

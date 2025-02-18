@@ -1,3 +1,3 @@
-/GameTogetherAPI/.vs
-/GameTogetherAPI/bin
-/GameTogetherAPI/obj
+/GameTogetherAPI/.vs/*
+/GameTogetherAPI/bin/*
+/GameTogetherAPI/obj/*
