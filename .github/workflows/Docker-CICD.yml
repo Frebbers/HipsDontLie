@@ -31,3 +31,20 @@ jobs:
           push: true
           target: final
           tags: ${{ secrets.DOCKER_USER }}/game-together-backend:latest
+  
+  
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: deploying
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            docker image pull ${{ secrets.DOCKER_USER }}/game-together-backend:latest
+            docker container stop game-together-backend
+            docker container rm game-together-backend
+            docker container run -d --name game-together-backend -p 80:5000 ${{ secrets.DOCKER_USER }}/game-together-backend
