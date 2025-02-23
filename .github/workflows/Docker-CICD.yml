@@ -48,7 +48,7 @@ jobs:
 
 
       - name: deploying
-        uses: appleboy/ssh-action@v0.1.8
+        uses: appleboy/ssh-action@v1.2.1
         with:
           host: ${{ vars.HOST }}
           username: ${{ secrets.SSH_USER }}
