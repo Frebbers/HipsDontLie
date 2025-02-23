@@ -41,7 +41,7 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            console.log("SSH Host: ${{ vars.SSH_HOST }}" );
+            console.log("SSH Host: ${{ vars.HOST }}" );
             console.log ("SSH port: ${{ secrets.SSH_PORT }}");
             console.log("username: ${{ secrets.SSH_USER }}");
           
@@ -50,7 +50,7 @@ jobs:
       - name: deploying
         uses: appleboy/ssh-action@v0.1.8
         with:
-          host: ${{ vars.SSH_HOST }}
+          host: ${{ vars.HOST }}
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
