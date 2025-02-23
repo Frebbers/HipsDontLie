@@ -54,6 +54,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           password: ${{ secrets.SSH_PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_PKEY }}
           script: |
             docker image pull ${{ secrets.DOCKER_USER }}/game-together-backend:latest
             docker container stop game-together-backend
