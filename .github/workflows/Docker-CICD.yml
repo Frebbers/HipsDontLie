@@ -37,6 +37,16 @@ jobs:
     environment: DTU Hosting
     runs-on: ubuntu-latest
     steps:
+      - name: print variables
+        uses: actions/github-script@v6
+        with:
+          script: |
+            console.log("SSH Host: ${{ vars.SSH_HOST }}" );
+            console.log ("SSH port: ${{ secrets.SSH_PORT }}");
+            console.log("username: ${{ secrets.SSH_USER }}");
+          
+
+
       - name: deploying
         uses: appleboy/ssh-action@v0.1.8
         with:
