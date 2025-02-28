@@ -1,73 +1,81 @@
 ﻿using GameTogetherAPI.Database;
 using GameTogetherAPI.Models;
+using GameTogetherAPI.Repository;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace GameTogetherAPI.Repository {
-    public class UserRepository : IUserRepository {
+namespace GameTogetherAPI.Repository
+{
+    public class UserRepository : IUserRepository
+    {
         private readonly ApplicationDbContext _context;
 
-        public UserRepository(ApplicationDbContext context) {
+        public UserRepository(ApplicationDbContext context)
+        {
             _context = context;
         }
 
-        /// <summary>
-        /// Adds a new user to the database if the email does not already exist.
-        /// </summary>
-        /// <param name="user">The user object to add.</param>
-        /// <returns>True if the user was successfully added; otherwise, false.</returns>
-        /// <exception cref="InvalidOperationException">Thrown when a user with the same email already exists.</exception>
-        /// <exception cref="Exception">Thrown when an unexpected error occurs.</exception>
-        public async Task<bool> CreateUserAsync(User user) {
-            try {
-                if (await _context.Users.AnyAsync(u => u.Email == user.Email))
-                    throw new InvalidOperationException($"A user with email '{user.Email}' already exists.");
+        public async Task<bool> AddUserAsync(User user)
+        {
+            try
+            {
+                await _context.Users.AddAsync(user);
+                await _context.SaveChangesAsync();
+                return true;
 
-                _context.Users.Add(user);
-                return await _context.SaveChangesAsync() > 0;
             }
-            catch (InvalidOperationException) {
-                throw;
+            catch (DbUpdateException ex) 
+            {
+                return false;
             }
-            catch (Exception ex) {
-                throw new Exception("An error occurred while adding the user.", ex);
+            catch (Exception ex) 
+            {
+                return false;
             }
         }
 
-        /// <summary>
-        /// Retrieves all users from the database, including their associated games.
-        /// </summary>
-        /// <returns>A list of users with their games.</returns>
-        /// <exception cref="Exception">Thrown when an error occurs while fetching users.</exception>
-        public async Task<IEnumerable<User>> GetAllUsersAsync() {
-            try {
-                return await _context.Users.ToListAsync();
+        public async Task<bool> AddOrUpdateProfileAsync(Profile profile)
+        {
+            try
+            {
+                var existingProfile = await _context.Profiles.FindAsync(profile.Id);
+
+                if (existingProfile == null)
+                {
+                    await _context.Profiles.AddAsync(profile);
+                }
+                else
+                {
+                    _context.Entry(existingProfile).CurrentValues.SetValues(profile);
+                }
+
+                await _context.SaveChangesAsync();
+                return true;
             }
-            catch (Exception ex) {
-                throw new Exception("An error occurred while retrieving users.", ex);
+            catch (Exception)
+            {
+                return false;
             }
         }
 
-        /// <summary>
-        /// Retrieves a user by their ID, including their associated games.
-        /// </summary>
-        /// <param name="userId">The ID of the user to retrieve.</param>
-        /// <returns>The user object if found.</returns>
-        /// <exception cref="KeyNotFoundException">Thrown when no user with the given ID is found.</exception>
-        /// <exception cref="Exception">Thrown when an unexpected error occurs.</exception>
-        public async Task<User> GetUserByIdAsync(string userId) {
-            try {
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        public async Task<User> GetUserByEmailAsync(string email)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        }
 
-                if (user == null)
-                    throw new KeyNotFoundException($"User with ID '{userId}' not found.");
-
-                return user;
+        public async Task<bool> DeleteUserAsync(int userId)
+        {
+            var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (existingUser != null)
+            {
+                _context.Users.Remove(existingUser);
+                await _context.SaveChangesAsync();
+                return true;
             }
-            catch (KeyNotFoundException) {
-                throw;
-            }
-            catch (Exception ex) {
-                throw new Exception($"An error occurred while retrieving the user with ID '{userId}'.", ex);
+            else
+            {
+                return false;
             }
         }
     }

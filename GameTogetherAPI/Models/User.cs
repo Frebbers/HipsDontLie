@@ -1,23 +1,22 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime;
 
-namespace GameTogetherAPI.Models {
-    public class User {
+namespace GameTogetherAPI.Models
+{
+    public class User
+    {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public string Id { get; set; } = Guid.NewGuid().ToString();
+        public int Id { get; set; }
 
         [Required, EmailAddress]
         public string Email { get; set; }
 
         [Required]
-        public string Password { get; set; }
+        public string PasswordHash { get; set; }
 
-        public string? ProfilePicture { get; set; }
-        public string? Description { get; set; }
-        public string? Region { get; set; }
-
-        public List<string> GameIDs { get; set; } = new List<string>();
-
+        public Profile Profile { get; set; }
     }
+    
 }
