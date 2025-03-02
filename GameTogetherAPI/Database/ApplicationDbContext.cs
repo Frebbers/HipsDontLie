@@ -8,6 +8,8 @@ namespace GameTogetherAPI.Database {
 
         public DbSet<User> Users { get; set; }
         public DbSet<Profile> Profiles { get; set; }
+        public DbSet<Session> Sessions { get; set; }
+        public DbSet<UserSession> UserSessions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -16,6 +18,19 @@ namespace GameTogetherAPI.Database {
                 .WithOne(u => u.Profile)
                 .HasForeignKey<Profile>(p => p.Id)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<UserSession>()
+                .HasKey(us => new { us.UserId, us.SessionId });
+
+            modelBuilder.Entity<UserSession>()
+                .HasOne(us => us.User)
+                .WithMany(u => u.JoinedSessions)
+                .HasForeignKey(us => us.UserId);
+
+            modelBuilder.Entity<UserSession>()
+                .HasOne(us => us.Session)
+                .WithMany(s => s.Participants)
+                .HasForeignKey(us => us.SessionId);
         }
     }
 

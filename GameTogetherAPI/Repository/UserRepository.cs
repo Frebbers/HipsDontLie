@@ -1,9 +1,6 @@
 ﻿using GameTogetherAPI.Database;
 using GameTogetherAPI.Models;
-using GameTogetherAPI.Repository;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace GameTogetherAPI.Repository
 {
@@ -77,6 +74,11 @@ namespace GameTogetherAPI.Repository
             {
                 return false;
             }
+        }
+
+        public async Task<Profile> GetProfileAsync(int userId)
+        {
+            return await _context.Profiles.FirstOrDefaultAsync(p => p.Id == userId);
         }
     }
 }

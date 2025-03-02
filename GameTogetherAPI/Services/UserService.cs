@@ -1,30 +1,25 @@
-﻿using GameTogetherAPI.Models;
+﻿using GameTogetherAPI.DTO;
+using GameTogetherAPI.Models;
 using GameTogetherAPI.Repository;
-using Microsoft.EntityFrameworkCore;
 
 namespace GameTogetherAPI.Services
 {
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
-        private readonly IConfiguration _configuration;
 
-        public UserService(IUserRepository userRepository, IConfiguration configuration)
+        public UserService(IUserRepository userRepository)
         {
             _userRepository = userRepository;
         }
 
-        public Task<ProfileResponseDTO> GetProfileAsync(int userId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<bool> AddOrUpdateProfileAsync(int userId, ProfileCreateDTO profileDto)
+        public async Task<bool> AddOrUpdateProfileAsync(int userId, UpdateProfileRequestDTO profileDto)
         {
             var profile = new Profile
             {
                 Id = userId,
                 Name = profileDto.Name,
+                Age = profileDto.Age,
                 ProfilePicture = profileDto.ProfilePicture,
                 Description = profileDto.Description,
                 Region = profileDto.Region,
@@ -38,6 +33,20 @@ namespace GameTogetherAPI.Services
                 return false;
             }
             return true;
+        }
+
+        public async Task<GetProfileResponseDTO> GetProfileAsync(int userId)
+        {
+            var profile = await _userRepository.GetProfileAsync(userId);
+            return new GetProfileResponseDTO
+            {
+                Age = profile.Age,
+                Description = profile.Description,
+                Region = profile.Region,
+                Tags = profile.Tags,
+                Name = profile.Name,
+                ProfilePicture = profile.ProfilePicture
+            };
         }
     }
 }

@@ -17,6 +17,8 @@ namespace GameTogetherAPI.Models
         public string PasswordHash { get; set; }
 
         public Profile Profile { get; set; }
+
+        public List<UserSession> JoinedSessions { get; set; } = new();
     }
     
 }

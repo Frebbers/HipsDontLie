@@ -1,29 +1,38 @@
-﻿using GameTogetherAPI.Models;
+﻿using GameTogetherAPI.DTO;
 using GameTogetherAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace GameTogetherAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UsersController : ControllerBase
     {
-        private readonly IAuthService _authService;
         private readonly IUserService _userService;
-        public UserController(IAuthService authService, IUserService userService)
+        public UsersController(IUserService userService)
         {
-            _authService = authService;
             _userService = userService;
         }
 
+        [HttpGet("get-profile")]
+        [Authorize]
+        public async Task<IActionResult> GetProfileAsync()
+        {
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+            var profile = await _userService.GetProfileAsync(userId);
+
+            if (profile == null)
+                return NotFound(new { message = "User not found" });
+
+            return Ok(profile);
+        }
 
         [HttpPut("update-profile")]
         [Authorize]
-        public async Task<IActionResult> UpdateProfile([FromBody] ProfileCreateDTO profile)
+        public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileRequestDTO profile)
         {
             try
             {
