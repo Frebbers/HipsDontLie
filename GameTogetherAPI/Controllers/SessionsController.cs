@@ -19,7 +19,7 @@ namespace GameTogetherAPI.Controllers
             _sessionService = sessionservice; 
         }
 
-        [HttpPost("create-session")]
+        [HttpPost("create")]
         public async Task<IActionResult> CreateSession([FromBody] CreateSessionRequestDTO sessionDto)
         {
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
@@ -43,7 +43,7 @@ namespace GameTogetherAPI.Controllers
             return Ok(sessions);
         }
 
-        [HttpGet("my")]
+        [HttpGet("user")]
         public async Task<IActionResult> GetMySessionsAsync()
         {
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
