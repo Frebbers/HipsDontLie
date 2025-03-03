@@ -69,6 +69,15 @@ namespace GameTogetherAPI.Controllers
             return Ok(sessions);
         }
 
+        /// <summary>
+        /// Retrieves a session by its unique identifier.
+        /// </summary>
+        /// <param name="sessionId">The unique identifier of the session.</param>
+        /// <returns>
+        /// A 200 OK response containing the session details if found.  
+        /// A 404 Not Found response if the session does not exist.
+        /// </returns>
+
         [HttpGet("{sessionId}")]
         public async Task<IActionResult> GetSessionByIdAsync(int sessionId) {
             var session = await _sessionService.GetSessionByIdAsync(sessionId);
@@ -78,6 +87,14 @@ namespace GameTogetherAPI.Controllers
 
             return Ok(session);
         }
+
+        /// <summary>
+        /// Retrieves all sessions that the authenticated user is participating in.
+        /// </summary>
+        /// <returns>
+        /// A 200 OK response containing the list of sessions the user is part of.  
+        /// A 404 Not Found response if no sessions are found.
+        /// </returns>
 
         [HttpGet("user")]
         public async Task<IActionResult> GetMySessionsAsync()

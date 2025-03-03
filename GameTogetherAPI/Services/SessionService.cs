@@ -55,6 +55,14 @@ namespace GameTogetherAPI.Services
 
         }
 
+        /// <summary>
+        /// Retrieves a session by its unique identifier and maps it to a response DTO.
+        /// </summary>
+        /// <param name="sessionId">The unique identifier of the session.</param>
+        /// <returns>
+        /// A task representing the asynchronous operation, returning a <see cref="GetSessionByIdResponseDTO"/> 
+        /// containing session details if found.
+        /// </returns>
         public async Task<GetSessionByIdResponseDTO> GetSessionByIdAsync(int sessionId) {
             var session = await _sessionRepository.GetSessionByIdAsync(sessionId);
 
@@ -74,7 +82,6 @@ namespace GameTogetherAPI.Services
                     .ToList()
             };
         }
-
 
         /// <summary>
         /// Retrieves all available sessions or sessions associated with a specific user.

@@ -36,6 +36,13 @@ namespace GameTogetherAPI.Repository {
             }
         }
 
+        /// <summary>
+        /// Retrieves a session by its unique identifier, including its participants and their profiles.
+        /// </summary>
+        /// <param name="sessionId">The unique identifier of the session.</param>
+        /// <returns>
+        /// A task representing the asynchronous operation, returning the session if found, otherwise null.
+        /// </returns>
         public async Task<Session> GetSessionByIdAsync(int sessionId) {
             return await _context.Sessions
                 .Include(s => s.Participants)
@@ -43,6 +50,14 @@ namespace GameTogetherAPI.Repository {
                 .ThenInclude(u => u.Profile).FirstOrDefaultAsync();
 
         }
+
+        /// <summary>
+        /// Adds a user to a session and saves the change to the database.
+        /// </summary>
+        /// <param name="userSession">The user-session relationship to be added.</param>
+        /// <returns>
+        /// A task representing the asynchronous operation, returning true if the user is successfully added to the session.
+        /// </returns>
         public async Task<bool> AddUserToSessionAsync(UserSession userSession)
         {
             await _context.UserSessions.AddAsync(userSession);
