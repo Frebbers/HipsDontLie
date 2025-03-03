@@ -47,5 +47,6 @@ namespace GameTogetherAPI.Repository {
         /// <param name="sessionId">The unique identifier of the session.</param>
         /// <returns>A task that represents the asynchronous operation, returning true if the user is successfully removed from the session.</returns>
         Task<bool> RemoveUserFromSessionAsync(int userId, int sessionId);
+        Task<Session> GetSessionByIdAsync(int sessionId);
     }
 }

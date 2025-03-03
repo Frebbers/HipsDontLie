@@ -15,6 +15,8 @@ namespace GameTogetherAPI.Services
         /// <param name="session">The session details provided in the request.</param>
         /// <returns>A task representing the asynchronous operation, returning true if the session is successfully created.</returns>
         Task<bool> CreateSessionAsync(int userId , CreateSessionRequestDTO session);
+        
+        Task<GetSessionByIdResponseDTO> GetSessionByIdAsync(int sessionId);
 
         /// <summary>
         /// Retrieves all available sessions or sessions associated with a specific user.

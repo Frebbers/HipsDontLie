@@ -55,6 +55,27 @@ namespace GameTogetherAPI.Services
 
         }
 
+        public async Task<GetSessionByIdResponseDTO> GetSessionByIdAsync(int sessionId) {
+            var session = await _sessionRepository.GetSessionByIdAsync(sessionId);
+
+            return new GetSessionByIdResponseDTO() {
+                Title = session.Title,
+                AgeRange = session.AgeRange,
+                Description = session.Description,
+                IsVisible = session.IsVisible,
+                OwnerId = sessionId,
+                Tags = session.Tags,
+                Id = sessionId,
+                Participants = session.Participants
+                    .Select(p => new ParticipantDTO {
+                        UserId = p.UserId,
+                        Name = p.User.Profile.Name,
+                    })
+                    .ToList()
+            };
+        }
+
+
         /// <summary>
         /// Retrieves all available sessions or sessions associated with a specific user.
         /// </summary>

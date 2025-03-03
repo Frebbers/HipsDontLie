@@ -69,13 +69,15 @@ namespace GameTogetherAPI.Controllers
             return Ok(sessions);
         }
 
-        /// <summary>
-        /// Retrieves all sessions that the authenticated user is part of.
-        /// </summary>
-        /// <returns>
-        /// Returns a 200 OK response with a list of the user's sessions.  
-        /// Returns a 404 Not Found response if the user is not part of any sessions.
-        /// </returns>
+        [HttpGet("{sessionId}")]
+        public async Task<IActionResult> GetSessionByIdAsync(int sessionId) {
+            var session = await _sessionService.GetSessionByIdAsync(sessionId);
+
+            if (session == null)
+                return NotFound(new { message = "Session not found" });
+
+            return Ok(session);
+        }
 
         [HttpGet("user")]
         public async Task<IActionResult> GetMySessionsAsync()
