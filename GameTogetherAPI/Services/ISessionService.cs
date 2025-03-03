@@ -8,5 +8,6 @@ namespace GameTogetherAPI.Services
         Task<bool> CreateSessionAsync(int userId , CreateSessionRequestDTO session);
         Task<List<GetSessionsResponseDTO>> GetSessionsAsync(int? userId = null);
         Task<bool> JoinSessionAsync(int userId, int sessionId);
+        Task<bool> LeaveSessionAsync(int userId, int sessionId);
     }
 }

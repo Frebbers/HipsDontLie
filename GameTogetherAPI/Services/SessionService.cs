@@ -96,5 +96,11 @@ namespace GameTogetherAPI.Services
             return true;
         }
 
+        public async Task<bool> LeaveSessionAsync(int userId, int sessionId)
+        {
+            return await _sessionRepository.RemoveUserFromSessionAsync(userId, sessionId);
+            
+        }
+
     }
 }

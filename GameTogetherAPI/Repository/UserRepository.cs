@@ -63,22 +63,19 @@ namespace GameTogetherAPI.Repository
 
         public async Task<bool> DeleteUserAsync(int userId)
         {
-            var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
-            if (existingUser != null)
-            {
-                _context.Users.Remove(existingUser);
-                await _context.SaveChangesAsync();
-                return true;
-            }
-            else
-            {
+            var existingUser = await _context.Users.FindAsync(userId);
+            if (existingUser == null)
                 return false;
-            }
+
+
+            _context.Users.Remove(existingUser);
+            await _context.SaveChangesAsync();
+            return true;
         }
 
         public async Task<Profile> GetProfileAsync(int userId)
         {
-            return await _context.Profiles.FirstOrDefaultAsync(p => p.Id == userId);
+            return await _context.Profiles.FindAsync(userId);
         }
     }
 }

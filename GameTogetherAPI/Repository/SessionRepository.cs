@@ -38,6 +38,19 @@ namespace GameTogetherAPI.Repository
             return true;
         }
 
+        public async Task<bool> RemoveUserFromSessionAsync(int userId, int sessionId)
+        {
+            var userSession = await _context.UserSessions
+                .FirstOrDefaultAsync(us => us.UserId == userId && us.SessionId == sessionId);
+
+            if (userSession == null)
+                return false;
+
+            _context.UserSessions.Remove(userSession);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
         public async Task<bool> ValidateUserSessionAsync(int userId, int sessionId)
         {
 

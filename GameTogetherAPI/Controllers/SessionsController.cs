@@ -69,5 +69,18 @@ namespace GameTogetherAPI.Controllers
             return Ok(new { message = "Successfully joined the session!" });
         }
 
+        [HttpDelete("{sessionId}/leave")]
+        public async Task<IActionResult> LeaveSession(int sessionId)
+        {
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+            bool success = await _sessionService.LeaveSessionAsync(userId, sessionId);
+
+            if (!success)
+                return BadRequest(new { message = "Failed to leave session. Either it does not exist or you've already left." });
+
+            return Ok(new { message = "Successfully left the session!" });
+        }
+
     }
 }
