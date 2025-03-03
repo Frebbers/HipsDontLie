@@ -20,6 +20,8 @@ namespace GameTogetherAPI.Models {
         [Required, EmailAddress]
         public string Email { get; set; }
 
+        public bool IsEmailVerified { get; set; } = false;
+
         /// <summary>
         /// Gets or sets the hashed password of the user.
         /// </summary>

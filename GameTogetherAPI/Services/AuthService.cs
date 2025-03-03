@@ -4,6 +4,9 @@ using System.Security.Claims;
 using System.Text;
 using GameTogetherAPI.Models;
 using GameTogetherAPI.Repository;
+using System.Net.Mail;
+using System.Net;
+using Microsoft.Extensions.Configuration;
 
 namespace GameTogetherAPI.Services
 {
@@ -55,6 +58,95 @@ namespace GameTogetherAPI.Services
             return true;
         }
 
+
+    public async Task<bool> SendEmailVerificationAsync(string email) {
+        var user = await _userRepository.GetUserByEmailAsync(email);
+        if (user == null) return false;
+
+        var token = GenerateEmailVerificationToken(user.Id);
+
+        var smtpSettings = _configuration.GetSection("EmailSettings");
+        var verificationUrl = smtpSettings["VerificationUrl"] + $"?token={token}";
+        var smtpServer = smtpSettings["SmtpServer"];
+        var port = int.Parse(smtpSettings["Port"]);
+        var senderEmail = smtpSettings["SenderEmail"];
+        var senderPassword = smtpSettings["SenderPassword"];
+
+        using (var client = new SmtpClient(smtpServer)) {
+            client.Port = port;
+            client.Credentials = new NetworkCredential(senderEmail, senderPassword);
+            client.EnableSsl = true;
+
+            var mailMessage = new MailMessage {
+                From = new MailAddress(senderEmail),
+                Subject = "Verify Your Email",
+                Body = $"Click <a href='{verificationUrl}'>here</a> to verify your email.",
+                IsBodyHtml = true
+            };
+
+            mailMessage.To.Add(email);
+            await client.SendMailAsync(mailMessage);
+        }
+
+        return true;
+    }
+
+
+    /// <summary>
+    /// Generates a JWT token for email verification.
+    /// </summary>
+    private string GenerateEmailVerificationToken(int userId) {
+            var key = Encoding.UTF8.GetBytes(_configuration["JwtSettings:SecretKey"]);
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
+                new Claim("email_verification", "true") // Custom claim
+            };
+
+            var tokenDescriptor = new SecurityTokenDescriptor {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.UtcNow.AddHours(2),
+                Issuer = _configuration["JwtSettings:Issuer"],
+                Audience = _configuration["JwtSettings:Audience"],
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+            return tokenHandler.WriteToken(token);
+        }
+
+        /// <summary>
+        /// Verifies the email using a JWT token.
+        /// </summary>
+        public async Task<bool> ConfirmEmailAsync(string token) {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(_configuration["JwtSettings:SecretKey"]);
+
+            try {
+                var principal = tokenHandler.ValidateToken(token, new TokenValidationParameters {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
+                }, out SecurityToken validatedToken);
+
+                var userId = int.Parse(principal.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+                var emailVerificationClaim = principal.FindFirst("email_verification")?.Value;
+
+                if (emailVerificationClaim != "true")
+                    return false;
+
+                return await _userRepository.ConfirmEmailAsync(userId);
+            }
+            catch {
+                return false;
+            }
+        }
+
         /// <summary>
         /// Authenticates a user by verifying their credentials and returning a JWT token if valid.
         /// </summary>
@@ -65,6 +157,9 @@ namespace GameTogetherAPI.Services
         {
             var user = await _userRepository.GetUserByEmailAsync(email);
             if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
+                return null;
+
+            if (!user.IsEmailVerified)
                 return null;
 
             return GenerateJwtToken(user);

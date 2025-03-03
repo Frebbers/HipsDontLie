@@ -84,6 +84,20 @@ namespace GameTogetherAPI.Repository
         }
 
         /// <summary>
+        /// Confirms a user's email verification status.
+        /// </summary>
+        /// <param name="userId">The unique identifier of the user.</param>
+        /// <returns>A task representing the asynchronous operation, returning true if the email was successfully verified.</returns>
+        public async Task<bool> ConfirmEmailAsync(int userId) {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) return false;
+
+            user.IsEmailVerified = true;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        /// <summary>
         /// Deletes a user and their associated data from the database.
         /// </summary>
         /// <param name="userId">The unique identifier of the user to be deleted.</param>
@@ -111,3 +125,5 @@ namespace GameTogetherAPI.Repository
         }
     }
 }
+
+

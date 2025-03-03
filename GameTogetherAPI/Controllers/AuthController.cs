@@ -22,12 +22,13 @@ namespace GameTogetherAPI.Controllers {
         }
 
         /// <summary>
-        /// Registers a new user with the provided email and password.
+        /// Registers a new user with the provided email and password and sends a verification email.
         /// </summary>
         /// <param name="model">The registration model containing the user's email and password.</param>
         /// <returns>
-        /// Returns a 200 OK response if registration is successful.
-        /// Returns a 400 Bad Request response if the email is already taken.
+        /// Returns a 200 OK response if registration is successful and the verification email is sent.
+        /// Returns a 400 Bad Request response if the email is already taken or if the verification email could not be sent.
+        /// </returns>
         /// </returns>
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model) {
@@ -35,7 +36,25 @@ namespace GameTogetherAPI.Controllers {
             if (!success)
                 return BadRequest("Email already taken.");
 
+            bool emailSent = await _authService.SendEmailVerificationAsync(model.Email);
+            if (!emailSent)
+                return BadRequest("Could not send verification email.");
+
             return Ok("User registered successfully!");
+        }
+
+        /// <summary>
+        /// Confirms the user's email using the verification token.
+        /// </summary>
+        /// <param name="token">JWT verification token</param>
+        /// <returns>200 OK if successful, 400 Bad Request otherwise</returns>
+        [HttpGet("verify-email")]
+        public async Task<IActionResult> VerifyEmail([FromQuery] string token) {
+            bool success = await _authService.ConfirmEmailAsync(token);
+            if (!success)
+                return BadRequest("Invalid or expired verification token.");
+
+            return Ok("Email verified successfully.");
         }
 
         /// <summary>
@@ -50,7 +69,7 @@ namespace GameTogetherAPI.Controllers {
         public async Task<IActionResult> Login([FromBody] LoginModel model) {
             var token = await _authService.AuthenticateUserAsync(model.Email, model.Password);
             if (token == null)
-                return Unauthorized("Invalid credentials.");
+                return Unauthorized("Invalid credentials or your user has not been verified.");
 
             return Ok(new { Token = token });
         }

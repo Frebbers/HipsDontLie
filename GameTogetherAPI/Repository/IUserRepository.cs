@@ -27,6 +27,13 @@ namespace GameTogetherAPI.Repository {
         Task<User> GetUserByEmailAsync(string email);
 
         /// <summary>
+        /// Confirms a user's email address.
+        /// </summary>
+        /// <param name="userId">User ID</param>
+        /// <returns>Task representing the async operation</returns>
+        Task<bool> ConfirmEmailAsync(int userId);
+
+        /// <summary>
         /// Retrieves a user's profile asynchronously.
         /// </summary>
         /// <param name="userId">The unique identifier of the user.</param>

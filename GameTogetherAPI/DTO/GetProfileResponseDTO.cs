@@ -27,10 +27,5 @@
         /// Gets or sets the region or location of the user.
         /// </summary>
         public string? Region { get; set; }
-
-        /// <summary>
-        /// Gets or sets a list of tags associated with the user for preferences or interests.
-        /// </summary>
-        public List<string> Tags { get; set; } = new();
     }
 }

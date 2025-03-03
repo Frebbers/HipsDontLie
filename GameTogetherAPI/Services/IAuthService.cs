@@ -16,6 +16,20 @@ namespace GameTogetherAPI.Services
         Task<bool> RegisterUserAsync(string email, string password);
 
         /// <summary>
+        /// Sends an email verification link to the user's email address.
+        /// </summary>
+        /// <param name="email">User's email address</param>
+        /// <returns>Task representing the async operation</returns>
+        Task<bool> SendEmailVerificationAsync(string email);
+
+        /// <summary>
+        /// Confirms the user's email using a verification token.
+        /// </summary>
+        /// <param name="token">JWT verification token</param>
+        /// <returns>Task representing the async operation</returns>
+        Task<bool> ConfirmEmailAsync(string token);
+
+        /// <summary>
         /// Authenticates a user by verifying their credentials and returning a JWT token if valid.
         /// </summary>
         /// <param name="email">The email address of the user.</param>
