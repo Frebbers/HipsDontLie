@@ -1,67 +1,68 @@
-﻿using GameTogetherAPI.Models;
+﻿using GameTogetherAPI.DTO;
+using GameTogetherAPI.Models;
 using GameTogetherAPI.Repository;
 
-namespace GameTogetherAPI.Services {
-    public class UserService : IUserService {
+namespace GameTogetherAPI.Services
+{
+    /// <summary>
+    /// Provides user management services, including profile retrieval and updates.
+    /// </summary>
+    public class UserService : IUserService
+    {
         private readonly IUserRepository _userRepository;
 
-        public UserService(IUserRepository userRepository) {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UserService"/> class.
+        /// </summary>
+        /// <param name="userRepository">The repository for user-related database operations.</param>
+        public UserService(IUserRepository userRepository)
+        {
             _userRepository = userRepository;
         }
 
         /// <summary>
-        /// Creates a new user in the database.
+        /// Adds or updates the profile of a specified user.
         /// </summary>
-        /// <param name="user">The user object to add.</param>
-        /// <returns>True if the user was successfully added; otherwise, false.</returns>
-        /// <exception cref="InvalidOperationException">Thrown when a user with the same email already exists.</exception>
-        /// <exception cref="Exception">Thrown when an unexpected error occurs.</exception>
-        public async Task<bool> CreateUserAsync(User user) {
-            try {
-                return await _userRepository.CreateUserAsync(user);
+        /// <param name="userId">The unique identifier of the user.</param>
+        /// <param name="profileDto">The profile data to be added or updated.</param>
+        /// <returns>A task representing the asynchronous operation, returning true if the operation is successful.</returns>
+        public async Task<bool> AddOrUpdateProfileAsync(int userId, UpdateProfileRequestDTO profileDto)
+        {
+            var profile = new Profile
+            {
+                Id = userId,
+                Name = profileDto.Name,
+                Age = profileDto.Age,
+                ProfilePicture = profileDto.ProfilePicture,
+                Description = profileDto.Description,
+                Region = profileDto.Region,
+            };
+
+            bool isSuccess = await _userRepository.AddOrUpdateProfileAsync(profile);
+
+            if (!isSuccess)
+            {
+                return false;
             }
-            catch (InvalidOperationException) {
-                throw;
-            }
-            catch (Exception ex) {
-                throw new Exception("An error occurred while creating the user.", ex);
-            }
+            return true;
         }
 
         /// <summary>
-        /// Retrieves all users.
+        /// Retrieves the profile information of a specified user.
         /// </summary>
-        /// <returns>A list of users with limited information.</returns>
-        /// <exception cref="Exception">Thrown when an unexpected error occurs.</exception>
-        public async Task<IEnumerable<User>> GetAllUsersAsync() {
-            try {
-                return await _userRepository.GetAllUsersAsync();
-            }
-            catch (Exception ex) {
-                throw new Exception("An error occurred while retrieving users.", ex);
-            }
-        }
-
-        /// <summary>
-        /// Retrieves a user by ID.
-        /// </summary>
-        /// <param name="userId">The ID of the user.</param>
-        /// <returns>The user DTO if found.</returns>
-        /// <exception cref="KeyNotFoundException">Thrown if the user is not found.</exception>
-        /// <exception cref="Exception">Thrown when an unexpected error occurs.</exception>
-        public async Task<User> GetUserByIdAsync(string userId) {
-            try {
-                var user = await _userRepository.GetUserByIdAsync(userId);
-                if (user == null) throw new KeyNotFoundException($"User with ID '{userId}' not found.");
-
-                return user;
-            }
-            catch (KeyNotFoundException) {
-                throw;
-            }
-            catch (Exception ex) {
-                throw new Exception($"An error occurred while retrieving the user with ID '{userId}'.", ex);
-            }
+        /// <param name="userId">The unique identifier of the user.</param>
+        /// <returns>A task representing the asynchronous operation, returning the user's profile details.</returns>
+        public async Task<GetProfileResponseDTO> GetProfileAsync(int userId)
+        {
+            var profile = await _userRepository.GetProfileAsync(userId);
+            return new GetProfileResponseDTO
+            {
+                Age = profile.Age,
+                Description = profile.Description,
+                Region = profile.Region,
+                Name = profile.Name,
+                ProfilePicture = profile.ProfilePicture
+            };
         }
     }
 }

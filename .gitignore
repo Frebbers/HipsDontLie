@@ -1,5 +1,4 @@
-/GameTogetherAPI/.vs
-/GameTogetherAPI/bin
-/GameTogetherAPI/obj
-/GameTogetherAPI/Migrations
-GameTogetherAPI/testdatabase.db
+/GameTogetherAPI/.vs/*
+/GameTogetherAPI/bin/*
+/GameTogetherAPI/obj/*
+/.vs
