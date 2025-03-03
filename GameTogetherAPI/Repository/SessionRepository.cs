@@ -37,6 +37,20 @@ namespace GameTogetherAPI.Repository
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<bool> ValidateUserSessionAsync(int userId, int sessionId)
+        {
+
+            bool sessionExists = await _context.Sessions.AnyAsync(s => s.Id == sessionId);
+            if (!sessionExists)
+                return false;
+
+            bool isParticipant = await _context.UserSessions
+                .AnyAsync(us => us.UserId == userId && us.SessionId == sessionId);
+
+            return !isParticipant;
+        }
+
         public async Task<List<Session>> GetSessionsByUserIdAsync(int userId)
         {
             return await _context.Sessions
@@ -53,5 +67,6 @@ namespace GameTogetherAPI.Repository
                 .ThenInclude(p => p.User)
                 .ThenInclude(u => u.Profile).ToListAsync();
         }
+
     }
 }

@@ -79,5 +79,22 @@ namespace GameTogetherAPI.Services
             return results; 
         }
 
+        public async Task<bool> JoinSessionAsync(int userId, int sessionId)
+        {
+
+            if (!await _sessionRepository.ValidateUserSessionAsync(userId, sessionId))
+                return false;
+
+            var userSession = new UserSession
+            {
+                UserId = userId,
+                SessionId = sessionId
+            };
+
+            await _sessionRepository.AddUserToSessionAsync(userSession);
+
+            return true;
+        }
+
     }
 }

@@ -8,6 +8,7 @@ using System.Security.Claims;
 
 namespace GameTogetherAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class SessionsController : ControllerBase
@@ -19,7 +20,6 @@ namespace GameTogetherAPI.Controllers
         }
 
         [HttpPost("create-session")]
-        [Authorize]
         public async Task<IActionResult> CreateSession([FromBody] CreateSessionRequestDTO sessionDto)
         {
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
@@ -33,7 +33,6 @@ namespace GameTogetherAPI.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         public async Task<IActionResult> GetSessionsAsync()
         {
             var sessions = await _sessionService.GetSessionsAsync();
@@ -45,7 +44,6 @@ namespace GameTogetherAPI.Controllers
         }
 
         [HttpGet("my")]
-        [Authorize]
         public async Task<IActionResult> GetMySessionsAsync()
         {
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
@@ -56,6 +54,19 @@ namespace GameTogetherAPI.Controllers
                 return NotFound(new { message = "Sessions not found" });
 
             return Ok(sessions);
+        }
+
+        [HttpPost("{sessionId}/join")]
+        public async Task<IActionResult> JoinSession(int sessionId)
+        {
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+            bool success = await _sessionService.JoinSessionAsync(userId, sessionId);
+
+            if (!success)
+                return BadRequest(new { message = "Failed to join session. Either it does not exist or you're already a participant." });
+
+            return Ok(new { message = "Successfully joined the session!" });
         }
 
     }
