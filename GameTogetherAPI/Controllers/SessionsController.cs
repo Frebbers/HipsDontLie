@@ -11,13 +11,31 @@ namespace GameTogetherAPI.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
+    /// <summary>
+    /// Manages game sessions, including session creation, retrieval, joining, and leaving.
+    /// </summary>
     public class SessionsController : ControllerBase
     {
         private readonly ISessionService _sessionService;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SessionsController"/> class.
+        /// </summary>
+        /// <param name="sessionservice">The session service responsible for handling session-related operations.</param>
+
         public SessionsController(ISessionService sessionservice)
         {
             _sessionService = sessionservice; 
         }
+
+        /// <summary>
+        /// Creates a new session for the authenticated user.
+        /// </summary>
+        /// <param name="sessionDto">The session details provided in the request body.</param>
+        /// <returns>
+        /// Returns a 201 Created response if the session is successfully created.  
+        /// Returns a 400 Bad Request response if the session creation fails.
+        /// </returns>
 
         [HttpPost("create")]
         public async Task<IActionResult> CreateSession([FromBody] CreateSessionRequestDTO sessionDto)
@@ -32,6 +50,14 @@ namespace GameTogetherAPI.Controllers
             return Created(string.Empty, new { message = "Session created successfully!" });
         }
 
+        /// <summary>
+        /// Retrieves all available sessions.
+        /// </summary>
+        /// <returns>
+        /// Returns a 200 OK response with a list of sessions.  
+        /// Returns a 404 Not Found response if no sessions are available.
+        /// </returns>
+
         [HttpGet]
         public async Task<IActionResult> GetSessionsAsync()
         {
@@ -42,6 +68,14 @@ namespace GameTogetherAPI.Controllers
 
             return Ok(sessions);
         }
+
+        /// <summary>
+        /// Retrieves all sessions that the authenticated user is part of.
+        /// </summary>
+        /// <returns>
+        /// Returns a 200 OK response with a list of the user's sessions.  
+        /// Returns a 404 Not Found response if the user is not part of any sessions.
+        /// </returns>
 
         [HttpGet("user")]
         public async Task<IActionResult> GetMySessionsAsync()
@@ -56,6 +90,15 @@ namespace GameTogetherAPI.Controllers
             return Ok(sessions);
         }
 
+        /// <summary>
+        /// Allows the authenticated user to join a specified session.
+        /// </summary>
+        /// <param name="sessionId">The ID of the session to join.</param>
+        /// <returns>
+        /// Returns a 200 OK response if the user successfully joins the session.  
+        /// Returns a 400 Bad Request response if the session does not exist or the user is already a participant.
+        /// </returns>
+
         [HttpPost("{sessionId}/join")]
         public async Task<IActionResult> JoinSession(int sessionId)
         {
@@ -68,6 +111,15 @@ namespace GameTogetherAPI.Controllers
 
             return Ok(new { message = "Successfully joined the session!" });
         }
+
+        /// <summary>
+        /// Allows the authenticated user to leave a specified session.
+        /// </summary>
+        /// <param name="sessionId">The ID of the session to leave.</param>
+        /// <returns>
+        /// Returns a 200 OK response if the user successfully leaves the session.  
+        /// Returns a 400 Bad Request response if the session does not exist or the user has already left.
+        /// </returns>
 
         [HttpDelete("{sessionId}/leave")]
         public async Task<IActionResult> LeaveSession(int sessionId)

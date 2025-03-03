@@ -4,15 +4,27 @@ using GameTogetherAPI.Repository;
 
 namespace GameTogetherAPI.Services
 {
+    /// <summary>
+    /// Provides session management services, including session creation, retrieval, joining, and leaving.
+    /// </summary>
     public class SessionService : ISessionService
     {
         private readonly ISessionRepository _sessionRepository;
 
+        /// <summary>
+        /// Provides session management services, including session creation, retrieval, joining, and leaving.
+        /// </summary>
         public SessionService(IUserRepository userRepository, ISessionRepository sessionRepository)
         {
             _sessionRepository = sessionRepository;
         }
 
+        /// <summary>
+        /// Creates a new session and assigns the user as its owner.
+        /// </summary>
+        /// <param name="userId">The unique identifier of the user creating the session.</param>
+        /// <param name="sessionDto">The session details provided in the request.</param>
+        /// <returns>A task representing the asynchronous operation, returning true if the session is successfully created.</returns>
         public async Task<bool> CreateSessionAsync(int userId, CreateSessionRequestDTO sessionDto)
         {
             var session = new Session()
@@ -43,7 +55,11 @@ namespace GameTogetherAPI.Services
 
         }
 
-
+        /// <summary>
+        /// Retrieves all available sessions or sessions associated with a specific user.
+        /// </summary>
+        /// <param name="userId">The optional user ID to filter sessions by user participation. If null, all sessions are retrieved.</param>
+        /// <returns>A task representing the asynchronous operation, returning a list of available sessions.</returns>
         public async Task<List<GetSessionsResponseDTO>> GetSessionsAsync(int? userId = null)
         {
         
@@ -79,6 +95,12 @@ namespace GameTogetherAPI.Services
             return results; 
         }
 
+        /// <summary>
+        /// Allows a user to join a specified session if they are not already a participant.
+        /// </summary>
+        /// <param name="userId">The unique identifier of the user joining the session.</param>
+        /// <param name="sessionId">The unique identifier of the session to join.</param>
+        /// <returns>A task representing the asynchronous operation, returning true if the user successfully joins the session.</returns>
         public async Task<bool> JoinSessionAsync(int userId, int sessionId)
         {
 
@@ -96,6 +118,12 @@ namespace GameTogetherAPI.Services
             return true;
         }
 
+        /// <summary>
+        /// Allows a user to leave a specified session.
+        /// </summary>
+        /// <param name="userId">The unique identifier of the user leaving the session.</param>
+        /// <param name="sessionId">The unique identifier of the session to leave.</param>
+        /// <returns>A task representing the asynchronous operation, returning true if the user successfully leaves the session.</returns>
         public async Task<bool> LeaveSessionAsync(int userId, int sessionId)
         {
             return await _sessionRepository.RemoveUserFromSessionAsync(userId, sessionId);
