@@ -31,6 +31,15 @@ namespace GameTogetherAPI.Repository
                 return false;
             }
         }
+
+        public async Task<Session> GetSessionByIdAsync(int sessionId)
+        {
+            return await _context.Sessions
+                .Include(s => s.Participants)
+                .ThenInclude(p => p.User)
+                .ThenInclude(u => u.Profile).FirstOrDefaultAsync();
+
+        }
         public async Task<bool> AddUserToSessionAsync(UserSession userSession)
         {
             await _context.UserSessions.AddAsync(userSession);

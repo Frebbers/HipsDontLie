@@ -43,6 +43,17 @@ namespace GameTogetherAPI.Controllers
             return Ok(sessions);
         }
 
+        [HttpGet("{sessionId}")]
+        public async Task<IActionResult> GetSessionByIdAsync(int sessionId)
+        {
+            var session = await _sessionService.GetSessionByIdAsync(sessionId);
+
+            if (session == null)
+                return NotFound(new { message = "Session not found" });
+
+            return Ok(session);
+        }
+
         [HttpGet("user")]
         public async Task<IActionResult> GetMySessionsAsync()
         {

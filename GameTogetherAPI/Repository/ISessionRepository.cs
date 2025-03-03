@@ -10,5 +10,6 @@ namespace GameTogetherAPI.Repository
         Task<List<Session>> GetSessionsByUserIdAsync(int userId);
         Task<bool> ValidateUserSessionAsync(int userId, int sessionId);
         Task<bool> RemoveUserFromSessionAsync(int userId, int sessionId);
+        Task<Session> GetSessionByIdAsync(int sessionId);
     }
 }
