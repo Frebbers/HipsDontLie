@@ -59,43 +59,53 @@ namespace GameTogetherAPI.Services
         }
 
 
-    public async Task<bool> SendEmailVerificationAsync(string email) {
-        var user = await _userRepository.GetUserByEmailAsync(email);
-        if (user == null) return false;
+        public async Task<bool> SendEmailVerificationAsync(string email) {
+            var user = await _userRepository.GetUserByEmailAsync(email);
+            if (user == null) return false;
 
-        var token = GenerateEmailVerificationToken(user.Id);
+            var token = GenerateEmailVerificationToken(user.Id);
 
-        var smtpSettings = _configuration.GetSection("EmailSettings");
-        var verificationUrl = smtpSettings["VerificationUrl"] + $"?token={token}";
-        var smtpServer = smtpSettings["SmtpServer"];
-        var port = int.Parse(smtpSettings["Port"]);
-        var senderEmail = smtpSettings["SenderEmail"];
-        var senderPassword = smtpSettings["SenderPassword"];
+            var smtpSettings = _configuration.GetSection("EmailSettings");
+            var verificationUrl = smtpSettings["VerificationUrl"] + $"?token={token}";
+            var smtpServer = smtpSettings["SmtpServer"];
+            var port = int.Parse(smtpSettings["Port"]);
+            var senderEmail = smtpSettings["SenderEmail"];
+            var senderPassword = smtpSettings["SenderPassword"];
 
-        using (var client = new SmtpClient(smtpServer)) {
-            client.Port = port;
-            client.Credentials = new NetworkCredential(senderEmail, senderPassword);
-            client.EnableSsl = true;
+            // **Correct the file path to match the Models folder**
+            string templatePath = Path.Combine(Directory.GetCurrentDirectory(), "Models", "email-template.html");
 
-            var mailMessage = new MailMessage {
-                From = new MailAddress(senderEmail),
-                Subject = "Verify Your Email",
-                Body = $"Click <a href='{verificationUrl}'>here</a> to verify your email.",
-                IsBodyHtml = true
-            };
+            if (!File.Exists(templatePath))
+                throw new FileNotFoundException($"Email template not found at {templatePath}");
 
-            mailMessage.To.Add(email);
-            await client.SendMailAsync(mailMessage);
+            string emailBody = await File.ReadAllTextAsync(templatePath);
+            emailBody = emailBody.Replace("{VERIFICATION_URL}", verificationUrl);
+
+            using (var client = new SmtpClient(smtpServer)) {
+                client.Port = port;
+                client.Credentials = new NetworkCredential(senderEmail, senderPassword);
+                client.EnableSsl = true;
+
+                var mailMessage = new MailMessage {
+                    From = new MailAddress(senderEmail),
+                    Subject = "Verify Your Email",
+                    Body = emailBody,
+                    IsBodyHtml = true
+                };
+
+                mailMessage.To.Add(email);
+                await client.SendMailAsync(mailMessage);
+            }
+
+            return true;
         }
 
-        return true;
-    }
 
 
-    /// <summary>
-    /// Generates a JWT token for email verification.
-    /// </summary>
-    private string GenerateEmailVerificationToken(int userId) {
+        /// <summary>
+        /// Generates a JWT token for email verification.
+        /// </summary>
+        private string GenerateEmailVerificationToken(int userId) {
             var key = Encoding.UTF8.GetBytes(_configuration["JwtSettings:SecretKey"]);
             var claims = new[]
             {
