@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - test-fw2
 
 jobs:
   build:
