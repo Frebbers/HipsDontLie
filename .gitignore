@@ -2,3 +2,4 @@
 /GameTogetherAPI/bin/*
 /GameTogetherAPI/obj/*
 /.vs
+/.idea
