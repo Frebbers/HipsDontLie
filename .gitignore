@@ -1,6 +1,9 @@
 /GameTogetherAPI/.vs/*
 /GameTogetherAPI/bin/*
 /GameTogetherAPI/obj/*
+GameTogetherAPI.Test/obj/*
+/GameTogetherAPI.Test/bin/*
+
 /.vs
 /.idea
 /GameTogetherAPI/.idea/.idea.GameTogetherAPI/.idea

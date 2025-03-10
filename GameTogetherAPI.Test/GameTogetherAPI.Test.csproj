@@ -15,8 +15,6 @@
 
   <ItemGroup>
     <Folder Include="Factories\" />
-    <Folder Include="Fixtures\" />
-    <Folder Include="Hooks\" />
   </ItemGroup>
 
 </Project>
