@@ -1856,11 +1856,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Freb\\source\\repos\\Frebbers\\GameTogether-BackEnd\\GameTogether-BackEnd.Test\\GameTogetherAPI.Test.csproj",
+      "projectUniqueName": "C:\\Users\\Freb\\source\\repos\\Frebbers\\GameTogether-BackEnd\\GameTogetherAPI.Test\\GameTogetherAPI.Test.csproj",
       "projectName": "GameTogetherAPI.Test",
-      "projectPath": "C:\\Users\\Freb\\source\\repos\\Frebbers\\GameTogether-BackEnd\\GameTogether-BackEnd.Test\\GameTogetherAPI.Test.csproj",
+      "projectPath": "C:\\Users\\Freb\\source\\repos\\Frebbers\\GameTogether-BackEnd\\GameTogetherAPI.Test\\GameTogetherAPI.Test.csproj",
       "packagesPath": "C:\\Users\\Freb\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Freb\\source\\repos\\Frebbers\\GameTogether-BackEnd\\GameTogether-BackEnd.Test\\obj\\",
+      "outputPath": "C:\\Users\\Freb\\source\\repos\\Frebbers\\GameTogether-BackEnd\\GameTogetherAPI.Test\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Freb\\AppData\\Roaming\\NuGet\\NuGet.Config",

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "jTdblXAjwF4=",
+  "dgSpecHash": "cPLfyW1kpq0=",
   "success": true,
-  "projectFilePath": "C:\\Users\\Freb\\source\\repos\\Frebbers\\GameTogether-BackEnd\\GameTogether-BackEnd.Test\\GameTogetherAPI.Test.csproj",
+  "projectFilePath": "C:\\Users\\Freb\\source\\repos\\Frebbers\\GameTogether-BackEnd\\GameTogetherAPI.Test\\GameTogetherAPI.Test.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Freb\\.nuget\\packages\\cucumber.cucumberexpressions\\17.1.0\\cucumber.cucumberexpressions.17.1.0.nupkg.sha512",
     "C:\\Users\\Freb\\.nuget\\packages\\gherkin\\30.0.0\\gherkin.30.0.0.nupkg.sha512",

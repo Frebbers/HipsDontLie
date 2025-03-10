@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTogetherAPI", "GameTogetherAPI\GameTogetherAPI.csproj", "{56360629-DE98-4AA7-BC08-C914B5591AF8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameTogetherAPI.Test", "GameTogether-BackEnd.Test\GameTogetherAPI.Test.csproj", "{FF04673D-0D1B-4C43-BCD3-4C70076A1184}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTogetherAPI.Test", "GameTogetherAPI.Test\GameTogetherAPI.Test.csproj", "{886AC128-925E-4E18-B180-87DEFB6376F6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{56360629-DE98-4AA7-BC08-C914B5591AF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56360629-DE98-4AA7-BC08-C914B5591AF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56360629-DE98-4AA7-BC08-C914B5591AF8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FF04673D-0D1B-4C43-BCD3-4C70076A1184}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FF04673D-0D1B-4C43-BCD3-4C70076A1184}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FF04673D-0D1B-4C43-BCD3-4C70076A1184}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FF04673D-0D1B-4C43-BCD3-4C70076A1184}.Release|Any CPU.Build.0 = Release|Any CPU
+		{886AC128-925E-4E18-B180-87DEFB6376F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{886AC128-925E-4E18-B180-87DEFB6376F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{886AC128-925E-4E18-B180-87DEFB6376F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{886AC128-925E-4E18-B180-87DEFB6376F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
