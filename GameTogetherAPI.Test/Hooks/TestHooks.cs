@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GameTogetherAPI.Test.Factories;
 using GameTogetherAPI.Test.Fixtures;
+using GameTogetherAPI.Test.Util;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
 
 namespace GameTogetherAPI.Test.Hooks
@@ -21,7 +23,7 @@ namespace GameTogetherAPI.Test.Hooks
             Context = new APITestContext();
             Context.Factory = new APIFactory<Program>();
             Context.Client = Context.Factory.CreateClient();
-            string baseAddress = "http://localhost:5232/Http";
+            string baseAddress = APIConstants.BaseAddress;
             Context.Client.BaseAddress = new Uri(baseAddress);
         }
         [AfterFeature]

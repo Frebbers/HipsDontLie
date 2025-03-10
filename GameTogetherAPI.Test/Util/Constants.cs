@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace GameTogetherAPI.Test.Util
 {
-    internal class Constants
+    internal static class APIConstants
     {
+        public const string BaseAddress = "http://localhost:5232/Http";
     }
 }
