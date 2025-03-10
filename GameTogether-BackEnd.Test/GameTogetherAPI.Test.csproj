@@ -14,7 +14,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Support\" />
+    <Folder Include="Factories\" />
+    <Folder Include="Fixtures\" />
+    <Folder Include="Hooks\" />
   </ItemGroup>
 
 </Project>
