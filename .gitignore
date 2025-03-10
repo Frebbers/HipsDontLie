@@ -6,6 +6,5 @@ GameTogetherAPI.Test/obj/*
 
 /.vs
 /.idea
-/GameTogetherAPI/.idea/.idea.GameTogetherAPI/.idea
-/GameTogetherAPI.Test/obj/Debug/net8.0/GameTogetherAPI.Test.AssemblyInfo.cs
-/GameTogetherAPI.Test/obj/Debug/net8.0/GameTogetherAPI.Test.AssemblyInfoInputs.cache
+/GameTogetherAPI/.idea/*
+/GameTogetherAPI.Test/obj/*
