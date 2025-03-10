@@ -8,8 +8,3 @@ GameTogetherAPI.Test/obj/*
 /.idea
 /GameTogetherAPI/.idea/*
 /GameTogetherAPI.Test/obj/*
-/GameTogetherAPI.Test/obj/GameTogetherAPI.Test.csproj.nuget.dgspec.json
-/GameTogetherAPI.Test/obj/GameTogetherAPI.Test.csproj.nuget.g.props
-/GameTogetherAPI.Test/obj/GameTogetherAPI.Test.csproj.nuget.g.targets
-/GameTogetherAPI.Test/obj/project.assets.json
-/GameTogetherAPI.Test/obj/project.nuget.cache
