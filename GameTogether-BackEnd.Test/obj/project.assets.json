@@ -1856,9 +1856,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Freb\\source\\repos\\Frebbers\\GameTogether-BackEnd\\GameTogether-BackEnd.Test\\GameTogether-BackEnd.Test.csproj",
-      "projectName": "GameTogether-BackEnd.Test",
-      "projectPath": "C:\\Users\\Freb\\source\\repos\\Frebbers\\GameTogether-BackEnd\\GameTogether-BackEnd.Test\\GameTogether-BackEnd.Test.csproj",
+      "projectUniqueName": "C:\\Users\\Freb\\source\\repos\\Frebbers\\GameTogether-BackEnd\\GameTogether-BackEnd.Test\\GameTogetherAPI.Test.csproj",
+      "projectName": "GameTogetherAPI.Test",
+      "projectPath": "C:\\Users\\Freb\\source\\repos\\Frebbers\\GameTogether-BackEnd\\GameTogether-BackEnd.Test\\GameTogetherAPI.Test.csproj",
       "packagesPath": "C:\\Users\\Freb\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\Freb\\source\\repos\\Frebbers\\GameTogether-BackEnd\\GameTogether-BackEnd.Test\\obj\\",
       "projectStyle": "PackageReference",

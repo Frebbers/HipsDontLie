@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTogetherAPI", "GameTogetherAPI\GameTogetherAPI.csproj", "{56360629-DE98-4AA7-BC08-C914B5591AF8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameTogether-BackEnd.Test", "GameTogether-BackEnd.Test\GameTogether-BackEnd.Test.csproj", "{FF04673D-0D1B-4C43-BCD3-4C70076A1184}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameTogetherAPI.Test", "GameTogether-BackEnd.Test\GameTogetherAPI.Test.csproj", "{FF04673D-0D1B-4C43-BCD3-4C70076A1184}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,5 +24,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {413EA0F3-3FCC-4505-B2B2-162903A09F72}
 	EndGlobalSection
 EndGlobal
