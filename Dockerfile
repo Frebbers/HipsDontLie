@@ -5,19 +5,20 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0-preview AS build
 # Set working directory for build stage
 WORKDIR /src
 
-# Copy solution file if exists (replace *.sln with actual solution name if needed)
-COPY *.sln .
+# Copy solution file if exists
+COPY GameTogether-Backend.sln .
 COPY GameTogetherAPI/*.csproj ./GameTogetherAPI/
-COPY GameTogetherAPI/*.*proj ./GameTogetherAPI/
+COPY GameTogetherAPI.Test/*.csproj ./GameTogetherAPI.Test/
 
 # Restore NuGet packages
 RUN dotnet restore "GameTogetherAPI/GameTogetherAPI.csproj" --disable-parallel
+RUN dotnet restore "GameTogetherAPI.Test/GameTogetherAPI.Test.csproj" --disable-parallel
 
 # Copy everything else
 COPY . .
 
 # Build application
-WORKDIR /src/GameTogetherAPI
+WORKDIR /src/
 RUN dotnet publish -c Release -o /app/publish
 
 # Build runtime image
