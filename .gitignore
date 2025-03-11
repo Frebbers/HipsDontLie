@@ -7,4 +7,4 @@ GameTogetherAPI.Test/obj/*
 /.vs
 /.idea
 /GameTogetherAPI/.idea/*
-/GameTogetherAPI.Test/obj/*
+GameTogetherAPI.Test/obj/*
