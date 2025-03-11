@@ -22,6 +22,7 @@ namespace GameTogetherAPI.Test.Hooks
         {
             Context = new APITestContext();
             Context.Factory = new APIFactory<Program>();
+            
             Context.Client = Context.Factory.CreateClient();
             string baseAddress = APIConstants.BaseAddress;
             Context.Client.BaseAddress = new Uri(baseAddress);
