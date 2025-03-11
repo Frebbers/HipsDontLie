@@ -23,6 +23,10 @@ namespace GameTogetherAPI.Test.Drivers
         public APIDriver(HttpClient client)
         {
             Client = client;
+            if (client==null || client.BaseAddress == null)
+            {
+                throw new ArgumentNullException(nameof(client));
+            }
         }
 
         /// <summary>

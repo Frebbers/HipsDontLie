@@ -24,8 +24,7 @@ namespace GameTogetherAPI.Test.Hooks
             Context.Factory = new APIFactory<Program>();
             
             Context.Client = Context.Factory.CreateClient();
-            string baseAddress = APIConstants.BaseAddress;
-            Context.Client.BaseAddress = new Uri(baseAddress);
+            Context.Client.BaseAddress = new Uri(APIConstants.BaseAddress);
         }
         [AfterFeature]
         public static void GlobalTearDown()
