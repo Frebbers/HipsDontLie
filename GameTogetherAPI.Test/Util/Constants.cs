@@ -8,6 +8,6 @@ namespace GameTogetherAPI.Test.Util
 {
     internal static class APIConstants
     {
-        public const string BaseAddress = "http://localhost:5232/Http";
+        public const string BaseAddress = "http://localhost:5000";
     }
 }
