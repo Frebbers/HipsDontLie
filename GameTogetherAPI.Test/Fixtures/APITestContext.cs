@@ -8,7 +8,7 @@ using Microsoft.VisualStudio.TestPlatform.TestHost;
 
 namespace GameTogetherAPI.Test.Fixtures
 {
-    internal class APITestContext
+    public class APITestContext
     {
         public HttpClient Client { get; set; }
         public APIFactory<Program> Factory { get; set; }

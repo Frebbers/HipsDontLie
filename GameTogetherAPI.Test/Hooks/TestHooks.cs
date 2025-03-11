@@ -32,5 +32,6 @@ namespace GameTogetherAPI.Test.Hooks
             Context.Client.Dispose();
             Context.Factory.Dispose();
         }
+        
     }
 }
