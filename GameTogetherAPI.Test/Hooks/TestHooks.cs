@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using GameTogetherAPI.Test.Factories;
 using GameTogetherAPI.Test.Fixtures;
 using GameTogetherAPI.Test.Util;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
+using GameTogetherAPI;
 
 namespace GameTogetherAPI.Test.Hooks
 {
