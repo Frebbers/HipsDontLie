@@ -1,6 +1,6 @@
-# Dockerfile for ASP.NET Core 9 application
+# Dockerfile for ASP.NET Core 8 application
 # Use official .NET SDK to build
-FROM mcr.microsoft.com/dotnet/sdk:9.0-preview AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
 # Set working directory for build stage
 WORKDIR /src
@@ -22,7 +22,7 @@ WORKDIR /src/
 RUN dotnet publish -c Release -o /app/publish
 
 # Build runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:9.0-preview AS final
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 COPY --from=build /app/publish .
 
