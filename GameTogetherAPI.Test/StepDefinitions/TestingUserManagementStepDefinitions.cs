@@ -33,7 +33,7 @@ public class TestingUserManagementStepDefinitions(ScenarioContext scenarioContex
     public async Task GivenIAmLoggedIn()
     {
         APIDriver driver = new APIDriver(TestHooks.Context.Client);
-        var response = await driver.SendRequest($"/api/auth/login", HttpMethod.Post, new { Util.APIConstants.TestEmail, Util.APIConstants.TestPassword });
+        var response = await driver.SendPostRequest($"/api/auth/login", new { Util.APIConstants.TestEmail, Util.APIConstants.TestPassword });
         var responseCode = response.StatusCode.ToString();
         responseCode.Should().BeEquivalentTo("OK");
     }
