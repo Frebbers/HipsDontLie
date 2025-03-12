@@ -14,7 +14,7 @@ public class TestingUserManagementStepDefinitions(ScenarioContext scenarioContex
     public async Task GivenISendACreateAccountRequest()
     {
         APIDriver driver = new APIDriver(TestHooks.Context.Client);
-        var response = await driver.SendRequest($"/api/auth/register", HttpMethod.Post, new { email = "user@example.com", Password = "Password123" });
+        var response = await driver.SendRequest($"/api/auth/register", HttpMethod.Post, new { Util.APIConstants.TestEmail,Util.APIConstants.TestPassword});
         scenarioContext.Add("response", response);
     }
 
