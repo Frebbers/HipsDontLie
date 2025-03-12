@@ -85,7 +85,7 @@ namespace GameTogetherAPI.Test.Features
         public virtual async System.Threading.Tasks.Task FeatureBackgroundAsync()
         {
 #line 4
-#line hidden
+    #line hidden
         }
         
         [NUnit.Framework.TestAttribute()]
@@ -96,7 +96,7 @@ namespace GameTogetherAPI.Test.Features
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Create account", null, tagsOfScenario, argumentsOfScenario, featureTags);
 #line 7
-this.ScenarioInitialize(scenarioInfo);
+    this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
             {
@@ -106,13 +106,13 @@ this.ScenarioInitialize(scenarioInfo);
             {
                 await this.ScenarioStartAsync();
 #line 4
-await this.FeatureBackgroundAsync();
+    await this.FeatureBackgroundAsync();
 #line hidden
 #line 8
-await testRunner.GivenAsync("I send a create account request", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
+        await testRunner.GivenAsync("I send a create account request", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
 #line hidden
 #line 9
-await testRunner.ThenAsync("I assert that the account is created", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+        await testRunner.ThenAsync("I assert that the account is created", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();

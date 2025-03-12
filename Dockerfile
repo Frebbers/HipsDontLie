@@ -2,7 +2,7 @@
 # Use official .NET SDK to build
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ENV PATH $PATH:/root/.dotnet/tools
-RUN dotnet tool install -g dotnet-ef --version 8.0
+RUN dotnet tool install -g dotnet-ef --version 8.0.5
 # Set working directory for build stage
 WORKDIR /src
 

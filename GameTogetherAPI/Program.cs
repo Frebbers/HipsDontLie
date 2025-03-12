@@ -103,7 +103,6 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
         options.RoutePrefix = "";
     });
 }
-
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
