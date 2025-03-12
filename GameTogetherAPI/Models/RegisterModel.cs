@@ -16,5 +16,9 @@ namespace GameTogetherAPI.Models {
         /// </summary>
         [Required]
         public string Password { get; set; }
+        public RegisterModel(string email, string password) {
+            Email = email;
+            Password = password;
+        }
     }
 }

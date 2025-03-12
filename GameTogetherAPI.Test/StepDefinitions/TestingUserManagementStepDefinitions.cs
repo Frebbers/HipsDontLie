@@ -1,4 +1,5 @@
-﻿using GameTogetherAPI.Test.Drivers;
+﻿using GameTogetherAPI.Models;
+using GameTogetherAPI.Test.Drivers;
 using GameTogetherAPI.Test.Fixtures;
 using GameTogetherAPI.Test.Hooks;
 using GameTogetherAPI.Test.Util;
@@ -14,7 +15,7 @@ public class TestingUserManagementStepDefinitions(ScenarioContext scenarioContex
     public async Task GivenISendACreateAccountRequest()
     {
         APIDriver driver = new APIDriver(TestHooks.Context.Client);
-        var response = await driver.SendPostRequest($"/api/auth/register", new Credential(
+        var response = await driver.SendPostRequest($"/api/auth/register", new RegisterModel(
             APIConstants.TestEmail, APIConstants.TestPassword)
         );
         scenarioContext.Add("response", response);
