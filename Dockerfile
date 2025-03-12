@@ -1,7 +1,8 @@
 # Dockerfile for ASP.NET Core 8 application
 # Use official .NET SDK to build
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-
+ENV PATH $PATH:/root/.dotnet/tools
+RUN dotnet tool install -g dotnet-ef --version 8.0
 # Set working directory for build stage
 WORKDIR /src
 
@@ -13,6 +14,7 @@ COPY GameTogetherAPI.Test/*.csproj ./GameTogetherAPI.Test/
 # Restore NuGet packages
 RUN dotnet restore "GameTogetherAPI/GameTogetherAPI.csproj" --disable-parallel
 RUN dotnet restore "GameTogetherAPI.Test/GameTogetherAPI.Test.csproj" --disable-parallel
+
 
 # Copy everything else
 COPY . .

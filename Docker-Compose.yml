@@ -17,14 +17,19 @@ services:
   api:
     build: .
     ports:
-      - "5000:80"
+      - "5000:8080"
     depends_on:
       mysql:
         condition: service_healthy
     environment:
       ConnectionStrings__DefaultConnection: "Server=mysql;Database=GameTogetherDB;User=root;Password=rekt123;"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  test:
+  migrate:
     build:
       context: .
       target: build
@@ -33,4 +38,25 @@ services:
         condition: service_healthy
     environment:
       ConnectionStrings__DefaultConnection: "Server=mysql;Database=GameTogetherDB;User=root;Password=rekt123;"
-    command: dotnet test GameTogetherAPI.Test/GameTogetherAPI.Test.csproj
+    working_dir: /src
+    command: >
+      sh -c "dotnet ef database update --project GameTogetherAPI/GameTogetherAPI.csproj --startup-project GameTogetherAPI/GameTogetherAPI.csproj"
+
+  test:
+    build:
+      context: .
+      target: build
+    depends_on:
+      mysql:
+        condition: service_healthy
+      api:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      ConnectionStrings__DefaultConnection: "Server=mysql;Database=GameTogetherDB;User=root;Password=rekt123;"
+      API_BASE_URL: "http://api:8080"
+    working_dir: /src
+    command: >
+      sh -c "dotnet build GameTogetherAPI.Test/GameTogetherAPI.Test.csproj -c Release /p:PreserveCompilationContext=true &&
+       dotnet test GameTogetherAPI.Test/GameTogetherAPI.Test.csproj -c Release --no-build"
