@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GameTogetherAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250303164843_ClearedTagsForPlayer")]
-    partial class ClearedTagsForPlayer
+    [Migration("20250303132918_RemovedTagsFromProfile")]
+    partial class RemovedTagsFromProfile
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -98,9 +98,6 @@ namespace GameTogetherAPI.Migrations
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("longtext");
-
-                    b.Property<bool>("IsEmailVerified")
-                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()

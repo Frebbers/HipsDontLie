@@ -10,10 +10,6 @@ namespace GameTogetherAPI.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "Tags",
-                table: "Profiles");
-
             migrationBuilder.AddColumn<bool>(
                 name: "IsEmailVerified",
                 table: "Users",
@@ -29,12 +25,6 @@ namespace GameTogetherAPI.Migrations
                 name: "IsEmailVerified",
                 table: "Users");
 
-            migrationBuilder.AddColumn<string>(
-                name: "Tags",
-                table: "Profiles",
-                type: "longtext",
-                nullable: false)
-                .Annotation("MySql:CharSet", "utf8mb4");
         }
     }
 }
