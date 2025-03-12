@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using JsonConverter = System.Text.Json.Serialization.JsonConverter;
 
 namespace GameTogetherAPI.Test.Drivers
 {
@@ -35,7 +37,7 @@ namespace GameTogetherAPI.Test.Drivers
         /// <param name="endPointMethodName">The endpoint method name to send the request to.</param>
         /// <param name="parameters">Optional parameters to be included in the request URL.</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains the HTTP response message.</returns>
-        public async Task<HttpResponseMessage> SendRequest(string endPointMethodName, params object[] parameters)
+        public async Task<HttpResponseMessage> SendGetRequest(string endPointMethodName, params object[] parameters)
         {
             if (parameters != null && parameters.Length > 0)
             {
@@ -44,6 +46,13 @@ namespace GameTogetherAPI.Test.Drivers
             }
 
             var result = await Client.SendAsync(new HttpRequestMessage(HttpMethod.Get, endPointMethodName));
+            return result;
+        }
+        public async Task<HttpResponseMessage> SendPostRequest(string endPointMethodName, object content)
+        {
+            var json = JsonConvert.SerializeObject(content);
+            var data = new StringContent(json, Encoding.UTF8, "application/json");
+            var result = await Client.PostAsync(endPointMethodName, data);
             return result;
         }
     }

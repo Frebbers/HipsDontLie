@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,5 +14,15 @@ namespace GameTogetherAPI.Test.Util
         public const string TestEmail = "user@example.com";
         public const string TestPassword = "Password123";
 
+    }
+    internal class Credential
+    {
+        public string Email { get; set; }
+        public string Password { get; set; }
+       public Credential(string email, string password)
+        {
+            this.Email = email;
+            this.Password = password;
+        }
     }
 }
