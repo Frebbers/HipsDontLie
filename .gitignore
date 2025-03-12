@@ -5,6 +5,8 @@ GameTogetherAPI.Test/obj/*
 /GameTogetherAPI.Test/bin/*
 
 /.vs
+/.vscode
 /.idea
 /GameTogetherAPI/.idea/*
 GameTogetherAPI.Test/obj/*
+
