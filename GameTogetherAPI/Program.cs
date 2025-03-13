@@ -7,6 +7,14 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 
+namespace GameTogetherAPI
+{
+    
+
+public class Program
+{
+    private static void Main(string[] args) {
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -95,9 +103,12 @@ if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
         options.RoutePrefix = "";
     });
 }
-
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+    }
+    
+}
+}

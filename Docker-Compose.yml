@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: rekt123
+      MYSQL_DATABASE: GameTogetherDB
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+
+  api:
+    build: .
+    ports:
+      - "5000:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+
+    environment:
+      ConnectionStrings__DefaultConnection: "Server=mysql;Database=GameTogetherDB;User=root;Password=rekt123;"
+    # healthcheck: TODO re-implement this health check by adding the endpoint to the backend
+    #   test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 5
+
+  migrate:
+    build:
+      context: .
+      target: build
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      ConnectionStrings__DefaultConnection: "Server=mysql;Database=GameTogetherDB;User=root;Password=rekt123;"
+    working_dir: /src
+    command: >
+      sh -c "dotnet ef database update --project GameTogetherAPI/GameTogetherAPI.csproj --startup-project GameTogetherAPI/GameTogetherAPI.csproj"
+
+  test:
+    build:
+      context: .
+      target: build
+    depends_on:
+      mysql:
+        condition: service_healthy 
+      api:
+        condition: service_started #Disable this and reenable the below condition when health checking is implemented
+      #   condition: service_healthy
+    environment:
+      ConnectionStrings__DefaultConnection: "Server=mysql;Database=GameTogetherDB;User=root;Password=rekt123;"
+    
+    command: dotnet test GameTogetherAPI.Test/GameTogetherAPI.Test.csproj

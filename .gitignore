@@ -1,4 +1,12 @@
 /GameTogetherAPI/.vs/*
 /GameTogetherAPI/bin/*
 /GameTogetherAPI/obj/*
+GameTogetherAPI.Test/obj/*
+/GameTogetherAPI.Test/bin/*
+
 /.vs
+/.vscode
+/.idea
+/GameTogetherAPI/.idea/*
+GameTogetherAPI.Test/obj/*
+
