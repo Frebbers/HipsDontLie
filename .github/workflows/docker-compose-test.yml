@@ -4,21 +4,27 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   run-tests:
-    runs-on: ubuntu-latest
+    runs-on: debian-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
       - name: Set up Docker Compose
-        uses: docker/setup-compose-action@v1
+        uses: docker/setup-compose@v2
         with:
           version: 'latest'
+
+      - name: Add Docker Compose to PATH
+        run: echo "::add-path::/home/runner/.docker/cli-plugins"
 
       - name: Build and run test service
         run: |
           docker-compose up -d
-          docker-compose exec test-service-name run-tests
+          docker-compose exec test run-tests
