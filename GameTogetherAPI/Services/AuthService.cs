@@ -58,7 +58,12 @@ namespace GameTogetherAPI.Services
             return true;
         }
 
-
+        /// <summary>
+        /// Sends a verification email to the specified user.
+        /// </summary>
+        /// <param name="email">The user's email address.</param>
+        /// <returns>True if the email is sent successfully; false if the user is not found.</returns>
+        /// <exception cref="FileNotFoundException">Thrown if the email template is missing.</exception>
         public async Task<bool> SendEmailVerificationAsync(string email) {
             var user = await _userRepository.GetUserByEmailAsync(email);
             if (user == null) return false;
