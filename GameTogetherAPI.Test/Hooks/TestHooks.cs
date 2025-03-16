@@ -22,9 +22,10 @@ namespace GameTogetherAPI.Test.Hooks
         {
             Context = new APITestContext();
             Context.Factory = new APIFactory<Program>();
-            
             Context.Client = Context.Factory.CreateClient();
-            Context.Client.BaseAddress = new Uri(APIConstants.BaseAddress);
+            Context.Client.BaseAddress = new Uri(APIConstants.DockerAddress);
+            //Context.Client.BaseAddress = new Uri(APIConstants.BaseAddress);
+
         }
         [AfterFeature]
         public static void GlobalTearDown()

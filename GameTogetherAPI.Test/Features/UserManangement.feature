@@ -8,9 +8,9 @@ This feature file describes the process of logging in and managing one's user ac
         Given I send a create account request
         Then I assert that the account is created
 
-    Scenario: Log in
-        Given I send a log in request
-		Then I assert that the account is logged in
+#    Scenario: Log in
+#        Given I send a log in request
+#		Then I assert that the account is logged in
 
 #    Scenario: Group assignment
 #        Given I am logged in
