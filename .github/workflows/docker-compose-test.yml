@@ -22,10 +22,10 @@ jobs:
           version: 'latest'
 
       - name: Build containers
-        run: usr/libexec/docker/cli-plugins/docker-compose build
+        run: /usr/bin/docker compose build
 
       - name: Run tests
-        run: usr/libexec/docker/cli-plugins/docker-compose up test
+        run: /usr/bin/docker compose up test
           
 
   #     - name: Docker compose tests run
