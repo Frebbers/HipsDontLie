@@ -28,13 +28,22 @@ public class TestingUserManagementStepDefinitions(ScenarioContext scenarioContex
         var responseCode = response.StatusCode.ToString();
         responseCode.Should().BeEquivalentTo("OK");
     }
-
-    [Given(@"I am logged in")]
-    public async Task GivenIAmLoggedIn()
-    {
+        [Given("I send a log in request")]
+        public async Task GivenISendALogInRequest()
+        {
         APIDriver driver = new APIDriver(TestHooks.Context.Client);
         var response = await driver.SendPostRequest($"/api/auth/login", new { Util.APIConstants.TestEmail, Util.APIConstants.TestPassword });
-        var responseCode = response.StatusCode.ToString();
-        responseCode.Should().BeEquivalentTo("OK");
+        scenarioContext.Add("response", response);
+        Console.WriteLine(response);
     }
+
+        [Then("I assert that the account is logged in")]
+        public void ThenIAssertThatTheAccountIsLoggedIn()
+        {
+            var response = scenarioContext.Get<HttpResponseMessage>("response");
+            var responseCode = response.StatusCode.ToString();
+            responseCode.Should().BeEquivalentTo("OK");
+            
+    }
+
 }
