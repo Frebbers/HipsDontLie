@@ -12,8 +12,8 @@ COPY GameTogetherAPI/*.csproj ./GameTogetherAPI/
 COPY GameTogetherAPI.Test/*.csproj ./GameTogetherAPI.Test/
 
 # Restore NuGet packages
-RUN dotnet restore "GameTogetherAPI/GameTogetherAPI.csproj" --disable-parallel
-RUN dotnet restore "GameTogetherAPI.Test/GameTogetherAPI.Test.csproj" --disable-parallel
+RUN dotnet restore "GameTogetherAPI/GameTogetherAPI.csproj"
+RUN dotnet restore "GameTogetherAPI.Test/GameTogetherAPI.Test.csproj"
 
 
 # Copy everything else
@@ -27,6 +27,10 @@ RUN dotnet publish -c Release -o /app/publish
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 COPY --from=build /app/publish .
+
+RUN apt-get update && \
+    apt-get install -y curl && \
+    rm -rf /var/lib/apt/lists/*
 
 # Entry point for the application
 ENTRYPOINT ["dotnet", "GameTogetherAPI.dll"]
