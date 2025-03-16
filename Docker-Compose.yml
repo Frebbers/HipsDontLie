@@ -14,19 +14,19 @@ services:
       timeout: 10s
       retries: 5
 
-  api:
-    build: .
-    ports:
-      - "5000:8080"
-      - "7191:7191"
-    depends_on:
-      mysql:
-        condition: service_healthy
-      migrate:
-        condition: service_completed_successfully
+  # api:
+  #   build: .
+  #   ports:
+  #     - "5000:8080"
+  #     - "7191:7191"
+  #   depends_on:
+  #     mysql:
+  #       condition: service_healthy
+  #     migrate:
+  #       condition: service_completed_successfully
 
-    environment:
-      ConnectionStrings__DefaultConnection: "Server=mysql;Database=GameTogetherDB;User=root;Password=rekt123;"
+    # environment:
+    #   ConnectionStrings__DefaultConnection: "Server=mysql;Database=GameTogetherDB;User=root;Password=rekt123;"
     # healthcheck: TODO re-implement this health check by adding the endpoint to the backend
     #   test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
     #   interval: 10s
@@ -53,9 +53,11 @@ services:
     depends_on:
       mysql:
         condition: service_healthy 
-      api:
-        condition: service_started #Disable this and reenable the below condition when health checking is implemented
-      #   condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+      # api:
+      #   condition: service_started #Disable this and reenable the below condition when health checking is implemented
+      # #   condition: service_healthy
     environment:
       ConnectionStrings__DefaultConnection: "Server=mysql;Database=GameTogetherDB;User=root;Password=rekt123;"
     
