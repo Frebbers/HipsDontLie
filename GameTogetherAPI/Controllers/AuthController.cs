@@ -38,7 +38,8 @@ namespace GameTogetherAPI.Controllers {
 
             bool emailSent = await _authService.SendEmailVerificationAsync(model.Email);
             if (!emailSent)
-                return BadRequest("Could not send verification email.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Could not send verification email.");
+
 
             return Ok("User registered successfully!");
         }
