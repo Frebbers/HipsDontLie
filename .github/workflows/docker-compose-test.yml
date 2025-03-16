@@ -22,10 +22,10 @@ jobs:
           version: 'latest'
 
       - name: Build containers
-        run: /usr/bin/docker compose build
+        run: /usr/bin/docker compose build ./Docker-Compose.yml
 
       - name: Run tests
-        run: /usr/bin/docker compose up test
+        run: /usr/bin/docker compose up test ./Docker-Compose.yml
           
 
   #     - name: Docker compose tests run
