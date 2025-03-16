@@ -32,4 +32,4 @@ jobs:
           # Service run tests inside
           service: test
           # Command to run tests
-          command: docker compose up test
+          command: docker-compose up test
