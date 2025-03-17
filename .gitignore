@@ -11,3 +11,4 @@ GameTogetherAPI.Test/obj/*
 GameTogetherAPI.Test/obj/*
 
 /GameTogetherAPI/appsettings.json
+/GameTogetherAPI/appsettings.Development.json
