@@ -14,6 +14,7 @@ namespace GameTogetherAPI.Test.Util
 
         public const string TestEmail = "user1@example.com";
         public const string TestPassword = "Password123";
-
+        
+        public const string TestToken = "Token";
     }
 }

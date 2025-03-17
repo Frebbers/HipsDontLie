@@ -46,4 +46,14 @@ public class TestingUserManagementStepDefinitions(ScenarioContext scenarioContex
             
     }
 
+        [Given(@"I am logged in")]
+        public async Task  GivenIAmLoggedIn()
+        {
+            APIDriver driver = new APIDriver(TestHooks.Context.Client);
+            var response = await driver.SendGetRequest("/api/auth/login");
+            var responseToken = response.ToString();
+            var responseCode = response.StatusCode.ToString();
+            responseToken.Should().BeEquivalentTo(Util.APIConstants.TestToken);
+            responseCode.Should().BeEquivalentTo("OK");
+        }
 }
