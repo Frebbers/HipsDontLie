@@ -15,6 +15,8 @@ namespace GameTogetherAPI.Services
     /// </summary>
     public class AuthService : IAuthService
     {
+        private readonly string[] testEmails = { "user@example.com" }; // Test emails
+
         private readonly IUserRepository _userRepository;
         private readonly IConfiguration _configuration;
 
@@ -41,7 +43,20 @@ namespace GameTogetherAPI.Services
                 return false;
 
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
+            bool isTestEmail = false;
+            foreach (var testEmail in testEmails)
+            {
+                if (testEmail == email)
+                {
+                    isTestEmail = true;
+                }
+            }
             var user = new User { Email = email, PasswordHash = hashedPassword };
+            
+            if (isTestEmail) // If the email is a test email, set IsEmailVerified to true
+            {
+                 user.IsEmailVerified = true;
+            }
 
             await _userRepository.AddUserAsync(user);
             return true;
