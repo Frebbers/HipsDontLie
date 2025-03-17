@@ -50,10 +50,16 @@ public class TestingUserManagementStepDefinitions(ScenarioContext scenarioContex
         public async Task  GivenIAmLoggedIn()
         {
             APIDriver driver = new APIDriver(TestHooks.Context.Client);
-            var response = await driver.SendGetRequest("/api/auth/login");
-            var responseToken = response.ToString();
+            var response = await driver.SendGetRequest("/api/auth/me");
+            var responseEmail = response.ToString();
             var responseCode = response.StatusCode.ToString();
-            responseToken.Should().BeEquivalentTo(Util.APIConstants.TestToken);
+            responseEmail.Should().BeEquivalentTo(Util.APIConstants.TestEmail);
             responseCode.Should().BeEquivalentTo("OK");
+        }
+
+        [Given(@"I click the log off button")]
+        public void GivenIClickTheLogOffButton()
+        {
+            ScenarioContext.StepIsPending();
         }
 }

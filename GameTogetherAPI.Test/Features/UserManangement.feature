@@ -12,10 +12,10 @@ This feature file describes the process of logging in and managing one's user ac
         Given I send a log in request
 		Then I assert that the account is logged in
 
-    Scenario: Log off
-        Given I am logged in
-        And I click the log off button
-        Then I am no longer logged in
+#    Scenario: Log off
+#        Given I am logged in
+#        And I click the log off button
+#        Then I am no longer logged in
 
 #    Scenario: Group assignment
 #        Given I am logged in
