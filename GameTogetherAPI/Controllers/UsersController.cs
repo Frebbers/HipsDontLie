@@ -48,6 +48,26 @@ namespace GameTogetherAPI.Controllers
         }
 
         /// <summary>
+        /// Retrieves the profile of the authenticated user by id.
+        /// </summary>
+        /// <returns>
+        /// Returns a 200 OK response with the user's profile.  
+        /// Returns a 404 Not Found response if the user does not exist.
+        /// </returns>
+        [HttpGet("{id}/profile")]
+        [Authorize]
+        public async Task<IActionResult> GetProfileByIdAsync(int id)
+        {
+
+            var profile = await _userService.GetProfileByIdAsync(id);
+
+            if (profile == null)
+                return NotFound(new { message = "Profile not found" });
+
+            return Ok(profile);
+        }
+
+        /// <summary>
         /// Updates or creates the profile of the authenticated user.
         /// </summary>
         /// <param name="profile">The profile data to be updated.</param>
