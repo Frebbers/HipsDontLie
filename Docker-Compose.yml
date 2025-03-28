@@ -56,6 +56,6 @@ services:
       api:
         condition: service_healthy
     environment:
-      ConnectionStrings__DefaultConnection: "Server=mysql;Database=GameTogetherDB;User=root;Password=rekt123;"
+      ConnectionStrings__DefaultConnection: "Server=mysql;Database=GameTogetherDB;User=root;Password=${DB_PASSWORD};"
     
     command: dotnet test GameTogetherAPI.Test/GameTogetherAPI.Test.csproj
