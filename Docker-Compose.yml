@@ -24,7 +24,7 @@ services:
         condition: service_completed_successfully
 
     environment:
-      ConnectionStrings__DefaultConnection: "Server=mysql;Database=GameTogetherDB;User=root;Password=${DB_PASSWORD};"
+      ConnectionStrings__DefaultConnection: "Server=${DB_SERVER};Database=${DB_DATABASE};User=${DB_USER};Password=${DB_PASSWORD};"
     healthcheck: 
       test: ["CMD", "curl", "-f", "http://localhost:8080/healthz"]
       interval: 10s
@@ -39,7 +39,7 @@ services:
       mysql:
         condition: service_healthy
     environment:
-      ConnectionStrings__DefaultConnection: "Server=mysql;Database=GameTogetherDB;User=root;Password=${DB_PASSWORD};"
+      ConnectionStrings__DefaultConnection: "Server=${DB_SERVER};Database=${DB_DATABASE};User=${DB_USER};Password=${DB_PASSWORD};"
     working_dir: /src
     command: >
       sh -c "dotnet ef database update --project GameTogetherAPI/GameTogetherAPI.csproj --startup-project GameTogetherAPI/GameTogetherAPI.csproj"
@@ -56,6 +56,8 @@ services:
       api:
         condition: service_healthy
     environment:
-      ConnectionStrings__DefaultConnection: "Server=mysql;Database=GameTogetherDB;User=root;Password=${DB_PASSWORD};"
-    
+      ConnectionStrings__DefaultConnection: "Server=${DB_SERVER};Database=${DB_DATABASE};User=${DB_USER};Password=${DB_PASSWORD};"
+      JwtSettings__SecretKey: "${SECRET_KEY}"
+      JwtSettings__Issuer: "GameTogether"
+      JwtSettings__Audience: "GameTogetherApp"
     command: dotnet test GameTogetherAPI.Test/GameTogetherAPI.Test.csproj
