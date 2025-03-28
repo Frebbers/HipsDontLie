@@ -37,10 +37,10 @@ namespace GameTogetherAPI.Services
         /// <param name="email">The email address of the user.</param>
         /// <param name="password">The plaintext password to be hashed and stored.</param>
         /// <returns>A task representing the asynchronous operation, returning true if registration is successful, otherwise false.</returns>
-        public async Task<bool> RegisterUserAsync(string email, string password)
+        public async Task<AuthStatus> RegisterUserAsync(string email, string password)
         {
             if (await _userRepository.GetUserByEmailAsync(email) != null)
-                return false;
+                return AuthStatus.UserExists;
 
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
             bool isTestEmail = false;
@@ -59,7 +59,11 @@ namespace GameTogetherAPI.Services
             }
 
             await _userRepository.AddUserAsync(user);
-            return true;
+            if (isTestEmail)
+            {
+                return AuthStatus.TestUserCreated;
+            }
+            return AuthStatus.UserCreated;
         }
 
         /// <summary>
