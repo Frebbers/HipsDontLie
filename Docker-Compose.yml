@@ -56,7 +56,7 @@ services:
       api:
         condition: service_healthy
     environment:
-      ConnectionStrings__DefaultConnection: "Server=${DB_SERVER};Database=${DB_DATABASE};User=${DB_USER};Password=${DB_PASSWORD};"
+      ConnectionStrings__DefaultConnection: "Server=${DB_SERVER};Database=${DB_NAME};User=${DB_USER};Password=${DB_PASSWORD}; Port=3306;"
       JwtSettings__SecretKey: "${SECRET_KEY}"
       JwtSettings__Issuer: "GameTogether"
       JwtSettings__Audience: "GameTogetherApp"
