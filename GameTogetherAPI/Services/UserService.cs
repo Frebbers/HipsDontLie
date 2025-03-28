@@ -48,11 +48,29 @@ namespace GameTogetherAPI.Services
         }
 
         /// <summary>
-        /// Retrieves the profile information of a specified user.
+        /// Retrieves the profile information of the calling user.
         /// </summary>
         /// <param name="userId">The unique identifier of the user.</param>
         /// <returns>A task representing the asynchronous operation, returning the user's profile details.</returns>
         public async Task<GetProfileResponseDTO> GetProfileAsync(int userId)
+        {
+            var profile = await _userRepository.GetProfileAsync(userId);
+            return new GetProfileResponseDTO
+            {
+                Age = profile.Age,
+                Description = profile.Description,
+                Region = profile.Region,
+                Name = profile.Name,
+                ProfilePicture = profile.ProfilePicture
+            };
+        }
+
+        /// <summary>
+        /// Retrieves the profile information of a specified user.
+        /// </summary>
+        /// <param name="userId">The unique identifier of the user.</param>
+        /// <returns>A task representing the asynchronous operation, returning the user's profile details.</returns>
+        public async Task<GetProfileResponseDTO> GetProfileByIdAsync(int userId)
         {
             var profile = await _userRepository.GetProfileAsync(userId);
             return new GetProfileResponseDTO
