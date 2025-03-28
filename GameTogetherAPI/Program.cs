@@ -92,7 +92,7 @@ namespace GameTogetherAPI {
 
             var app = builder.Build();
 
-            if (app.Environment.IsDevelopment() || app.Environment.IsStaging()) {
+            if (app.Environment.IsDevelopment() || app.Environment.IsStaging() || app.Environment.IsProduction()) {
                 app.UseSwagger();
                 app.UseSwaggerUI(options => {
                     options.SwaggerEndpoint("/swagger/v1/swagger.json", "GameTogether API v1");
