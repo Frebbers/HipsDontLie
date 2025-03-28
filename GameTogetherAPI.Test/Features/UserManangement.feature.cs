@@ -86,6 +86,9 @@ namespace GameTogetherAPI.Test.Features
         {
 #line 4
     #line hidden
+#line 6
+    await testRunner.GivenAsync("TestUser is reset", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
+#line hidden
         }
         
         [NUnit.Framework.TestAttribute()]
@@ -95,7 +98,7 @@ namespace GameTogetherAPI.Test.Features
             string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Create account", null, tagsOfScenario, argumentsOfScenario, featureTags);
-#line 7
+#line 8
     this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -108,10 +111,10 @@ namespace GameTogetherAPI.Test.Features
 #line 4
     await this.FeatureBackgroundAsync();
 #line hidden
-#line 8
+#line 9
         await testRunner.GivenAsync("I send a create account request", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
 #line hidden
-#line 9
+#line 10
         await testRunner.ThenAsync("I assert that the account is created", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
@@ -125,7 +128,7 @@ namespace GameTogetherAPI.Test.Features
             string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Log in", null, tagsOfScenario, argumentsOfScenario, featureTags);
-#line 11
+#line 12
     this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -138,10 +141,10 @@ namespace GameTogetherAPI.Test.Features
 #line 4
     await this.FeatureBackgroundAsync();
 #line hidden
-#line 12
+#line 13
         await testRunner.GivenAsync("I send a log in request", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
 #line hidden
-#line 13
+#line 14
   await testRunner.ThenAsync("I assert that the account is logged in", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
