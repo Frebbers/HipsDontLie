@@ -12,3 +12,5 @@ GameTogetherAPI.Test/obj/*
 
 /GameTogetherAPI/appsettings.json
 /GameTogetherAPI/appsettings.Development.json
+
+.DS_Store
