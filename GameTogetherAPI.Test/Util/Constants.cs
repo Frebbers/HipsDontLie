@@ -12,8 +12,7 @@ namespace GameTogetherAPI.Test.Util
         public const string BaseAddress = "http://localhost:5000";
         public const string DockerAddress = "http://localhost:8080";
 
-        public const string TestEmail = "user1@example.com";
+        public const string TestEmail = "user@example.com";
         public const string TestPassword = "Password123";
-
     }
 }

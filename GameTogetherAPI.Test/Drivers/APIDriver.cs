@@ -55,5 +55,11 @@ namespace GameTogetherAPI.Test.Drivers
             var result = await Client.PostAsync(endPointMethodName, data);
             return result;
         }
+
+        public async Task<HttpResponseMessage> SendDeleteRequest(string endPointMethodName, IEnumerable<string> token)
+        {
+            var result = await Client.DeleteAsync(endPointMethodName);
+            return result;
+        }
     }
 }
