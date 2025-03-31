@@ -31,7 +31,7 @@ public class TestingUserManagementStepDefinitions(ScenarioContext scenarioContex
         responseCode.Should().BeEquivalentTo("OK");
     }
 
-    [Given("I send a log in request")]
+    [When("I send a log in request")]
     
     public async Task  GivenISendALogInRequest()
     {
