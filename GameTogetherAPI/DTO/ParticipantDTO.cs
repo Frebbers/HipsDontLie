@@ -11,4 +11,6 @@ public class ParticipantDTO {
     /// Gets or sets the name of the participant.
     /// </summary>
     public string Name { get; set; }
+
+    public UserSessionStatus SessionStatus { get; set; }
 }

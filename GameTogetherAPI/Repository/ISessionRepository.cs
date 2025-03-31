@@ -48,5 +48,6 @@ namespace GameTogetherAPI.Repository {
         /// <returns>A task that represents the asynchronous operation, returning true if the user is successfully removed from the session.</returns>
         Task<bool> RemoveUserFromSessionAsync(int userId, int sessionId);
         Task<Session> GetSessionByIdAsync(int sessionId);
+        Task<bool> ValidateAcceptSessionAsync(int userId, int sessionId, int ownerId);
     }
 }
