@@ -32,7 +32,8 @@ public class TestingUserManagementStepDefinitions(ScenarioContext scenarioContex
     public async Task GivenISendALogInRequest()
     {
         var driver = new APIDriver(TestHooks.Context.Client);
-        var response = await driver.SendPostRequest($"/api/auth/login", new { APIConstants.TestEmail, APIConstants.TestPassword });
+        LoginModel login = new LoginModel(APIConstants.TestEmail, APIConstants.TestPassword);
+        var response = await driver.SendPostRequest($"/api/auth/login", login);
         scenarioContext.Add("response", response);
         Console.WriteLine(response);
     }
