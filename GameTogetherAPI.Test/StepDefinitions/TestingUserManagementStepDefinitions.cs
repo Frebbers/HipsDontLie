@@ -49,8 +49,9 @@ public class TestingUserManagementStepDefinitions(ScenarioContext scenarioContex
     {   
         var driver = new APIDriver(TestHooks.Context.Client);
         var responseToken = scenarioContext.Get<string>("token");
-        var response = await driver.SendGetRequest("/api/auth/me", responseToken);
-        response.Should().BeEquivalentTo(APIConstants.TestEmail);
+        HttpResponseMessage response = await driver.SendGetRequest("/api/auth/me", responseToken);
+        response.Headers.TryGetValues("email", out var responseEmail);
+        responseEmail.Should().BeEquivalentTo(APIConstants.TestEmail);
     }
 
         [Given(@"I click the log off button")]
