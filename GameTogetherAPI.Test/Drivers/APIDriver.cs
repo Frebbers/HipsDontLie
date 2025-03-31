@@ -76,7 +76,7 @@ namespace GameTogetherAPI.Test.Drivers
                     request.Headers.Add(header.Key, header.Value);
                 }
             }
-            var result = await Client.DeleteAsync(endPointMethodName);
+            var result = await Client.SendAsync(request);
             return result;
         }
     }

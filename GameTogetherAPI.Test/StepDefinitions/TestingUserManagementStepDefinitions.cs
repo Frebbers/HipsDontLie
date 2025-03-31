@@ -67,7 +67,7 @@ public class TestingUserManagementStepDefinitions(ScenarioContext scenarioContex
         public async Task GivenTestUserIsReset()
         {
             var driver = new APIDriver(TestHooks.Context.Client);
-            GivenISendALogInRequest();
+            await GivenISendALogInRequest();
             if (scenarioContext.ContainsKey("token")) //if there is a token, delete the user
             { 
                 var responseToken = scenarioContext.Get<string>("token").ToString();
