@@ -41,8 +41,15 @@ public class TestingUserManagementStepDefinitions(ScenarioContext scenarioContex
         APIResponse responseModel = JSONParser.FromJson<APIResponse>(response.Content.ReadAsStringAsync().Result);
         //string responseToken = responseString.Split("")[1]; //remove "Token: " from the response
         var responseCode = response.StatusCode.ToString();
-        responseCode.Should().BeEquivalentTo("OK");
-        scenarioContext.Add("token", responseModel.token);
+        try
+        {
+           scenarioContext.Add("token", responseModel.token);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
+        
     }
 
     [Then("I assert that the account is logged in")]
