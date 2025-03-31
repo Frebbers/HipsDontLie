@@ -24,6 +24,7 @@ namespace GameTogetherAPI.Test.Hooks
             Context.Factory = new APIFactory<Program>();
             Context.Client = Context.Factory.CreateClient();
             Context.Client.BaseAddress = new Uri(APIConstants.DockerAddress);
+            
             //Context.Client.BaseAddress = new Uri(APIConstants.BaseAddress);
 
         }

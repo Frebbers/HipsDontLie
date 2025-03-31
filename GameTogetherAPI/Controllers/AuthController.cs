@@ -114,6 +114,7 @@ namespace GameTogetherAPI.Controllers {
         /// </returns>
         [HttpGet("me")]
         [Authorize]
+        //public async Task<IActionResult> GetCurrentUser([FromBody] string token)
         public IActionResult GetCurrentUser() {
             var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
             return Ok(new { Email = userEmail });
