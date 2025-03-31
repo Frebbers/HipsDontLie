@@ -68,15 +68,16 @@ public class TestingUserManagementStepDefinitions(ScenarioContext scenarioContex
         {
             var driver = new APIDriver(TestHooks.Context.Client);
             GivenISendALogInRequest();
-            var responseToken = scenarioContext.Get<string>("token").ToString();
-            var deleteResponse = await driver.SendDeleteRequest("/api/auth/remove-user", responseToken);
-            deleteResponse.StatusCode.ToString().Should().BeEquivalentTo("OK");
-        }
+            if (scenarioContext.ContainsKey("token")) //if there is a token, delete the user
+            { 
+                var responseToken = scenarioContext.Get<string>("token").ToString();
+                var deleteResponse = await driver.SendDeleteRequest("/api/auth/remove-user", new Dictionary<string, string> { { "Authorization", "Bearer " + responseToken } });
+                deleteResponse.StatusCode.ToString().Should().BeEquivalentTo("OK");
+            }
             else
             {
                 Console.WriteLine("User failed to log in");
             }
-        //var response = scenarioContext.Get<HttpResponseMessage>("response");
     }
         
 }
