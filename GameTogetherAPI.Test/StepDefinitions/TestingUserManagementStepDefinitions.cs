@@ -66,12 +66,9 @@ public class TestingUserManagementStepDefinitions(ScenarioContext scenarioContex
         [Given(@"TestUser is reset")]
         public async Task GivenTestUserIsReset()
         {
-            var driver = new APIDriver(TestHooks.Context.Client); 
-            var loginResponse = await driver.SendPostRequest("/api/auth/login", new { APIConstants.TestEmail, APIConstants.TestPassword });
-            if (loginResponse.StatusCode.ToString() == ("OK")) { //if logged in, delete the user. Else do nothing
-            loginResponse.Headers.TryGetValues("token", out var responseToken);
-            //scenarioContext["token"] = responseToken;
-            loginResponse.Should().NotBeNull();
+            var driver = new APIDriver(TestHooks.Context.Client);
+            GivenISendALogInRequest();
+            var responseToken = scenarioContext.Get<string>("token").ToString();
             var deleteResponse = await driver.SendDeleteRequest("/api/auth/remove-user", responseToken);
             deleteResponse.StatusCode.ToString().Should().BeEquivalentTo("OK");
         }
