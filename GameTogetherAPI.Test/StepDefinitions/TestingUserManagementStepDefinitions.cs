@@ -36,8 +36,8 @@ public class TestingUserManagementStepDefinitions(ScenarioContext scenarioContex
         var driver = new APIDriver(TestHooks.Context.Client);
         LoginModel loginModel = new LoginModel(APIConstants.TestEmail, APIConstants.TestPassword);
         var response = await driver.SendPostRequest("/api/auth/login", loginModel);
-        //var responseString = response.Content.ReadAsStringAsync().Result;
-        var responseToken = response.Headers.GetValues("token").FirstOrDefault();
+        var responseString = response.Content.ReadAsStringAsync().Result;
+        string responseToken = responseString.Split(" ")[1]; //remove "Token: " from the response
         var responseCode = response.StatusCode.ToString();
         scenarioContext.Add("token", responseToken);
             
