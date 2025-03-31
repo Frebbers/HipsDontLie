@@ -47,7 +47,7 @@ public class TestingUserManagementStepDefinitions(ScenarioContext scenarioContex
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            Console.WriteLine("No token exists");
         }
         
     }
