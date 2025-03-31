@@ -48,8 +48,8 @@ public class TestingUserManagementStepDefinitions(ScenarioContext scenarioContex
     public async Task ThenIAssertThatTheAccountIsLoggedIn()
     {   
         var driver = new APIDriver(TestHooks.Context.Client);
-        var responseToken = scenarioContext.Get<string>("token");
-        HttpResponseMessage response = await driver.SendGetRequest("/api/auth/me", responseToken);
+        string responseToken = scenarioContext.Get<string>("token").ToString();
+        HttpResponseMessage response = await driver.SendGetRequest("/api/auth/me", new Dictionary<string, string> { { "Authorization", "Bearer " + responseToken } }, null);
         response.Headers.TryGetValues("email", out var responseEmail);
         responseEmail.Should().BeEquivalentTo(APIConstants.TestEmail);
     }
