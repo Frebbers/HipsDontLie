@@ -6,6 +6,8 @@ using GameTogetherAPI.Test.Util;
 
 namespace GameTogetherAPI.Test.StepDefinitions;
 using FluentAssertions;
+using GameTogetherAPI.Test.Models;
+using SpecFlow.Internal.Json;
 
 [Binding]
 public class TestingUserManagementStepDefinitions(ScenarioContext scenarioContext)
@@ -36,10 +38,10 @@ public class TestingUserManagementStepDefinitions(ScenarioContext scenarioContex
         var driver = new APIDriver(TestHooks.Context.Client);
         LoginModel loginModel = new LoginModel(APIConstants.TestEmail, APIConstants.TestPassword);
         var response = await driver.SendPostRequest("/api/auth/login", loginModel);
-        var responseString = response.Content.ReadAsStringAsync().Result;
-        string responseToken = responseString.Split(" ")[1]; //remove "Token: " from the response
+        APIResponse responseModel = JSONParser.FromJson<APIResponse>(response.Content.ReadAsStringAsync().Result);
+        //string responseToken = responseString.Split("")[1]; //remove "Token: " from the response
         var responseCode = response.StatusCode.ToString();
-        scenarioContext.Add("token", responseToken);
+        scenarioContext.Add("token", responseModel.token);
             
         responseCode.Should().BeEquivalentTo("OK");
     }
