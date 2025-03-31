@@ -86,9 +86,6 @@ namespace GameTogetherAPI.Test.Features
         {
 #line 4
     #line hidden
-#line 6
-    await testRunner.GivenAsync("TestUser is reset", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
-#line hidden
         }
         
         [NUnit.Framework.TestAttribute()]

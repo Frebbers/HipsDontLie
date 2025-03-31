@@ -28,36 +28,30 @@ public class TestingUserManagementStepDefinitions(ScenarioContext scenarioContex
         var responseCode = response.StatusCode.ToString();
         responseCode.Should().BeEquivalentTo("OK");
     }
-    [Given("I send a log in request")]
-    public async Task GivenISendALogInRequest()
-    {
-        var driver = new APIDriver(TestHooks.Context.Client);
-        LoginModel login = new LoginModel(APIConstants.TestEmail, APIConstants.TestPassword);
-        var response = await driver.SendPostRequest($"/api/auth/login", login);
-        scenarioContext.Add("response", response);
-        Console.WriteLine(response);
-    }
-    
-    [Then("I assert that the account is logged in")]
-    public void ThenIAssertThatTheAccountIsLoggedIn()
-    {
-        var response = scenarioContext.Get<HttpResponseMessage>("response");
-        var responseCode = response.StatusCode.ToString();
-        responseCode.Should().BeEquivalentTo("OK");
-            
-    }
 
-    [Given(@"I am logged in")]
-    public async Task  GivenIAmLoggedIn()
+    [Given("I send a log in request")]
+    
+    public async Task  GivenISendALogInRequest()
     {
         var driver = new APIDriver(TestHooks.Context.Client);
-        var response = await driver.SendGetRequest("/api/auth/login");
+        LoginModel loginModel = new LoginModel(APIConstants.TestEmail, APIConstants.TestPassword);
+        var response = await driver.SendPostRequest("/api/auth/login", loginModel);
         var responseToken = response.ToString();
         var responseCode = response.StatusCode.ToString();
+        scenarioContext.Add("token", responseToken);
             
         responseCode.Should().BeEquivalentTo("OK");
     }
 
+    [Then("I assert that the account is logged in")]
+    [When(@"I am logged in")]
+    public async Task ThenIAssertThatTheAccountIsLoggedIn()
+    {   
+        var driver = new APIDriver(TestHooks.Context.Client);
+        var responseToken = scenarioContext.Get<HttpResponseMessage>("token");
+        var response = await driver.SendGetRequest("/api/auth/me", new { responseToken });
+        response.Should().BeEquivalentTo(APIConstants.TestEmail);
+    }
 
         [Given(@"I click the log off button")]
         public void GivenIClickTheLogOffButton()

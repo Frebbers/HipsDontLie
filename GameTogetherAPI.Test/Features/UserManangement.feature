@@ -3,7 +3,7 @@ This feature file describes the process of logging in and managing one's user ac
 
     Background:
 #Given the API is initialized
-    Given TestUser is reset
+#    Given TestUser is reset
 
     Scenario: Create account
         Given I send a create account request
