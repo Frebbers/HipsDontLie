@@ -131,6 +131,15 @@ namespace GameTogetherAPI.Controllers
             return Ok(new { message = "Successfully joined the session!" });
         }
 
+        /// <summary>
+        /// Accept a pending user if you are the owner of the session
+        /// </summary>
+        /// <param name="sessionId"></param>
+        /// <param name="userId"></param>
+        /// <returns>
+        /// Returns a 200 OK response if the user has been accepted into the groupe successfully
+        /// Return a 400 Bad Request response if the the session do not exist or user is not a participant
+        /// </returns>
         [HttpGet("{sessionId}/{userId}/accept")]
         public async Task<IActionResult> AcceptUserInSessionAsync(int sessionId, int userId)
         {
@@ -141,21 +150,28 @@ namespace GameTogetherAPI.Controllers
             if (!success)
                 return BadRequest(new { message = "Failed to accept user." });
 
-            return Ok(new { message = "Successfully joined the session!" });
+            return Ok(new { message = "Successfully accepted the user!" });
         }
 
+        /// <summary>
+        /// Reject a pending user if you are the owner of the session
+        /// </summary>
+        /// <param name="sessionId"></param>
+        /// <param name="userId"></param>
+        /// <returns>
+        /// Returns a 200 OK response if the user has been rejected from the groupe successfully
+        /// Return a 400 Bad Request response if the the session do not exist or user is not a participant
         [HttpGet("{sessionId}/{userId}/reject")]
         public async Task<IActionResult> RejectUserInSessionAsync(int sessionId, int userId)
         {
             var ownerId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
-            //TODO: evaluate if ownerId is the same as the owner of the session
 
             bool success = await _sessionService.RejectUserInSessionAsync(userId, sessionId, ownerId);
 
             if (!success)
                 return BadRequest(new { message = "Failed to reject user." });
 
-            return Ok(new { message = "Successfully joined the session!" });
+            return Ok(new { message = "Successfully reject the user!" });
         }
 
         /// <summary>

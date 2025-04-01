@@ -11,14 +11,16 @@ namespace GameTogetherAPI.Services
     {
         private readonly ISessionRepository _sessionRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IChatRepository _chatRepository;
 
         /// <summary>
         /// Provides session management services, including session creation, retrieval, joining, and leaving.
         /// </summary>
-        public SessionService(IUserRepository userRepository, ISessionRepository sessionRepository)
+        public SessionService(IChatRepository chatRepository, IUserRepository userRepository, ISessionRepository sessionRepository)
         {
             _sessionRepository = sessionRepository;
             _userRepository = userRepository;
+            _chatRepository = chatRepository;
         }
 
         /// <summary>
@@ -37,22 +39,27 @@ namespace GameTogetherAPI.Services
                 IsVisible = sessionDto.IsVisible,
                 OwnerId = userId,
                 Tags = sessionDto.Tags,
-
             };
 
-            bool isSuccess = await _sessionRepository.CreateSessionAsync(session);
+            var savedSession = await _sessionRepository.CreateSessionAsync(session);
 
-            if (!isSuccess)
+            if (savedSession == null)
                 return false;
 
             var userSession = new UserSession
             {
                 UserId = userId,
-                SessionId = session.Id,
+                SessionId = savedSession.Id,
                 Status = UserSessionStatus.Accepted
             };
-
             await _sessionRepository.AddUserToSessionAsync(userSession);
+
+            var chat = new Chat
+            {
+                SessionId = savedSession.Id,
+                UserChats = new List<UserChat> { new UserChat{ UserId = userId } }
+            };
+            await _chatRepository.CreateSessionChatAsync(chat);
 
             return true;
 
@@ -124,7 +131,12 @@ namespace GameTogetherAPI.Services
                         Name = p.User.Profile.Name,
                         SessionStatus = p.Status
                     })
-                    .ToList()
+                    .ToList(),
+                    Chat = session.Chat != null ? new ChatDTO
+                    {
+                        ChatId = session.Chat.ChatId,
+                        SessionId = session.Chat.SessionId
+                    } : null
                 });
             }
             return results; 

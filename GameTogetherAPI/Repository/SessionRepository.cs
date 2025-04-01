@@ -22,18 +22,11 @@ namespace GameTogetherAPI.Repository {
         /// </summary>
         /// <param name="session">The session to be created.</param>
         /// <returns>A task that represents the asynchronous operation, returning true if successful, otherwise false.</returns>
-        public async Task<bool> CreateSessionAsync(Session session) {
-            try {
-                await _context.Sessions.AddAsync(session);
-                await _context.SaveChangesAsync();
-                return true;
-            }
-            catch (DbUpdateException) {
-                return false;
-            }
-            catch (Exception) {
-                return false;
-            }
+        public async Task<Session> CreateSessionAsync(Session session)
+        {
+            await _context.Sessions.AddAsync(session);
+            await _context.SaveChangesAsync();
+            return session;
         }
 
         /// <summary>
@@ -81,13 +74,25 @@ namespace GameTogetherAPI.Repository {
         /// <param name="sessionId">The unique identifier of the session.</param>
         /// <returns>A task that represents the asynchronous operation, returning true if the user is successfully removed, otherwise false.</returns>
         public async Task<bool> RemoveUserFromSessionAsync(int userId, int sessionId) {
-            var userSession = await _context.UserSessions
-                .FirstOrDefaultAsync(us => us.UserId == userId && us.SessionId == sessionId);
+            var userSession = await _context.UserSessions.FirstOrDefaultAsync
+                (us => us.UserId == userId && us.SessionId == sessionId);
 
             if (userSession == null)
                 return false;
 
-            _context.UserSessions.Remove(userSession);
+            //A check to see if the user is the owner of the session
+            var session = await _context.Sessions.FirstOrDefaultAsync
+                (s => s.Id == sessionId && s.OwnerId == userId);
+
+            if (session != null)
+            {
+                _context.Sessions.Remove(session);
+            }
+            else
+            {
+                _context.UserSessions.Remove(userSession);
+            }
+
             await _context.SaveChangesAsync();
             return true;
         }
@@ -122,8 +127,8 @@ namespace GameTogetherAPI.Repository {
             return await _context.Sessions
                 .Where(s => s.Participants.Any(p => p.UserId == userId))
                 .Include(s => s.Participants)
-                .ThenInclude(p => p.User)
-                .ThenInclude(u => u.Profile)
+                    .ThenInclude(p => p.User)
+                    .ThenInclude(u => u.Profile)
                 .ToListAsync();
         }
 
@@ -133,9 +138,11 @@ namespace GameTogetherAPI.Repository {
         /// <returns>A task that represents the asynchronous operation, returning a list of all sessions.</returns>
         public async Task<List<Session>> GetSessionsAsync() {
             return await _context.Sessions
+                .Include(s => s.Chat)
+                    .ThenInclude(c => c.UserChats)
                 .Include(s => s.Participants)
-                .ThenInclude(p => p.User)
-                .ThenInclude(u => u.Profile)
+                    .ThenInclude(p => p.User)
+                    .ThenInclude(u => u.Profile)
                 .ToListAsync();
         }
     }

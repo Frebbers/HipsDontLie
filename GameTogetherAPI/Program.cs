@@ -49,6 +49,7 @@ namespace GameTogetherAPI {
 
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<ISessionRepository, SessionRepository>();
+            builder.Services.AddScoped<IChatRepository, ChatRepository>();
 
             // Health Check setup
             builder.Services.AddHealthChecks()

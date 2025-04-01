@@ -10,7 +10,7 @@ namespace GameTogetherAPI.Repository {
         /// </summary>
         /// <param name="session">The session to create.</param>
         /// <returns>A task that represents the asynchronous operation, returning true if the session is successfully created.</returns>
-        Task<bool> CreateSessionAsync(Session session);
+        Task<Session> CreateSessionAsync(Session session);
 
         /// <summary>
         /// Adds a user to a session asynchronously.
