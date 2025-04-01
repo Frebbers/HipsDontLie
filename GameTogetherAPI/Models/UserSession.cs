@@ -19,8 +19,20 @@
         public int SessionId { get; set; }
 
         /// <summary>
+        /// Gets or sets the status of the participant.
+        /// </summary>
+        public UserSessionStatus Status { get; set; }
+
+        /// <summary>
         /// Gets or sets the session associated with the user.
         /// </summary>
         public Session Session { get; set; }
     }
+}
+
+public enum UserSessionStatus
+{
+    Pending,
+    Accepted,
+    Rejected
 }

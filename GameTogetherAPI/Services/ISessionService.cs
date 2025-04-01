@@ -40,5 +40,7 @@ namespace GameTogetherAPI.Services
         /// <param name="sessionId">The unique identifier of the session to leave.</param>
         /// <returns>A task representing the asynchronous operation, returning true if the user successfully leaves the session.</returns>
         Task<bool> LeaveSessionAsync(int userId, int sessionId);
+        Task<bool> AcceptUserInSessionAsync(int userId, int sessionId, int ownerId);
+        Task<bool> RejectUserInSessionAsync(int userId, int sessionId, int ownerId);
     }
 }
