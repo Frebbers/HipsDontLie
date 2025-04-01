@@ -23,9 +23,21 @@ namespace GameTogetherAPI.Test.Hooks
             Context = new APITestContext();
             Context.Factory = new APIFactory<Program>();
             Context.Client = Context.Factory.CreateClient();
-            Context.Client.BaseAddress = new Uri(APIConstants.DockerAddress);
+            //Check if we are running in a docker container
+            if (Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true")
+            {
+                //print out the environment variable
+                Console.WriteLine("Running in container. Connecting to docker address");
+                Context.Client.BaseAddress = new Uri(APIConstants.DockerAddress);
+            }
+            else
+            {
+                Console.WriteLine("Not running in container. Connecting to" + APIConstants.BaseAddress);
+                Context.Client.BaseAddress = new Uri(APIConstants.BaseAddress);
+            }
             
-            //Context.Client.BaseAddress = new Uri(APIConstants.BaseAddress);
+            
+            
 
         }
         [AfterFeature]
