@@ -67,4 +67,4 @@ services:
       JwtSettings__SecretKey: ${SECRET_KEY:-DefaultKey123!} # Change this in production
       JwtSettings__Issuer: "GameTogether"
       JwtSettings__Audience: "GameTogetherApp"
-    command: dotnet test GameTogetherAPI.Test/GameTogetherAPI.Test.csproj
+    command: dotnet test GameTogetherAPI.Test/GameTogetherAPI.Test.csproj --property:WarningLevel=0
