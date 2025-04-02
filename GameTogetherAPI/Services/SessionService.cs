@@ -161,8 +161,6 @@ namespace GameTogetherAPI.Services
                 Status = UserSessionStatus.Pending
             };
 
-            //TODO: Owner accepts the user and change status.
-
             await _sessionRepository.AddUserToSessionAsync(userSession);
 
             return true;
@@ -177,7 +175,6 @@ namespace GameTogetherAPI.Services
         public async Task<bool> LeaveSessionAsync(int userId, int sessionId)
         {
             return await _sessionRepository.RemoveUserFromSessionAsync(userId, sessionId);
-            
         }
 
         public async Task<bool> AcceptUserInSessionAsync(int userId, int sessionId, int ownerId)
