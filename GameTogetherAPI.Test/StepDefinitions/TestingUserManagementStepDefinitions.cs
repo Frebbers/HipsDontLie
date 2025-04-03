@@ -43,7 +43,8 @@ public class TestingUserManagementStepDefinitions(ScenarioContext scenarioContex
         responseModel.statusCode = response.StatusCode.ToString();
         try
         {
-           scenarioContext.Add("token", responseModel.token);
+            scenarioContext.Add("statusCode", responseModel.statusCode);
+            scenarioContext.Add("token", responseModel.token);
         }
         catch (Exception e)
         {
