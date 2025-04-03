@@ -40,10 +40,10 @@ public class TestingUserManagementStepDefinitions(ScenarioContext scenarioContex
         var response = await driver.SendPostRequest("/api/auth/login", loginModel);
         APIResponse responseModel = JSONParser.FromJson<APIResponse>(response.Content.ReadAsStringAsync().Result);
         //string responseToken = responseString.Split("")[1]; //remove "Token: " from the response
-        responseModel.statusCode = response.StatusCode.ToString();
+        var statusCode = response.StatusCode.ToString();
         try
         {
-            scenarioContext.Add("statusCode", responseModel.statusCode);
+            scenarioContext.Add("statusCode", responseModel);
             scenarioContext.Add("token", responseModel.token);
         }
         catch (Exception e)

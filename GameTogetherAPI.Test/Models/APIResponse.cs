@@ -9,7 +9,6 @@ namespace GameTogetherAPI.Test.Models
 {
     internal class APIResponse
     {
-        public string statusCode { get; set; }
         public string token { get; set; }
         public string email { get; set; }
     }

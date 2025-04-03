@@ -10,7 +10,7 @@ This feature file describes the process of logging in and managing one's user ac
      #   And I send a create account request
       #  Then I assert that the account is created
 
-    Scenario: Log in
+    Scenario: Create account and log in
         Given TestUser is reset
         Given I send a create account request
         When I send a log in request
