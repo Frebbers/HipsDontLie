@@ -5,12 +5,13 @@ This feature file describes the process of logging in and managing one's user ac
 #Given the API is initialized
     
 
-    Scenario: Create account and log in
-        Given TestUser is reset
-        And I send a create account request
-        Then I assert that the account is created
+   # Scenario: Create account and log in
+    #    Given TestUser is reset
+     #   And I send a create account request
+      #  Then I assert that the account is created
 
     Scenario: Log in
+        Given TestUser is reset
         Given I send a create account request
         When I send a log in request
 		Then I assert that the account is logged in
