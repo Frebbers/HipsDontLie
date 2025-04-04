@@ -41,7 +41,7 @@ namespace GameTogetherAPI.DTO
         /// <summary>
         /// Gets or sets the list of participants in the session.
         /// </summary>
-        public List<ParticipantDTO> Participants { get; set; } = new();
+        public List<MemberDTO> Participants { get; set; } = new();
 
         /// <summary>
         /// Gets or sets a list of tags associated with the session for filtering and categorization.

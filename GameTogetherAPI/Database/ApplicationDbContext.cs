@@ -55,7 +55,7 @@ namespace GameTogetherAPI.Database {
 
             modelBuilder.Entity<UserSession>()
                 .HasOne(us => us.Session)
-                .WithMany(s => s.Participants)
+                .WithMany(s => s.Members)
                 .HasForeignKey(us => us.SessionId);
         }
     }

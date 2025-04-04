@@ -1,7 +1,7 @@
 ﻿/// <summary>
 /// Represents a participant in a session.
 /// </summary>
-public class ParticipantDTO {
+public class MemberDTO {
     /// <summary>
     /// Gets or sets the unique identifier of the participant.
     /// </summary>

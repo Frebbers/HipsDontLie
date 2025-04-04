@@ -42,9 +42,9 @@ namespace GameTogetherAPI.Models {
         public string Description { get; set; }
 
         /// <summary>
-        /// Gets or sets the list of users participating in the session.
+        /// Gets or sets the list of members in the session.
         /// </summary>
-        public List<UserSession> Participants { get; set; } = new();
+        public List<UserSession> Members { get; set; } = new();
 
         /// <summary>
         /// Gets or sets a list of tags associated with the session for filtering and categorization.

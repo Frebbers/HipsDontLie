@@ -45,7 +45,7 @@ namespace GameTogetherAPI.Repository {
         /// </returns>
         public async Task<Session> GetSessionByIdAsync(int sessionId) {
             return await _context.Sessions
-                .Include(s => s.Participants)
+                .Include(s => s.Members)
                 .ThenInclude(p => p.User)
                 .ThenInclude(u => u.Profile).FirstOrDefaultAsync();
 
@@ -107,8 +107,8 @@ namespace GameTogetherAPI.Repository {
         /// <returns>A task that represents the asynchronous operation, returning a list of sessions the user is part of.</returns>
         public async Task<List<Session>> GetSessionsByUserIdAsync(int userId) {
             return await _context.Sessions
-                .Where(s => s.Participants.Any(p => p.UserId == userId))
-                .Include(s => s.Participants)
+                .Where(s => s.Members.Any(p => p.UserId == userId))
+                .Include(s => s.Members)
                 .ThenInclude(p => p.User)
                 .ThenInclude(u => u.Profile)
                 .ToListAsync();
@@ -120,7 +120,7 @@ namespace GameTogetherAPI.Repository {
         /// <returns>A task that represents the asynchronous operation, returning a list of all sessions.</returns>
         public async Task<List<Session>> GetSessionsAsync() {
             return await _context.Sessions
-                .Include(s => s.Participants)
+                .Include(s => s.Members)
                 .ThenInclude(p => p.User)
                 .ThenInclude(u => u.Profile)
                 .ToListAsync();

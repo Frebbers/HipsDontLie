@@ -88,6 +88,17 @@ namespace GameTogetherAPI {
                 });
             });
 
+            // Add CORS policy
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowFrontend", policy =>
+                {
+                    policy.WithOrigins("http://localhost:5173")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod();
+                });
+            });
+
             builder.Services.AddControllers();
 
             var app = builder.Build();
@@ -99,6 +110,9 @@ namespace GameTogetherAPI {
                     options.RoutePrefix = "";
                 });
             }
+
+            // Enable CORS before authentication
+            app.UseCors("AllowFrontend");
 
             app.UseAuthentication();
             app.UseAuthorization();

@@ -74,8 +74,8 @@ namespace GameTogetherAPI.Services
                 OwnerId = sessionId,
                 Tags = session.Tags,
                 Id = sessionId,
-                Participants = session.Participants
-                    .Select(p => new ParticipantDTO {
+                Participants = session.Members
+                    .Select(p => new MemberDTO {
                         UserId = p.UserId,
                         Name = p.User.Profile.Name,
                     })
@@ -111,8 +111,8 @@ namespace GameTogetherAPI.Services
                     AgeRange = session.AgeRange,
                     Description = session.Description,
                     Tags = session.Tags,
-                    Participants = session.Participants
-                    .Select(p => new ParticipantDTO
+                    Members = session.Members
+                    .Select(p => new MemberDTO
                     {
                         UserId = p.UserId,
                         Name = p.User.Profile.Name,
