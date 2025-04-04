@@ -42,6 +42,11 @@ namespace GameTogetherAPI.Models {
         public string Description { get; set; }
 
         /// <summary>
+        /// Gets or sets the maximum number of members allowed in the session.
+        /// </summary>
+        public int MaxMembers { get; set; }
+
+        /// <summary>
         /// Gets or sets the list of members in the session.
         /// </summary>
         public List<UserSession> Members { get; set; } = new();

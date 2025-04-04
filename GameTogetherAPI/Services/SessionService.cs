@@ -34,6 +34,7 @@ namespace GameTogetherAPI.Services
                 Description = sessionDto.Description,
                 IsVisible = sessionDto.IsVisible,
                 OwnerId = userId,
+                MaxMembers = sessionDto.MaxMembers,
                 Tags = sessionDto.Tags,
 
             };
@@ -74,7 +75,8 @@ namespace GameTogetherAPI.Services
                 OwnerId = sessionId,
                 Tags = session.Tags,
                 Id = sessionId,
-                Participants = session.Members
+                MaxMembers = session.MaxMembers,
+                Members = session.Members
                     .Select(p => new MemberDTO {
                         UserId = p.UserId,
                         Name = p.User.Profile.Name,
@@ -110,12 +112,13 @@ namespace GameTogetherAPI.Services
                     IsVisible = session.IsVisible,
                     AgeRange = session.AgeRange,
                     Description = session.Description,
+                    MaxMembers = session.MaxMembers,
                     Tags = session.Tags,
                     Members = session.Members
                     .Select(p => new MemberDTO
                     {
                         UserId = p.UserId,
-                        Name = p.User.Profile.Name,
+                        Name = p.User?.Profile?.Name ?? "Unknown",
                     })
                     .ToList()
                 });

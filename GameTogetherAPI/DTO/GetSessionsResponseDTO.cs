@@ -36,6 +36,11 @@ namespace GameTogetherAPI.DTO {
         public string Description { get; set; }
 
         /// <summary>
+        /// Gets or sets the maximum number of members allowed in the session.
+        /// </summary>
+        public int MaxMembers { get; set; }
+
+        /// <summary>
         /// Gets or sets a list of tags associated with the session for filtering and categorization.
         /// </summary>
         public List<string> Tags { get; set; }
