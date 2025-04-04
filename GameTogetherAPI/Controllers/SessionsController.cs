@@ -131,6 +131,33 @@ namespace GameTogetherAPI.Controllers
             return Ok(new { message = "Successfully joined the session!" });
         }
 
+        [HttpGet("{sessionId}/{userId}/accept")]
+        public async Task<IActionResult> AcceptUserInSessionAsync(int sessionId, int userId)
+        {
+            var ownerId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+            bool success = await _sessionService.AcceptUserInSessionAsync(userId, sessionId, ownerId);
+
+            if (!success)
+                return BadRequest(new { message = "Failed to accept user." });
+
+            return Ok(new { message = "Successfully joined the session!" });
+        }
+
+        [HttpGet("{sessionId}/{userId}/reject")]
+        public async Task<IActionResult> RejectUserInSessionAsync(int sessionId, int userId)
+        {
+            var ownerId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            //TODO: evaluate if ownerId is the same as the owner of the session
+
+            bool success = await _sessionService.RejectUserInSessionAsync(userId, sessionId, ownerId);
+
+            if (!success)
+                return BadRequest(new { message = "Failed to reject user." });
+
+            return Ok(new { message = "Successfully joined the session!" });
+        }
+
         /// <summary>
         /// Allows the authenticated user to leave a specified session.
         /// </summary>

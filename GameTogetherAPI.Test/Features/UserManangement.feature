@@ -3,14 +3,22 @@ This feature file describes the process of logging in and managing one's user ac
 
     Background:
 #Given the API is initialized
+    
 
-    Scenario: Create account
-        Given I send a create account request
+    Scenario: Create account and log in
+        Given TestUser is reset
+        And I send a create account request
         Then I assert that the account is created
 
-#    Scenario: Log in
-#        Given I send a log in request
-#		Then I assert that the account is logged in
+    Scenario: Log in
+        Given I send a create account request
+        When I send a log in request
+		Then I assert that the account is logged in
+
+#    Scenario: Log off
+#        Given I am logged in
+#        And I click the log off button
+#        Then I am no longer logged in
 
 #    Scenario: Group assignment
 #        Given I am logged in
@@ -33,12 +41,7 @@ This feature file describes the process of logging in and managing one's user ac
 #        Given I am logged in 
 #        When I recieve a request to join a group
 #        And The request to join is accepted
-#        Then I have 1 more member in my group
-#
-#    Scenario: Log off
-#        Given I am logged in
-#        When I click the log off button
-#        Then I am no longer logged in 
+#        Then I have 1 more member in my group 
 #    
 #    Scenario: Joining a Group
 #        Given I am logged in

@@ -37,7 +37,7 @@ namespace GameTogetherAPI.Test.Drivers
         /// <param name="endPointMethodName">The endpoint method name to send the request to.</param>
         /// <param name="parameters">Optional parameters to be included in the request URL.</param>
         /// <returns>A task that represents the asynchronous operation. The task result contains the HTTP response message.</returns>
-        public async Task<HttpResponseMessage> SendGetRequest(string endPointMethodName, params object[] parameters)
+        public async Task<HttpResponseMessage> SendGetRequest(string endPointMethodName, Dictionary<string, string> headers, params object[] parameters)
         {
             if (parameters != null && parameters.Length > 0)
             {
@@ -45,7 +45,17 @@ namespace GameTogetherAPI.Test.Drivers
                 endPointMethodName = $"{endPointMethodName}/{queryString}";
             }
 
-            var result = await Client.SendAsync(new HttpRequestMessage(HttpMethod.Get, endPointMethodName));
+            var request = new HttpRequestMessage(HttpMethod.Get, endPointMethodName);
+
+            if (headers != null)
+            {
+                foreach (var header in headers)
+                {
+                    request.Headers.Add(header.Key, header.Value);
+                }
+            }
+
+            var result = await Client.SendAsync(request);
             return result;
         }
         public async Task<HttpResponseMessage> SendPostRequest(string endPointMethodName, object content)
@@ -53,6 +63,20 @@ namespace GameTogetherAPI.Test.Drivers
             var json = JsonConvert.SerializeObject(content);
             var data = new StringContent(json, Encoding.UTF8, "application/json");
             var result = await Client.PostAsync(endPointMethodName, data);
+            return result;
+        }
+
+        public async Task<HttpResponseMessage> SendDeleteRequest(string endPointMethodName, Dictionary<string, string> headers)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Delete, endPointMethodName);
+            if (headers != null)
+            {
+                foreach (var header in headers)
+                {
+                    request.Headers.Add(header.Key, header.Value);
+                }
+            }
+            var result = await Client.SendAsync(request);
             return result;
         }
     }

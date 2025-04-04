@@ -31,18 +31,29 @@ namespace GameTogetherAPI.Controllers {
         /// </returns>
         /// </returns>
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterModel model) {
-            bool success = await _authService.RegisterUserAsync(model.Email, model.Password);
-            if (!success)
+        public async Task<IActionResult> Register([FromBody] RegisterModel model)
+        {
+            AuthStatus status = await _authService.RegisterUserAsync(model.Email, model.Password);
+            if (status == AuthStatus.UserExists)
+            {
                 return BadRequest("Email already taken.");
+            }
 
-            bool emailSent = await _authService.SendEmailVerificationAsync(model.Email);
-            if (!emailSent)
-                return StatusCode(StatusCodes.Status500InternalServerError, "Could not send verification email.");
+            if (status == AuthStatus.UserCreated)
+            {
+                bool emailSent = await _authService.SendEmailVerificationAsync(model.Email);
 
+
+                if (!emailSent)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, "Could not send verification email.");
+                }
+            }
 
             return Ok("User registered successfully!");
         }
+        
+            
 
         /// <summary>
         /// Confirms the user's email using the verification token.
@@ -103,6 +114,7 @@ namespace GameTogetherAPI.Controllers {
         /// </returns>
         [HttpGet("me")]
         [Authorize]
+        //public async Task<IActionResult> GetCurrentUser([FromBody] string token)
         public IActionResult GetCurrentUser() {
             var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
             return Ok(new { Email = userEmail });

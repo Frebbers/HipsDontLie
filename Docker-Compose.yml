@@ -25,7 +25,7 @@ services:
 
     environment:
       ConnectionStrings__DefaultConnection: Server=${DB_SERVER:-mysql};Database=${DB_NAME:-gametogether};User=${DB_USER:-root};Password=${DB_PASSWORD:-rekt123};PORT=${DB_PORT:-3306};
-      JwtSettings__SecretKey: ${SECRET_KEY:-DefaultKey123!} # Change this in production
+      JwtSettings__SecretKey: ${SECRET_KEY:-C6821CD46246E81E9B481CD9D4D9A} # Change this in production
       JwtSettings__Issuer: "GameTogether"
       JwtSettings__Audience: "GameTogetherApp"
       
@@ -44,7 +44,7 @@ services:
         condition: service_healthy
     environment:
       ConnectionStrings__DefaultConnection: Server=${DB_SERVER:-mysql};Database=${DB_NAME:-gametogether};User=${DB_USER:-root};Password=${DB_PASSWORD:-rekt123};PORT=${DB_PORT:-3306};
-      JwtSettings__SecretKey: ${SECRET_KEY:-DefaultKey123!} # Change this in production
+      JwtSettings__SecretKey: ${SECRET_KEY:-C6821CD46246E81E9B481CD9D4D9A} # Change this in production
       JwtSettings__Issuer: "GameTogether"
       JwtSettings__Audience: "GameTogetherApp"
     working_dir: /src
@@ -64,7 +64,7 @@ services:
         condition: service_healthy
     environment:
       ConnectionStrings__DefaultConnection: Server=${DB_SERVER:-mysql};Database=${DB_NAME:-gametogether};User=${DB_USER:-root};Password=${DB_PASSWORD:-rekt123};PORT=${DB_PORT:-3306};
-      JwtSettings__SecretKey: ${SECRET_KEY:-DefaultKey123!} # Change this in production
+      JwtSettings__SecretKey: ${SECRET_KEY:-C6821CD46246E81E9B481CD9D4D9A} # Change this in production
       JwtSettings__Issuer: "GameTogether"
       JwtSettings__Audience: "GameTogetherApp"
-    command: dotnet test GameTogetherAPI.Test/GameTogetherAPI.Test.csproj
+    command: dotnet test GameTogetherAPI.Test/GameTogetherAPI.Test.csproj --property:WarningLevel=0

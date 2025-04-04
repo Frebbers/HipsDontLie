@@ -60,7 +60,16 @@ namespace GameTogetherAPI.Repository {
         /// </returns>
         public async Task<bool> AddUserToSessionAsync(UserSession userSession)
         {
-            await _context.UserSessions.AddAsync(userSession);
+            var exists = await _context.UserSessions.FirstOrDefaultAsync(us => us.UserId == userSession.UserId && us.SessionId == userSession.SessionId);
+
+            if (exists != null) {
+                exists.Status = userSession.Status;
+                _context.UserSessions.Update(exists);
+            }
+            else {
+                await _context.UserSessions.AddAsync(userSession);
+            }
+
             await _context.SaveChangesAsync();
             return true;
         }
@@ -90,14 +99,18 @@ namespace GameTogetherAPI.Repository {
         /// <param name="sessionId">The unique identifier of the session.</param>
         /// <returns>A task that represents the asynchronous operation, returning true if the user is not already a participant, otherwise false.</returns>
         public async Task<bool> ValidateUserSessionAsync(int userId, int sessionId) {
-            bool sessionExists = await _context.Sessions.AnyAsync(s => s.Id == sessionId);
-            if (!sessionExists)
-                return false;
+            return await _context.Sessions
+                            .Where(s => s.Id == sessionId)
+                            .Select(s => !_context.UserSessions.Any(us => us.UserId == userId && us.SessionId == sessionId))
+                            .FirstOrDefaultAsync();
+        }
 
-            bool isParticipant = await _context.UserSessions
-                .AnyAsync(us => us.UserId == userId && us.SessionId == sessionId);
-
-            return !isParticipant;
+        public async Task<bool> ValidateAcceptSessionAsync(int userId, int sessionId,int ownerId)
+        {
+            return await _context.Sessions
+                            .Where(s => s.Id == sessionId && s.OwnerId == ownerId)
+                            .Select(s => _context.UserSessions.Any(us => us.UserId == userId && us.SessionId == sessionId && us.Status == UserSessionStatus.Pending))
+                            .FirstOrDefaultAsync();
         }
 
         /// <summary>

@@ -10,6 +10,7 @@ namespace GameTogetherAPI.Services
     public class SessionService : ISessionService
     {
         private readonly ISessionRepository _sessionRepository;
+        private readonly IUserRepository _userRepository;
 
         /// <summary>
         /// Provides session management services, including session creation, retrieval, joining, and leaving.
@@ -17,6 +18,7 @@ namespace GameTogetherAPI.Services
         public SessionService(IUserRepository userRepository, ISessionRepository sessionRepository)
         {
             _sessionRepository = sessionRepository;
+            _userRepository = userRepository;
         }
 
         /// <summary>
@@ -47,7 +49,8 @@ namespace GameTogetherAPI.Services
             var userSession = new UserSession
             {
                 UserId = userId,
-                SessionId = session.Id
+                SessionId = session.Id,
+                Status = UserSessionStatus.Accepted
             };
 
             await _sessionRepository.AddUserToSessionAsync(userSession);
@@ -80,10 +83,13 @@ namespace GameTogetherAPI.Services
                     .Select(p => new MemberDTO {
                         UserId = p.UserId,
                         Name = p.User.Profile.Name,
+                        SessionStatus = p.Status
                     })
                     .ToList()
             };
         }
+
+
 
         /// <summary>
         /// Retrieves all available sessions or sessions associated with a specific user.
@@ -118,7 +124,8 @@ namespace GameTogetherAPI.Services
                     .Select(p => new MemberDTO
                     {
                         UserId = p.UserId,
-                        Name = p.User?.Profile?.Name ?? "Unknown",
+                        Name = p.User.Profile.Name,
+                        SessionStatus = p.Status
                     })
                     .ToList()
                 });
@@ -141,8 +148,11 @@ namespace GameTogetherAPI.Services
             var userSession = new UserSession
             {
                 UserId = userId,
-                SessionId = sessionId
+                SessionId = sessionId,
+                Status = UserSessionStatus.Pending
             };
+
+            //TODO: Owner accepts the user and change status.
 
             await _sessionRepository.AddUserToSessionAsync(userSession);
 
@@ -161,5 +171,42 @@ namespace GameTogetherAPI.Services
             
         }
 
+        public async Task<bool> AcceptUserInSessionAsync(int userId, int sessionId, int ownerId)
+        {
+
+            if (!await _sessionRepository.ValidateAcceptSessionAsync(userId, sessionId, ownerId))
+                return false;
+
+            var userSession = new UserSession
+            {
+                UserId = userId,
+                SessionId = sessionId,
+                Status = UserSessionStatus.Accepted
+            };
+
+            await _sessionRepository.AddUserToSessionAsync(userSession);
+
+            return true;
+        }
+
+        public async Task<bool> RejectUserInSessionAsync(int userId, int sessionId, int ownerId)
+        {
+
+            if (!await _sessionRepository.ValidateAcceptSessionAsync(userId, sessionId, ownerId))
+                return false;
+
+            var userSession = new UserSession
+            {
+                UserId = userId,
+                SessionId = sessionId,
+                Status = UserSessionStatus.Rejected
+            };
+
+            await _sessionRepository.AddUserToSessionAsync(userSession);
+
+            return true;
+        }
+
     }
+
 }
