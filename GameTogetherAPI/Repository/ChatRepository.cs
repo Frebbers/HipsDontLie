@@ -92,5 +92,20 @@ namespace GameTogetherAPI.Repository
                             .OrderBy(t => t.TimeStamp)
                             .ToListAsync();
         }
+
+        public async Task<bool> AddUserToChatAsync(UserChat userChat)
+        {
+            // Avoid duplicate entries
+            var exists = await _context.UserChats.AnyAsync
+                (uc => uc.UserId == userChat.UserId && uc.ChatId == userChat.ChatId);
+
+            if (!exists)
+            {
+                await _context.UserChats.AddAsync(userChat);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
     }
 }

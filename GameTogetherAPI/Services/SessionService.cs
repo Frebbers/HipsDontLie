@@ -192,6 +192,18 @@ namespace GameTogetherAPI.Services
 
             await _sessionRepository.AddUserToSessionAsync(userSession);
 
+            var session = await _sessionRepository.GetSessionByIdAsync(sessionId);
+            if (session?.Chat != null)
+            {
+                var userChat = new UserChat
+                {
+                    UserId = userId,
+                    ChatId = session.Chat.ChatId
+                };
+
+                await _chatRepository.AddUserToChatAsync(userChat);
+            }
+
             return true;
         }
 

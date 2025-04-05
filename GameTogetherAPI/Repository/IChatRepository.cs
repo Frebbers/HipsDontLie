@@ -5,6 +5,7 @@ namespace GameTogetherAPI.Repository
 {
     public interface IChatRepository
     {
+        Task<bool> AddUserToChatAsync(UserChat userChat);
         Task<bool> CreatePrivateChatAsync(Chat chat);
         Task<bool> CreateSessionChatAsync(Chat chat);
         Task<Chat> GetChatBySessionId(int sessionId);
