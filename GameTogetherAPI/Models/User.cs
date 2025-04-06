@@ -37,5 +37,15 @@ namespace GameTogetherAPI.Models {
         /// Gets or sets the list of sessions the user has joined.
         /// </summary>
         public List<UserSession> JoinedSessions { get; set; } = new();
+
+        /// <summary>
+        /// Gets or sets the list of messages sent by the user.
+        /// </summary>
+        public List<Message> SentMessages { get; set; } = new();
+
+        /// <summary>
+        /// Gets or sets the list of chats the user is participating in.
+        /// </summary>
+        public List<UserChat> Chats { get; set; } = new();
     }
 }

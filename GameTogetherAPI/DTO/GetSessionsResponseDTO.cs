@@ -49,5 +49,7 @@ namespace GameTogetherAPI.DTO {
         /// Gets or sets the list of participants in the session.
         /// </summary>
         public List<MemberDTO> Members { get; set; } = new();
+
+        public ChatDTO Chat { get; set; }
     }
 }
