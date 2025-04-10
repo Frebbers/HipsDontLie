@@ -40,7 +40,9 @@ namespace GameTogetherAPI.Repository {
             return await _context.Sessions
                 .Include(s => s.Members)
                 .ThenInclude(p => p.User)
-                .ThenInclude(u => u.Profile).FirstOrDefaultAsync();
+                .ThenInclude(u => u.Profile)
+                .Include(c => c.Chat)
+                .FirstOrDefaultAsync(s => s.Id == sessionId);
 
         }
 
@@ -129,6 +131,7 @@ namespace GameTogetherAPI.Repository {
                             .Include(s => s.Members)
                                 .ThenInclude(p => p.User)
                                 .ThenInclude(u => u.Profile)
+                            .Include(c => c.Chat)
                             .ToListAsync();
         }
 
@@ -141,6 +144,7 @@ namespace GameTogetherAPI.Repository {
                 .Include(s => s.Members)
                 .ThenInclude(p => p.User)
                 .ThenInclude(u => u.Profile)
+                .Include(c => c.Chat)
                 .ToListAsync();
         }
     }

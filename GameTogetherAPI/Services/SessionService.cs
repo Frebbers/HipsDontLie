@@ -85,14 +85,19 @@ namespace GameTogetherAPI.Services
                 OwnerId = sessionId,
                 Tags = session.Tags,
                 Id = sessionId,
-                MaxMembers = session.MaxMembers,
+                MaxMembers = session.MaxMembers, 
                 Members = session.Members
                     .Select(p => new MemberDTO {
                         UserId = p.UserId,
                         Name = p.User.Profile.Name,
                         SessionStatus = p.Status
                     })
-                    .ToList()
+                    .ToList(),
+                Chat = session.Chat == null ? null : new ChatDTO()
+                {
+                    SessionId = session.Chat.SessionId,
+                    ChatId = session.Chat.ChatId
+                }
             };
         }
 
