@@ -40,10 +40,11 @@ public class TestingUserManagementStepDefinitions(ScenarioContext scenarioContex
         var response = await driver.SendPostRequest("/api/auth/login", loginModel);
         APIResponse responseModel = JSONParser.FromJson<APIResponse>(response.Content.ReadAsStringAsync().Result);
         //string responseToken = responseString.Split("")[1]; //remove "Token: " from the response
-        var responseCode = response.StatusCode.ToString();
+        var statusCode = response.StatusCode.ToString();
         try
         {
-           scenarioContext.Add("token", responseModel.token);
+            scenarioContext.Add("StatusCode", statusCode);
+            scenarioContext.Add("token", responseModel.token);
         }
         catch (Exception e)
         {
@@ -55,7 +56,9 @@ public class TestingUserManagementStepDefinitions(ScenarioContext scenarioContex
     [Then("I assert that the account is logged in")]
     [When(@"I am logged in")]
     public async Task ThenIAssertThatTheAccountIsLoggedIn()
-    {   
+    {
+        var responsecode = scenarioContext.Get<string>("StatusCode");
+        responsecode.Should().BeEquivalentTo("OK");
         var driver = new APIDriver(TestHooks.Context.Client);
         string responseToken = scenarioContext.Get<string>("token").ToString();
         HttpResponseMessage response = await driver.SendGetRequest("/api/auth/me", new Dictionary<string, string> { { "Authorization", "Bearer " + responseToken } }, null);

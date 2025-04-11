@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GameTogetherAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250401184324_DeleteOnCascadeUserChats")]
-    partial class DeleteOnCascadeUserChats
+    [Migration("20250410233300_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -119,6 +119,9 @@ namespace GameTogetherAPI.Migrations
                     b.Property<bool>("IsVisible")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<int>("MaxMembers")
+                        .HasColumnType("int");
+
                     b.Property<int>("OwnerId")
                         .HasColumnType("int");
 
@@ -198,7 +201,8 @@ namespace GameTogetherAPI.Migrations
                 {
                     b.HasOne("GameTogetherAPI.Models.Session", "Session")
                         .WithOne("Chat")
-                        .HasForeignKey("GameTogetherAPI.Models.Chat", "SessionId");
+                        .HasForeignKey("GameTogetherAPI.Models.Chat", "SessionId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Session");
                 });
@@ -265,7 +269,7 @@ namespace GameTogetherAPI.Migrations
             modelBuilder.Entity("GameTogetherAPI.Models.UserSession", b =>
                 {
                     b.HasOne("GameTogetherAPI.Models.Session", "Session")
-                        .WithMany("Participants")
+                        .WithMany("Members")
                         .HasForeignKey("SessionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -293,7 +297,7 @@ namespace GameTogetherAPI.Migrations
                     b.Navigation("Chat")
                         .IsRequired();
 
-                    b.Navigation("Participants");
+                    b.Navigation("Members");
                 });
 
             modelBuilder.Entity("GameTogetherAPI.Models.User", b =>
