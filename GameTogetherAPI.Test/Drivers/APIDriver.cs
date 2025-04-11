@@ -110,7 +110,7 @@ namespace GameTogetherAPI.Test.Drivers
         /// </exception>
 
         public async Task<HttpResponseMessage> SendRequest(HttpMethod method, string endpoint, bool authenticate, 
-            Dictionary<string, string> parameters = null, object[] content = null)
+            Dictionary<string, string>? parameters = null, object[]? content = null)
         { 
             endpoint = BuildUrl(endpoint, parameters);
             var request = new HttpRequestMessage(method, endpoint);
