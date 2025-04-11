@@ -24,14 +24,14 @@ namespace GameTogetherAPI.Database {
         public DbSet<Profile> Profiles { get; set; }
 
         /// <summary>
-        /// Represents sessions available in the database.
+        /// Represents groups available in the database.
         /// </summary>
-        public DbSet<Session> Sessions { get; set; }
+        public DbSet<Group> Groups { get; set; }
 
         /// <summary>
-        /// Represents the many-to-many relationship between users and sessions.
+        /// Represents the many-to-many relationship between users and groups.
         /// </summary>
-        public DbSet<UserSession> UserSessions { get; set; }
+        public DbSet<UserGroup> UserGroups { get; set; }
 
         public DbSet<Message> Messages { get; set; }
         public DbSet<Chat> Chats { get; set; }
@@ -52,19 +52,19 @@ namespace GameTogetherAPI.Database {
                 .HasForeignKey<Profile>(p => p.Id)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            //Many-to-many relationship between User and Session
-            modelBuilder.Entity<UserSession>()
+            //Many-to-many relationship between User and Groups
+            modelBuilder.Entity<UserGroup>()
                 .HasOne(us => us.User)
-                .WithMany(u => u.JoinedSessions)
+                .WithMany(u => u.JoinedGroups)
                 .HasForeignKey(us => us.UserId);
 
-            modelBuilder.Entity<UserSession>()
-                .HasKey(us => new { us.UserId, us.SessionId });
+            modelBuilder.Entity<UserGroup>()
+                .HasKey(us => new { us.UserId, us.GroupId });
 
-            modelBuilder.Entity<UserSession>()
-                .HasOne(us => us.Session)
+            modelBuilder.Entity<UserGroup>()
+                .HasOne(us => us.Group)
                 .WithMany(s => s.Members)
-                .HasForeignKey(us => us.SessionId);
+                .HasForeignKey(us => us.GroupId);
 
             //Many-to-many relationship between User and Chat
             modelBuilder.Entity<UserChat>()
@@ -81,12 +81,12 @@ namespace GameTogetherAPI.Database {
                 .HasForeignKey(uc => uc.ChatId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            //One-to-one "optional" relationship between Session and Chat
-            //A session may have a chat, but a chat can also exist without a session (private chat)
-            modelBuilder.Entity<Session>()
+            //One-to-one "optional" relationship between Groups and Chat
+            //A group may have a chat, but a chat can also exist without a group (private chat)
+            modelBuilder.Entity<Group>()
                 .HasOne(s => s.Chat)
-                .WithOne(c => c.Session)
-                .HasForeignKey<Chat>(c => c.SessionId)
+                .WithOne(c => c.Group)
+                .HasForeignKey<Chat>(c => c.GroupId)
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.Cascade);
 

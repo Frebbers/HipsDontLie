@@ -13,7 +13,7 @@ namespace GameTogetherAPI.Repository
             _context = context;
         }
 
-        public async Task<bool> CreateSessionChatAsync(Chat chat)
+        public async Task<bool> CreateGroupChatAsync(Chat chat)
         {
             try
             {
@@ -32,9 +32,9 @@ namespace GameTogetherAPI.Repository
             }
         }
 
-        public async Task<Chat?> GetChatBySessionId(int sessionId)
+        public async Task<Chat?> GetChatByGroupId(int sessionId)
         {
-            return await _context.Chats.FirstOrDefaultAsync(c => c.SessionId == sessionId);
+            return await _context.Chats.FirstOrDefaultAsync(c => c.GroupId == sessionId);
         }
 
         public async Task<bool> SendMessageToSessionAsync(Message message)
@@ -47,7 +47,7 @@ namespace GameTogetherAPI.Repository
         public async Task<Chat?> GetPrivateChatBetweenUsersAsync(int senderId, int receiverId)
         {
             return await _context.Chats
-                            .Where(c => c.SessionId == null)
+                            .Where(c => c.GroupId == null)
                             .Where(c => c.UserChats.Any(uc => uc.UserId == senderId) && c.UserChats.Any(uc => uc.UserId == receiverId))
                             .FirstOrDefaultAsync();
         }
@@ -73,7 +73,7 @@ namespace GameTogetherAPI.Repository
                             .Include(c => c.UserChats)
                                 .ThenInclude(uc => uc.User)
                                     .ThenInclude(u => u.Profile)
-                            .Include(c => c.Session)
+                            .Include(c => c.Group)
                             .Include(c => c.Messages)
                             .ToListAsync();
         }

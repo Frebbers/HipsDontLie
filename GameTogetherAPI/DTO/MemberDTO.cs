@@ -12,5 +12,5 @@ public class MemberDTO {
     /// </summary>
     public string Name { get; set; }
 
-    public UserSessionStatus SessionStatus { get; set; }
+    public UserGroupStatus GroupStatus { get; set; }
 }

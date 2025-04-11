@@ -49,8 +49,8 @@ namespace GameTogetherAPI.Services
                 result.Add(new GetUserInboxResponseDTO()
                 {
                     ChatId = chat.ChatId,
-                    SessionId = chat.SessionId,
-                    SessionTitle = chat.Session?.Title,
+                    SessionId = chat.GroupId,
+                    SessionTitle = chat.Group?.Title,
                     Participants = participants
                 });
             }
@@ -60,7 +60,7 @@ namespace GameTogetherAPI.Services
 
         public async Task<bool> SendMessageToSessionAsync(int sessionId, int userId, SendMessageRequestDTO messageDto)
         {
-            var chat = await _chatRepository.GetChatBySessionId(sessionId);
+            var chat = await _chatRepository.GetChatByGroupId(sessionId);
             if (chat == null)
                 return false;
 

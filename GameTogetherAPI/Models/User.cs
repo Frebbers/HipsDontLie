@@ -34,9 +34,9 @@ namespace GameTogetherAPI.Models {
         public Profile Profile { get; set; }
 
         /// <summary>
-        /// Gets or sets the list of sessions the user has joined.
+        /// Gets or sets the list of groups the user has joined.
         /// </summary>
-        public List<UserSession> JoinedSessions { get; set; } = new();
+        public List<UserGroup> JoinedGroups { get; set; } = new();
 
         /// <summary>
         /// Gets or sets the list of messages sent by the user.

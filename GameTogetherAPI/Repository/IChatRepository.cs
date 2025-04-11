@@ -7,8 +7,8 @@ namespace GameTogetherAPI.Repository
     {
         Task<bool> AddUserToChatAsync(UserChat userChat);
         Task<bool> CreatePrivateChatAsync(Chat chat);
-        Task<bool> CreateSessionChatAsync(Chat chat);
-        Task<Chat> GetChatBySessionId(int sessionId);
+        Task<bool> CreateGroupChatAsync(Chat chat);
+        Task<Chat> GetChatByGroupId(int sessionId);
         Task<List<Message>> GetMessagesByChatIdAsync(int chatId, int userId);
         Task<Chat?> GetPrivateChatBetweenUsersAsync(int senderId, int receiverId);
         Task<List<Chat>> GetUserInboxAsync(int userId);
