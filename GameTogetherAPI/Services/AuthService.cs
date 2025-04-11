@@ -15,7 +15,7 @@ namespace GameTogetherAPI.Services
     /// </summary>
     public class AuthService : IAuthService
     {
-        private readonly string[] testEmails = { "user@example.com" }; // Test emails
+        private readonly string[] testEmails = { "user@example.com", "user2@example.com" }; // Test emails
 
         private readonly IUserRepository _userRepository;
         private readonly IConfiguration _configuration;

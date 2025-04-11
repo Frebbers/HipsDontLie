@@ -3,31 +3,38 @@ This feature file describes the process of logging in and managing one's user ac
 
     Background:
 #Given the API is initialized
+        Given TestUser is reset
+        And I send a create account request
+        Then I assert that the account is created
     
 
    # Scenario: Create account and log in
-    #    Given TestUser is reset
-     #   And I send a create account request
-      #  Then I assert that the account is created
 
-    Scenario: Create account and log in
-        Given TestUser is reset
-        Given I send a create account request
+    Scenario: log in
         When I send a log in request
 		Then I assert that the account is logged in
 
-#    Scenario: Log off
-#        Given I am logged in
-#        And I click the log off button
-#        Then I am no longer logged in
+    Scenario: Log off
+        Given I am logged in
+        Then I am no longer logged in
 
-#    Scenario: Group assignment
+    Scenario: Group request accepted
+        Given I am logged in
+        And i create a second user  
+        And a group has been created
+        When I send a join request
+        Then I join a group
+    
+#    Scenario: Group request declined
 #        Given I am logged in
-#        When I try to join a group
-#        And Send a Join request
-#        Then The request is accepted
-#        And I join a group
-#
+#        When I send a join request
+#        And the join request is rejected
+#        Then The group stays the same
+
+#     Scenario: Leaving a group
+#        Given I am logged in
+#        And part of a group        
+        
 #    Scenario: Tag assignment for my account
 #        Given I am logged in
 #        And I assign a tag {string} to my account
@@ -37,14 +44,3 @@ This feature file describes the process of logging in and managing one's user ac
 #        Given I am logged in 
 #        And I assign a tag {string} to my group
 #        Then the tag {string} is found in the group
-#
-#    Scenario: Join request
-#        Given I am logged in 
-#        When I recieve a request to join a group
-#        And The request to join is accepted
-#        Then I have 1 more member in my group 
-#    
-#    Scenario: Joining a Group
-#        Given I am logged in
-#        When I request to join a group
-#        And The request to join is accepted 
