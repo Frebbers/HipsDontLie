@@ -23,9 +23,6 @@ namespace GameTogetherAPI.Services {
         /// <summary>
         /// Creates a new group and assigns the user as its owner.
         /// </summary>
-        /// <param name="userId">The unique identifier of the user creating the group.</param>
-        /// <param name="groupDto">The group details provided in the request.</param>
-        /// <returns>A task representing the asynchronous operation, returning true if the group is successfully created.</returns>
         public async Task<bool> CreateGroupAsync(int userId, CreateGroupRequestDTO groupDto) {
             var group = new Group() {
                 Title = groupDto.Title,
@@ -69,17 +66,21 @@ namespace GameTogetherAPI.Services {
                 AgeRange = group.AgeRange,
                 Description = group.Description,
                 IsVisible = group.IsVisible,
-                OwnerId = groupId,
+                OwnerId = group.OwnerId,
                 Tags = group.Tags,
-                Id = groupId,
+                Id = group.Id,
                 MaxMembers = group.MaxMembers,
                 Members = group.Members
                     .Select(p => new MemberDTO {
                         UserId = p.UserId,
-                        Name = p.User.Profile.Name,
+                        Name = p.User.Profile?.Name ?? "No Profile",
                         GroupStatus = p.Status
                     })
-                    .ToList()
+                    .ToList(),
+                Chat = group.Chat == null ? null : new ChatDTO {
+                    SessionId = group.Chat.GroupId,
+                    ChatId = group.Chat.ChatId
+                }
             };
         }
 
@@ -109,7 +110,7 @@ namespace GameTogetherAPI.Services {
                     Members = group.Members
                         .Select(p => new MemberDTO {
                             UserId = p.UserId,
-                            Name = p.User.Profile?.Name ?? "No profile",
+                            Name = p.User.Profile?.Name ?? "No Profile",
                             GroupStatus = p.Status
                         })
                         .ToList(),
@@ -119,7 +120,6 @@ namespace GameTogetherAPI.Services {
                     } : null
                 });
             }
-
             return results;
         }
 
@@ -149,15 +149,8 @@ namespace GameTogetherAPI.Services {
         }
 
         /// <summary>
-        /// Accepts a pending user into a group if the requesting user is the owner of the group.
+        /// Accepts a pending user into a group if the requester is the group owner.
         /// </summary>
-        /// <param name="userId">The unique identifier of the user to be accepted.</param>
-        /// <param name="groupId">The unique identifier of the group.</param>
-        /// <param name="ownerId">The unique identifier of the group owner making the request.</param>
-        /// <returns>
-        /// A task representing the asynchronous operation.  
-        /// Returns <c>true</c> if the user is successfully accepted and optionally added to the group's chat; otherwise, <c>false</c>.
-        /// </returns>
         public async Task<bool> AcceptUserInGroupAsync(int userId, int groupId, int ownerId) {
             if (!await _groupRepository.ValidateAcceptGroupAsync(userId, groupId, ownerId))
                 return false;
@@ -184,15 +177,8 @@ namespace GameTogetherAPI.Services {
         }
 
         /// <summary>
-        /// Rejects a pending user from a group if the requesting user is the owner of the group.
+        /// Rejects a pending user from a group if the requester is the group owner.
         /// </summary>
-        /// <param name="userId">The unique identifier of the user to be rejected.</param>
-        /// <param name="groupId">The unique identifier of the group.</param>
-        /// <param name="ownerId">The unique identifier of the group owner making the request.</param>
-        /// <returns>
-        /// A task representing the asynchronous operation.  
-        /// Returns <c>true</c> if the user is successfully rejected; otherwise, <c>false</c>.
-        /// </returns>
         public async Task<bool> RejectUserInGroupAsync(int userId, int groupId, int ownerId) {
             if (!await _groupRepository.ValidateAcceptGroupAsync(userId, groupId, ownerId))
                 return false;
@@ -207,6 +193,5 @@ namespace GameTogetherAPI.Services {
 
             return true;
         }
-
     }
 }

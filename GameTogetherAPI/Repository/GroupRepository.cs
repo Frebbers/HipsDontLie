@@ -21,7 +21,7 @@ namespace GameTogetherAPI.Repository {
         /// Creates a new group in the database.
         /// </summary>
         /// <param name="group">The group to be created.</param>
-        /// <returns>A task that represents the asynchronous operation, returning the created group.</returns>
+        /// <returns>A task that represents the asynchronous operation, returning the saved group.</returns>
         public async Task<Group> CreateGroupAsync(Group group) {
             await _context.Groups.AddAsync(group);
             await _context.SaveChangesAsync();
@@ -31,23 +31,22 @@ namespace GameTogetherAPI.Repository {
         /// <summary>
         /// Retrieves a group by its unique identifier, including its participants and their profiles.
         /// </summary>
-        /// <param name="groupId">The unique identifier of the group.</param>
-        /// <returns>A task representing the asynchronous operation, returning the group if found, otherwise null.</returns>
         public async Task<Group> GetGroupByIdAsync(int groupId) {
             return await _context.Groups
                 .Include(g => g.Members)
-                .ThenInclude(p => p.User)
-                .ThenInclude(u => u.Profile)
+                    .ThenInclude(p => p.User)
+                    .ThenInclude(u => u.Profile)
+                .Include(g => g.Chat)
                 .FirstOrDefaultAsync(g => g.Id == groupId);
         }
 
         /// <summary>
         /// Adds a user to a group and saves the change to the database.
         /// </summary>
-        /// <param name="userGroup">The user-group relationship to be added.</param>
-        /// <returns>A task representing the asynchronous operation, returning true if the user is successfully added to the group.</returns>
         public async Task<bool> AddUserToGroupAsync(UserGroup userGroup) {
-            var exists = await _context.UserGroups.FirstOrDefaultAsync(ug => ug.UserId == userGroup.UserId && ug.GroupId == userGroup.GroupId);
+            var exists = await _context.UserGroups.FirstOrDefaultAsync(
+                ug => ug.UserId == userGroup.UserId && ug.GroupId == userGroup.GroupId
+            );
 
             if (exists != null) {
                 exists.Status = userGroup.Status;
@@ -64,16 +63,18 @@ namespace GameTogetherAPI.Repository {
         /// <summary>
         /// Removes a user from a group.
         /// </summary>
-        /// <param name="userId">The unique identifier of the user.</param>
-        /// <param name="groupId">The unique identifier of the group.</param>
-        /// <returns>A task that represents the asynchronous operation, returning true if the user is successfully removed, otherwise false.</returns>
         public async Task<bool> RemoveUserFromGroupAsync(int userId, int groupId) {
-            var userGroup = await _context.UserGroups.FirstOrDefaultAsync(ug => ug.UserId == userId && ug.GroupId == groupId);
+            var userGroup = await _context.UserGroups.FirstOrDefaultAsync(
+                ug => ug.UserId == userId && ug.GroupId == groupId
+            );
 
             if (userGroup == null)
                 return false;
 
-            var group = await _context.Groups.FirstOrDefaultAsync(g => g.Id == groupId && g.OwnerId == userId);
+            // Check if the user is the owner of the group
+            var group = await _context.Groups.FirstOrDefaultAsync(
+                g => g.Id == groupId && g.OwnerId == userId
+            );
 
             if (group != null) {
                 _context.Groups.Remove(group);
@@ -89,9 +90,6 @@ namespace GameTogetherAPI.Repository {
         /// <summary>
         /// Validates whether a user is not already a participant in a group.
         /// </summary>
-        /// <param name="userId">The unique identifier of the user.</param>
-        /// <param name="groupId">The unique identifier of the group.</param>
-        /// <returns>A task representing the asynchronous operation, returning true if the user is not already a participant, otherwise false.</returns>
         public async Task<bool> ValidateUserGroupAsync(int userId, int groupId) {
             return await _context.Groups
                 .Where(g => g.Id == groupId)
@@ -100,38 +98,39 @@ namespace GameTogetherAPI.Repository {
         }
 
         /// <summary>
-        /// Validates if the group owner can accept a pending user.
+        /// Validates whether a group owner can accept a pending user.
         /// </summary>
         public async Task<bool> ValidateAcceptGroupAsync(int userId, int groupId, int ownerId) {
             return await _context.Groups
                 .Where(g => g.Id == groupId && g.OwnerId == ownerId)
-                .Select(g => _context.UserGroups.Any(ug => ug.UserId == userId && ug.GroupId == groupId && ug.Status == UserGroupStatus.Pending))
+                .Select(g => _context.UserGroups.Any(
+                    ug => ug.UserId == userId && ug.GroupId == groupId && ug.Status == UserGroupStatus.Pending
+                ))
                 .FirstOrDefaultAsync();
         }
 
         /// <summary>
-        /// Retrieves all groups a user is participating in.
+        /// Retrieves all groups that a user is participating in.
         /// </summary>
-        /// <param name="userId">The unique identifier of the user.</param>
-        /// <returns>A task representing the asynchronous operation, returning a list of groups the user is part of.</returns>
         public async Task<List<Group>> GetGroupsByUserIdAsync(int userId) {
             return await _context.Groups
                 .Where(g => g.Members.Any(p => p.UserId == userId))
                 .Include(g => g.Members)
                     .ThenInclude(p => p.User)
                     .ThenInclude(u => u.Profile)
+                .Include(g => g.Chat)
                 .ToListAsync();
         }
 
         /// <summary>
         /// Retrieves all available groups.
         /// </summary>
-        /// <returns>A task representing the asynchronous operation, returning a list of all groups.</returns>
         public async Task<List<Group>> GetGroupsAsync() {
             return await _context.Groups
                 .Include(g => g.Members)
-                .ThenInclude(p => p.User)
-                .ThenInclude(u => u.Profile)
+                    .ThenInclude(p => p.User)
+                    .ThenInclude(u => u.Profile)
+                .Include(g => g.Chat)
                 .ToListAsync();
         }
     }
