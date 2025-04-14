@@ -39,6 +39,9 @@ namespace GameTogetherAPI.Controllers {
                 return BadRequest("Email already taken.");
             }
 
+            if(status == AuthStatus.WeakPassword)
+                return BadRequest("Password must be atleast 8 characters long, contain at least one uppercase letter, one lowercase letter, one number.");
+
             if (status == AuthStatus.UserCreated)
             {
                 bool emailSent = await _authService.SendEmailVerificationAsync(model.Email);

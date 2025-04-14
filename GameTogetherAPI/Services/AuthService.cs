@@ -42,6 +42,9 @@ namespace GameTogetherAPI.Services
             if (await _userRepository.GetUserByEmailAsync(email) != null)
                 return AuthStatus.UserExists;
 
+            if (!IsPasswordValid(password))
+                return AuthStatus.WeakPassword;
+
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
             bool isTestEmail = false;
             foreach (var testEmail in testEmails)
@@ -64,6 +67,19 @@ namespace GameTogetherAPI.Services
                 return AuthStatus.TestUserCreated;
             }
             return AuthStatus.UserCreated;
+        }
+        /// <summary>
+        /// Validates whether a password meets the required strength criteria.
+        /// A valid password must be at least 8 characters long and contain at least:
+        /// one digit, one uppercase letter, one lowercase letter
+        /// </summary>
+        /// <param name="password">The password string to validate.</param>
+        /// <returns>True if the password is strong; otherwise, false.</returns>
+        private bool IsPasswordValid(string password) {
+            return password.Length >= 8 &&
+                password.Any(char.IsDigit) &&
+                password.Any(char.IsUpper) &&
+                password.Any(char.IsLower);
         }
 
         /// <summary>
