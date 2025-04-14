@@ -37,7 +37,7 @@ namespace GameTogetherAPI.Services
         /// <param name="email">The email address of the user.</param>
         /// <param name="password">The plaintext password to be hashed and stored.</param>
         /// <returns>A task representing the asynchronous operation, returning true if registration is successful, otherwise false.</returns>
-        public async Task<AuthStatus> RegisterUserAsync(string email, string password)
+        public async Task<AuthStatus> RegisterUserAsync(string email, string username, string password)
         {
             if (await _userRepository.GetUserByEmailAsync(email) != null)
                 return AuthStatus.UserExists;
@@ -51,7 +51,7 @@ namespace GameTogetherAPI.Services
                     isTestEmail = true;
                 }
             }
-            var user = new User { Email = email, PasswordHash = hashedPassword };
+            var user = new User { Email = email, Username = username, PasswordHash = hashedPassword };
             
             if (isTestEmail) // If the email is a test email, set IsEmailVerified to true
             {

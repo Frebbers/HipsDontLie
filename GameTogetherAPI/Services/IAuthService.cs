@@ -13,7 +13,7 @@ namespace GameTogetherAPI.Services
         /// <param name="email">The email address of the user.</param>
         /// <param name="password">The plaintext password to be stored securely.</param>
         /// <returns>A task representing the asynchronous operation, returning true if registration is successful, otherwise false.</returns>
-        Task<AuthStatus> RegisterUserAsync(string email, string password);
+        Task<AuthStatus> RegisterUserAsync(string email, string username, string password);
 
         /// <summary>
         /// Sends an email verification link to the user's email address.

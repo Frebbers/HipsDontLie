@@ -73,7 +73,7 @@ namespace GameTogetherAPI.Services {
                 Members = group.Members
                     .Select(p => new MemberDTO {
                         UserId = p.UserId,
-                        Name = p.User.Profile?.Name ?? "No Profile",
+                        Username = p.User.Username ?? "No Username",
                         GroupStatus = p.Status
                     })
                     .ToList(),
@@ -110,7 +110,7 @@ namespace GameTogetherAPI.Services {
                     Members = group.Members
                         .Select(p => new MemberDTO {
                             UserId = p.UserId,
-                            Name = p.User.Profile?.Name ?? "No Profile",
+                            Username = p.User.Username ?? "No Username",
                             GroupStatus = p.Status
                         })
                         .ToList(),

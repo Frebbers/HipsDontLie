@@ -31,7 +31,6 @@ namespace GameTogetherAPI.Services
             var profile = new Profile
             {
                 Id = userId,
-                Name = profileDto.Name,
                 Age = profileDto.Age,
                 ProfilePicture = profileDto.ProfilePicture,
                 Description = profileDto.Description,
@@ -60,7 +59,6 @@ namespace GameTogetherAPI.Services
                 Age = profile.Age,
                 Description = profile.Description,
                 Region = profile.Region,
-                Name = profile.Name,
                 ProfilePicture = profile.ProfilePicture
             };
         }
@@ -78,7 +76,6 @@ namespace GameTogetherAPI.Services
                 Age = profile.Age,
                 Description = profile.Description,
                 Region = profile.Region,
-                Name = profile.Name,
                 ProfilePicture = profile.ProfilePicture
             };
         }

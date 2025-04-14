@@ -10,7 +10,7 @@ public class MemberDTO {
     /// <summary>
     /// Gets or sets the name of the participant.
     /// </summary>
-    public string Name { get; set; }
+    public string Username { get; set; }
 
     public UserGroupStatus GroupStatus { get; set; }
 }

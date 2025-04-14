@@ -33,7 +33,7 @@ namespace GameTogetherAPI.Controllers {
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
-            AuthStatus status = await _authService.RegisterUserAsync(model.Email, model.Password);
+            AuthStatus status = await _authService.RegisterUserAsync(model.Email, model.Username, model.Password);
             if (status == AuthStatus.UserExists)
             {
                 return BadRequest("Email already taken.");
