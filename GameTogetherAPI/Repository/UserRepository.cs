@@ -121,7 +121,7 @@ namespace GameTogetherAPI.Repository
         /// <returns>A task representing the asynchronous operation, returning the profile if found, otherwise null.</returns>
         public async Task<Profile> GetProfileAsync(int userId)
         {
-            return await _context.Profiles.FindAsync(userId);
+            return await _context.Profiles.Include(u => u.User).FirstAsync();
         }
     }
 }
