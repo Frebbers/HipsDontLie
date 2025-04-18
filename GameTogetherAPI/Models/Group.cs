@@ -55,7 +55,7 @@ namespace GameTogetherAPI.Models {
         /// Gets or sets a list of tags associated with the group for filtering and categorization.
         /// </summary>
         public List<string> Tags { get; set; } = new();
-        public List<string> NonUserMembers { get; set; } = new();
+        public List<string>? NonUserMembers { get; set; } = new();
 
         public Chat Chat { get; set; }
     }
