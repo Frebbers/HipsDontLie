@@ -35,7 +35,6 @@ namespace GameTogetherAPI.Repository {
             return await _context.Groups
                 .Include(g => g.Members)
                     .ThenInclude(p => p.User)
-                    .ThenInclude(u => u.Profile)
                 .Include(g => g.Chat)
                 .FirstOrDefaultAsync(g => g.Id == groupId);
         }

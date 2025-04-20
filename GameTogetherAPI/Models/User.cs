@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace GameTogetherAPI.Models {
     /// <summary>
@@ -20,7 +17,16 @@ namespace GameTogetherAPI.Models {
         [Required, EmailAddress]
         public string Email { get; set; }
 
+        /// <summary>
+        /// Whether or not the email is verified.
+        /// </summary>
         public bool IsEmailVerified { get; set; } = false;
+
+        [Required]
+        /// <summary>
+        /// Gets or sets the username of the user.
+        /// </summary>
+        public string Username { get; set; }
 
         /// <summary>
         /// Gets or sets the hashed password of the user.

@@ -4,10 +4,9 @@
     /// </summary>
     public class GetProfileResponseDTO {
         /// <summary>
-        /// Gets or sets the name of the user.
+        /// Gets or sets the username of the user.
         /// </summary>
-        public string Name { get; set; }
-
+        public string Username { get; set; }
         /// <summary>
         /// Gets or sets the age of the user.
         /// </summary>

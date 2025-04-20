@@ -37,10 +37,13 @@ namespace GameTogetherAPI.Services
         /// <param name="email">The email address of the user.</param>
         /// <param name="password">The plaintext password to be hashed and stored.</param>
         /// <returns>A task representing the asynchronous operation, returning true if registration is successful, otherwise false.</returns>
-        public async Task<AuthStatus> RegisterUserAsync(string email, string password)
+        public async Task<AuthStatus> RegisterUserAsync(string email, string username, string password)
         {
             if (await _userRepository.GetUserByEmailAsync(email) != null)
                 return AuthStatus.UserExists;
+
+            if (!IsPasswordValid(password))
+                return AuthStatus.WeakPassword;
 
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
             bool isTestEmail = false;
@@ -51,7 +54,7 @@ namespace GameTogetherAPI.Services
                     isTestEmail = true;
                 }
             }
-            var user = new User { Email = email, PasswordHash = hashedPassword };
+            var user = new User { Email = email, Username = username, PasswordHash = hashedPassword };
             
             if (isTestEmail) // If the email is a test email, set IsEmailVerified to true
             {
@@ -64,6 +67,19 @@ namespace GameTogetherAPI.Services
                 return AuthStatus.TestUserCreated;
             }
             return AuthStatus.UserCreated;
+        }
+        /// <summary>
+        /// Validates whether a password meets the required strength criteria.
+        /// A valid password must be at least 8 characters long and contain at least:
+        /// one digit, one uppercase letter, one lowercase letter
+        /// </summary>
+        /// <param name="password">The password string to validate.</param>
+        /// <returns>True if the password is strong; otherwise, false.</returns>
+        private bool IsPasswordValid(string password) {
+            return password.Length >= 8 &&
+                password.Any(char.IsDigit) &&
+                password.Any(char.IsUpper) &&
+                password.Any(char.IsLower);
         }
 
         /// <summary>

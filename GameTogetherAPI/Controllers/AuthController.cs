@@ -33,11 +33,14 @@ namespace GameTogetherAPI.Controllers {
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
-            AuthStatus status = await _authService.RegisterUserAsync(model.Email, model.Password);
+            AuthStatus status = await _authService.RegisterUserAsync(model.Email, model.Username, model.Password);
             if (status == AuthStatus.UserExists)
             {
                 return BadRequest("Email already taken.");
             }
+
+            if(status == AuthStatus.WeakPassword)
+                return BadRequest("Password must be atleast 8 characters long, contain at least one uppercase letter, one lowercase letter, one number.");
 
             if (status == AuthStatus.UserCreated)
             {

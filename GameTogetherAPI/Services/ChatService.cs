@@ -20,7 +20,7 @@ namespace GameTogetherAPI.Services
             var result = messages.Select(message => new GetMessagesInChatResponseDTO
             {
                 MessageId = message.Id,
-                SenderName = message.Sender.Profile.Name,
+                SenderName = message.Sender.Username,
                 SenderId = message.SenderId ?? 0,
                 Content = message.Content,
                 TimeStamp = message.TimeStamp
@@ -42,7 +42,7 @@ namespace GameTogetherAPI.Services
                     .Select(uc => new ChatParticipantDTO
                     {
                         UserId = uc.UserId,
-                        Name = uc.User?.Profile?.Name ?? "John Doe",//when testing some users do not have a profile
+                        Name = uc.User?.Username ?? "No Username",//when testing some users do not have a profile
                     })
                     .ToList();
 

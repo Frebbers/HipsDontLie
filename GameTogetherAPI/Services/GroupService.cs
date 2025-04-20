@@ -32,6 +32,7 @@ namespace GameTogetherAPI.Services {
                 OwnerId = userId,
                 MaxMembers = groupDto.MaxMembers,
                 Tags = groupDto.Tags,
+                NonUserMembers = groupDto.NonUserMembers,
             };
 
             var savedGroup = await _groupRepository.CreateGroupAsync(group);
@@ -68,12 +69,13 @@ namespace GameTogetherAPI.Services {
                 IsVisible = group.IsVisible,
                 OwnerId = group.OwnerId,
                 Tags = group.Tags,
+                NonUserMembers = group.NonUserMembers,
                 Id = group.Id,
                 MaxMembers = group.MaxMembers,
                 Members = group.Members
                     .Select(p => new MemberDTO {
                         UserId = p.UserId,
-                        Name = p.User.Profile?.Name ?? "No Profile",
+                        Username = p.User.Username ?? "No Username",
                         GroupStatus = p.Status
                     })
                     .ToList(),
@@ -107,10 +109,11 @@ namespace GameTogetherAPI.Services {
                     Description = group.Description,
                     MaxMembers = group.MaxMembers,
                     Tags = group.Tags,
+                    NonUserMembers = group.NonUserMembers,
                     Members = group.Members
                         .Select(p => new MemberDTO {
                             UserId = p.UserId,
-                            Name = p.User.Profile?.Name ?? "No Profile",
+                            Username = p.User.Username ?? "No Username",
                             GroupStatus = p.Status
                         })
                         .ToList(),
