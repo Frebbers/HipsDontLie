@@ -1,9 +1,11 @@
+version: '3.8'
+
 services:
   mysql:
     image: mysql:latest
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-rekt123}
-      MYSQL_DATABASE: ${DB_NAME:-gametogether}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
     ports:
       - "3306:3306"
     healthcheck:
@@ -13,7 +15,10 @@ services:
       retries: 2
 
   api:
-    build: .
+    build: 
+      context: .
+      args:
+        - ENVIRONMENT=${ENVIRONMENT:-Development}
     ports:
       - "5000:8080"
       - "7191:7191"
@@ -22,13 +27,10 @@ services:
         condition: service_healthy
       migrate:
         condition: service_completed_successfully
-
     environment:
-      ConnectionStrings__DefaultConnection: Server=${DB_SERVER:-mysql};Database=${DB_NAME:-gametogether};User=${DB_USER:-root};Password=${DB_PASSWORD:-rekt123};PORT=${DB_PORT:-3306};
-      JwtSettings__SecretKey: ${SECRET_KEY:-C6821CD46246E81E9B481CD9D4D9A123C6821CD46246E81E9B481CD9D4D9A123} # Change this in production
-      JwtSettings__Issuer: "GameTogether"
-      JwtSettings__Audience: "GameTogetherApp"
-      
+      - ASPNETCORE_ENVIRONMENT=${ENVIRONMENT:-Development}
+      - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
+      - JwtSettings__SecretKey=${JWT_SECRET}
     healthcheck: 
       test: ["CMD", "curl", "-f", "http://localhost:8080/healthz"]
       interval: 10s
@@ -39,14 +41,15 @@ services:
     build:
       context: .
       target: build
+      args:
+        - ENVIRONMENT=${ENVIRONMENT:-Development}
     depends_on:
       mysql:
         condition: service_healthy
     environment:
-      ConnectionStrings__DefaultConnection: Server=${DB_SERVER:-mysql};Database=${DB_NAME:-gametogether};User=${DB_USER:-root};Password=${DB_PASSWORD:-rekt123};PORT=${DB_PORT:-3306};
-      JwtSettings__SecretKey: ${SECRET_KEY:-C6821CD46246E81E9B481CD9D4D9A123C6821CD46246E81E9B481CD9D4D9A123} # Change this in production
-      JwtSettings__Issuer: "GameTogether"
-      JwtSettings__Audience: "GameTogetherApp"
+      - ASPNETCORE_ENVIRONMENT=${ENVIRONMENT:-Development}
+      - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
+      - JwtSettings__SecretKey=${JWT_SECRET}
     working_dir: /src
     command: >
       sh -c "dotnet ef database update --project GameTogetherAPI/GameTogetherAPI.csproj --startup-project GameTogetherAPI/GameTogetherAPI.csproj"
@@ -55,6 +58,8 @@ services:
     build:
       context: .
       target: build
+      args:
+        - ENVIRONMENT=${ENVIRONMENT:-Development}
     depends_on:
       mysql:
         condition: service_healthy 
@@ -63,8 +68,7 @@ services:
       api:
         condition: service_healthy
     environment:
-      ConnectionStrings__DefaultConnection: Server=${DB_SERVER:-mysql};Database=${DB_NAME:-gametogether};User=${DB_USER:-root};Password=${DB_PASSWORD:-rekt123};PORT=${DB_PORT:-3306};
-      JwtSettings__SecretKey: ${SECRET_KEY:-C6821CD46246E81E9B481CD9D4D9A123C6821CD46246E81E9B481CD9D4D9A123} # Change this in production
-      JwtSettings__Issuer: "GameTogether"
-      JwtSettings__Audience: "GameTogetherApp"
+      - ASPNETCORE_ENVIRONMENT=${ENVIRONMENT:-Development}
+      - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
+      - JwtSettings__SecretKey=${JWT_SECRET}
     command: dotnet test GameTogetherAPI.Test/GameTogetherAPI.Test.csproj --property:WarningLevel=0

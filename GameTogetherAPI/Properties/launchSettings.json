@@ -1,4 +1,4 @@
-﻿{
+﻿{ //Launchsettings for launching the API through visual studio
   "$schema": "http://json.schemastore.org/launchsettings.json",
   "iisSettings": {
     "windowsAuthentication": false,
