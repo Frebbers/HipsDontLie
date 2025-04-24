@@ -1,5 +1,10 @@
+# Default environment file (.env) is loaded automatically
+# For development: docker-compose up --build
+# For production: Create a .env.prod file with real secrets (don't commit this file)
+#Then run: docker-compose --env-file .env.prod up --build
+
 x-common-env: &common-env
-  ASPNETCORE_ENVIRONMENT: ${ENVIRONMENT:-Development}
+  ASPNETCORE_ENVIRONMENT: ${ENVIRONMENT}
   ConnectionStrings__DefaultConnection: ${CONNECTION_STRING}
   JwtSettings__SecretKey: ${JWT_SECRET}
   JwtSettings__Issuer: "GameTogether"
@@ -9,6 +14,7 @@ x-common-env: &common-env
   EmailSettings__Port: ${SMTP_PORT}
   EmailSettings__SenderEmail: ${SENDER_EMAIL}
   EmailSettings__SenderPassword: ${SENDER_PASSWORD}
+  FrontendBaseUrl: ${FRONTEND_BASE_URL}
 
 services:
   mysql:
@@ -24,10 +30,10 @@ services:
       retries: 2
 
   api:
-    build: 
+    build:
       context: .
       args:
-        - ENVIRONMENT=${ENVIRONMENT:-Development}
+        - ENVIRONMENT=${ENVIRONMENT}
     ports: ["5000:8080", "7191:7191"]
     depends_on:
       mysql:
@@ -35,7 +41,7 @@ services:
       migrate:
         condition: service_completed_successfully
     environment: *common-env
-    healthcheck: 
+    healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/healthz"]
       interval: 10s
       timeout: 5s
@@ -44,6 +50,8 @@ services:
   migrate:
     build:
       context: .
+      args:
+        - ENVIRONMENT=${ENVIRONMENT}
       target: build
     depends_on:
       mysql:
@@ -59,7 +67,7 @@ services:
       target: build
     depends_on:
       mysql:
-        condition: service_healthy 
+        condition: service_healthy
       migrate:
         condition: service_completed_successfully
       api:
