@@ -1,5 +1,3 @@
-version: '3.8'
-
 x-common-env: &common-env
   ASPNETCORE_ENVIRONMENT: ${ENVIRONMENT:-Development}
   ConnectionStrings__DefaultConnection: ${CONNECTION_STRING}
