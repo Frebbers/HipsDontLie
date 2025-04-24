@@ -14,8 +14,8 @@ services:
   mysql:
     image: mysql:latest
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-rekt123}
+      MYSQL_DATABASE: ${DB_NAME:-gametogether}
     ports: ["3306:3306"]
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
