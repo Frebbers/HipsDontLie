@@ -17,3 +17,4 @@ GameTogetherAPI.Test/obj/*
 /GameTogetherAPI/appsettings.Development.json
 
 .DS_Store
+.env*

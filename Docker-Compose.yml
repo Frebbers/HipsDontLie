@@ -1,7 +1,10 @@
-version: '3.8'
+# Default environment file (.env) is loaded automatically
+# For development: docker-compose up --build
+# For production: Create a .env.prod file with real secrets (don't commit this file)
+#Then run: docker-compose --env-file .env.prod up --build
 
 x-common-env: &common-env
-  ASPNETCORE_ENVIRONMENT: ${ENVIRONMENT:-Development}
+  ASPNETCORE_ENVIRONMENT: ${ENVIRONMENT}
   ConnectionStrings__DefaultConnection: ${CONNECTION_STRING}
   JwtSettings__SecretKey: ${JWT_SECRET}
   JwtSettings__Issuer: "GameTogether"
@@ -14,13 +17,14 @@ x-common-env: &common-env
   ASPNETCORE_URLS: ${ASPNETCORE_URLS}
   ASPNETCORE_Kestrel__Certificates__Default__Path: ${ASPNETCORE_Kestrel__Certificates__Default__Path}
   ASPNETCORE_Kestrel__Certificates__Default__Password: ${ASPNETCORE_Kestrel__Certificates__Default__Password}
+  FrontendBaseUrl: ${FRONTEND_BASE_URL}
 
 services:
   mysql:
     image: mysql:latest
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-rekt123}
+      MYSQL_DATABASE: ${DB_NAME:-gametogether}
     ports: ["3306:3306"]
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
@@ -29,10 +33,10 @@ services:
       retries: 2
 
   api:
-    build: 
+    build:
       context: .
       args:
-        - ENVIRONMENT=${ENVIRONMENT:-Development}
+        - ENVIRONMENT=${ENVIRONMENT}
     ports: ["5000:8080", "7191:7191"]
     depends_on:
       mysql:
@@ -42,7 +46,7 @@ services:
     environment: *common-env
     volumes:
       - ./certs:/https:ro
-    healthcheck: 
+    healthcheck:
       test: ["CMD", "curl", "-f", "https://localhost:7191/healthz"]
       interval: 10s
       timeout: 5s
@@ -51,6 +55,8 @@ services:
   migrate:
     build:
       context: .
+      args:
+        - ENVIRONMENT=${ENVIRONMENT}
       target: build
     depends_on:
       mysql:
@@ -68,7 +74,7 @@ services:
       target: build
     depends_on:
       mysql:
-        condition: service_healthy 
+        condition: service_healthy
       migrate:
         condition: service_completed_successfully
       api:
