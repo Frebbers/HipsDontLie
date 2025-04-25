@@ -15,8 +15,8 @@ x-common-env: &common-env
   EmailSettings__SenderEmail: ${SENDER_EMAIL}
   EmailSettings__SenderPassword: ${SENDER_PASSWORD}
   ASPNETCORE_URLS: ${ASPNETCORE_URLS}
-  ASPNETCORE_Kestrel__Certificates__Default__Path: ${ASPNETCORE_Kestrel__Certificates__Default__Path}
-  ASPNETCORE_Kestrel__Certificates__Default__Password: ${ASPNETCORE_Kestrel__Certificates__Default__Password}
+  ASPNETCORE_Kestrel__Certificates__Default__Path: "/https/aspnet-dev.pfx"
+  ASPNETCORE_Kestrel__Certificates__Default__Password: ${DB_PASSWORD:-rekt123}
   FrontendBaseUrl: ${FRONTEND_BASE_URL}
 
 services:
@@ -31,6 +31,23 @@ services:
       interval: 5s
       timeout: 10s
       retries: 2
+      
+  cert-generator:
+    build:
+      context: .
+      target: build
+    environment:
+      - DB_PASSWORD=${DB_PASSWORD:-rekt123}
+    working_dir: /src
+    command: >
+      sh -c "mkdir -p /certs &&
+      dotnet dev-certs https --clean &&
+      dotnet dev-certs https --trust &&
+      dotnet dev-certs https -ep /certs/aspnet-dev.pfx -p ${DB_PASSWORD:-rekt123} &&
+      chmod 644 /certs/aspnet-dev.pfx &&
+      echo 'Certificate generated successfully' > /certs/cert-complete"
+    volumes:
+      - certs-volume:/certs
 
   api:
     build:
@@ -41,11 +58,13 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+      cert-generator:
+        condition: service_completed_successfully
       migrate:
         condition: service_completed_successfully
     environment: *common-env
     volumes:
-      - ./certs:/https:ro
+      - certs-volume:/https:ro
     healthcheck:
       test: ["CMD", "curl", "-f", "https://localhost:7191/healthz"]
       interval: 10s
@@ -61,12 +80,14 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+      cert-generator:
+        condition: service_completed_successfully
     environment: *common-env
     working_dir: /src
     command: >
       sh -c "dotnet ef database update --project GameTogetherAPI/GameTogetherAPI.csproj --startup-project GameTogetherAPI/GameTogetherAPI.csproj"
     volumes:
-      - ./certs:/https:ro
+      - certs-volume:/https:ro
 
   test:
     build:
@@ -82,4 +103,7 @@ services:
     environment: *common-env
     command: dotnet test GameTogetherAPI.Test/GameTogetherAPI.Test.csproj --property:WarningLevel=0
     volumes:
-      - ./certs:/https:ro
+      - certs-volume:/https:ro
+
+volumes:
+  certs-volume:
