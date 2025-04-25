@@ -4,6 +4,9 @@
 GameTogetherAPI.Test/obj/*
 /GameTogetherAPI.Test/bin/*
 
+/certs
+.env
+
 /.vs
 /.vscode
 /.idea
