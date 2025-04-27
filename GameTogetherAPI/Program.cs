@@ -95,9 +95,15 @@ namespace GameTogetherAPI {
             {
                 options.AddPolicy("AllowFrontend", policy =>
                 {
-                    policy.WithOrigins(Environment.GetEnvironmentVariable("FRONTEND_BASE_URL") ?? "http://localhost:5173")
-                          .AllowAnyHeader()
-                          .AllowAnyMethod();
+                    if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development") {
+                        policy.AllowAnyOrigin()
+                                .AllowAnyHeader()
+                                .AllowAnyMethod();
+                    } else {
+                        policy.WithOrigins(Environment.GetEnvironmentVariable("FRONTEND_BASE_URL"))
+                              .AllowAnyHeader()
+                              .AllowAnyMethod();
+                    }
                 });
             });
 
