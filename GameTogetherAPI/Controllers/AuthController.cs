@@ -47,8 +47,17 @@ namespace GameTogetherAPI.Controllers {
                 bool emailSent = await _authService.SendEmailVerificationAsync(model.Email);
 
 
-                if (!emailSent)
+                if (!emailSent) //email sending fails
                 {
+                    try //Clean up the user to make registration transactional
+                    {
+                        
+                        _authService.DeleteUserAsync(0, model.Email);
+                    }
+                    catch (Exception ex) {
+                        Console.WriteLine($"Error parsing user ID: {ex.Message}");
+                        // We should consider handling cases where this parsing fails. Could the user still exist?
+                    }
                     return StatusCode(StatusCodes.Status500InternalServerError, "Could not send verification email.");
                 }
             }

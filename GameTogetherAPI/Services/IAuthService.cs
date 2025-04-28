@@ -42,6 +42,6 @@ namespace GameTogetherAPI.Services
         /// </summary>
         /// <param name="userId">The unique identifier of the user to be deleted.</param>
         /// <returns>A task representing the asynchronous operation, returning true if the user is successfully deleted.</returns>
-        Task<bool> DeleteUserAsync(int userId);
+        Task<bool> DeleteUserAsync(int userId, string? email = null);
     }
 }

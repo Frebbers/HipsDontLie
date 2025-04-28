@@ -86,11 +86,20 @@ namespace GameTogetherAPI.Services
         /// Deletes a user from the system.
         /// </summary>
         /// <param name="userId">The unique identifier of the user to be deleted.</param>
+        /// <param name="email">The email of the user to be deleted. Used only if we do not know their userID</param>
         /// <returns>A task representing the asynchronous operation, returning true if the user is successfully deleted.</returns>
-        public async Task<bool> DeleteUserAsync(int userId)
+        public async Task<bool> DeleteUserAsync(int userId, string? email = null)
         {
-            await _userRepository.DeleteUserAsync(userId);
-            return true;
+            if (userId == 0 && email != null)
+            {
+                var user = await _userRepository.GetUserByEmailAsync(email);
+                if (user == null)
+                {
+                    return false;
+                }
+                userId = user.Id;
+            }
+            return await _userRepository.DeleteUserAsync(userId);
         }
 
         /// <summary>
