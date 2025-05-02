@@ -12,13 +12,15 @@ namespace GameTogetherAPI.Controllers {
     /// </summary>
     public class AuthController : ControllerBase {
         private readonly IAuthService _authService;
+        private readonly IConfiguration _configuration;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthController"/> class.
         /// </summary>
         /// <param name="authService">The authentication service used to handle user authentication and management.</param>
-        public AuthController(IAuthService authService) {
+        public AuthController(IAuthService authService, IConfiguration configuration) {
             _authService = authService;
+            _configuration = configuration;
         }
 
         /// <summary>
@@ -64,21 +66,24 @@ namespace GameTogetherAPI.Controllers {
 
             return Ok("User registered successfully!");
         }
-        
-            
 
         /// <summary>
-        /// Confirms the user's email using the verification token.
+        /// Verifies the user's email by validating the provided token.
+        /// Redirects the user to the frontend with a success or failure status.
         /// </summary>
-        /// <param name="token">JWT verification token</param>
-        /// <returns>200 OK if successful, 400 Bad Request otherwise</returns>
+        /// <param name="token">The email verification JWT token.</param>
+        /// <returns>Redirects to the frontend URL with a verification status in the query string.</returns>
         [HttpGet("verify-email")]
         public async Task<IActionResult> VerifyEmail([FromQuery] string token) {
             bool success = await _authService.ConfirmEmailAsync(token);
-            if (!success)
-                return BadRequest("Invalid or expired verification token.");
 
-            return Ok("Email verified successfully.");
+            var redirectUrl = _configuration["FRONTEND_BASE_URL"];
+
+            if (!success) {
+                return Redirect($"{redirectUrl}/?verification=failed");
+            }
+
+            return Redirect($"{redirectUrl}/?verification=success");
         }
 
         /// <summary>
