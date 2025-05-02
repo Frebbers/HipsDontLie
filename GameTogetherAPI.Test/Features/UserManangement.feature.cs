@@ -28,8 +28,8 @@ namespace GameTogetherAPI.Test.Features
         
         private static string[] featureTags = ((string[])(null));
         
-        private static global::Reqnroll.FeatureInfo featureInfo = new global::Reqnroll.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Features", "UserManagement", "This feature file describes the process of logging in and managing one\'s user acc" +
-                "ount.", global::Reqnroll.ProgrammingLanguage.CSharp, featureTags);
+        private static global::Reqnroll.FeatureInfo featureInfo = new global::Reqnroll.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Features", "UserManagement", ("This feature file describes the process of logging in and managing one\'s user acc" +
+                "ount."), global::Reqnroll.ProgrammingLanguage.CSharp, featureTags);
         
 #line 1 "UserManangement.feature"
 #line hidden
