@@ -4,9 +4,9 @@
     /// </summary>
     public class UpdateProfileRequestDTO {
         /// <summary>
-        /// Gets or sets the age of the user.
+        /// Gets or sets the birth date of the user.
         /// </summary>
-        public int Age { get; set; }
+        public DateTime BirthDate { get; set; }
 
         /// <summary>
         /// Gets or sets the URL or base64 string of the user's profile picture.
