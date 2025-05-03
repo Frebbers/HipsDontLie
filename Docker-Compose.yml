@@ -32,22 +32,22 @@ services:
       timeout: 10s
       retries: 2
       
-  cert-generator:
-    build:
-      context: .
-      target: build
-    environment:
-      - DB_PASSWORD=${DB_PASSWORD:-rekt123}
-    working_dir: /src
-    command: >
-      sh -c "mkdir -p /certs &&
-      dotnet dev-certs https --clean &&
-      dotnet dev-certs https --trust &&
-      dotnet dev-certs https -ep /certs/aspnet-dev.pfx -p ${DB_PASSWORD:-rekt123} &&
-      chmod 644 /certs/aspnet-dev.pfx &&
-      echo 'Certificate generated successfully' > /certs/cert-complete"
-    volumes:
-      - certs-volume:/certs
+#  cert-generator:
+#    build:
+#      context: .
+#      target: build
+#    environment:
+#      - DB_PASSWORD=${DB_PASSWORD:-rekt123}
+#    working_dir: /src
+#    command: >
+#      sh -c "mkdir -p /certs &&
+#      dotnet dev-certs https --clean &&
+#      dotnet dev-certs https --trust &&
+#      dotnet dev-certs https -ep /certs/aspnet-dev.pfx -p ${DB_PASSWORD:-rekt123} &&
+#      chmod 644 /certs/aspnet-dev.pfx &&
+#      echo 'Certificate generated successfully' > /certs/cert-complete"
+#    volumes:
+#      - certs-volume:/certs
 
   api:
     build:
