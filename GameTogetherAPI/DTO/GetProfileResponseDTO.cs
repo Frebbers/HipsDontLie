@@ -11,7 +11,11 @@
         /// <summary>
         /// Gets or sets the age of the user.
         /// </summary>
+<<<<<<< HEAD
         public int? Age { get; set; }
+=======
+        public DateTime BirthDate { get; set; }
+>>>>>>> test
 
         /// <summary>
         /// Gets or sets the URL or base64 string of the user's profile picture.
