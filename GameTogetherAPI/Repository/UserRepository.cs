@@ -119,9 +119,10 @@ namespace GameTogetherAPI.Repository
         /// </summary>
         /// <param name="userId">The unique identifier of the user.</param>
         /// <returns>A task representing the asynchronous operation, returning the profile if found, otherwise null.</returns>
-        public async Task<Profile> GetProfileAsync(int userId)
-        {
-            return await _context.Profiles.Include(u => u.User).FirstAsync();
+        public async Task<Profile> GetProfileAsync(int userId) {
+            return await _context.Profiles
+                .Include(p => p.User)
+                .FirstOrDefaultAsync(p => p.Id == userId);
         }
     }
 }
