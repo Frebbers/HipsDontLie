@@ -62,6 +62,31 @@ namespace GameTogetherAPI.Controllers {
         }
 
         /// <summary>
+        /// Retrieves all groups that the specified user is participating in.
+        /// </summary>
+        /// <param name="userId">The ID of the user.</param>
+        /// <returns>
+        /// A 200 OK response with the list of groups.  
+        /// A 404 Not Found response if no public groups are found.
+        /// </returns>
+        [AllowAnonymous]
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetGroupsByUserIdAsync(int userId) {
+            var groups = await _groupService.GetGroupsByUserIdAsync(userId);
+
+            if (groups == null || !groups.Any())
+                return NotFound(new { message = "No groups found for this user." });
+
+            var visibleGroups = groups.Where(g => g.IsVisible).ToList();
+
+            if (!visibleGroups.Any())
+                return NotFound(new { message = "No public groups found for this user." });
+
+            return Ok(visibleGroups);
+        }
+
+
+        /// <summary>
         /// Retrieves a group by its unique identifier.
         /// </summary>
         /// <param name="groupId">The unique identifier of the group.</param>

@@ -127,6 +127,46 @@ namespace GameTogetherAPI.Services {
         }
 
         /// <summary>
+        /// Retrieves all groups the user is participating in.
+        /// </summary>
+        public async Task<List<GetGroupResponseDTO>> GetGroupsByUserIdAsync(int userId) {
+            var groups = await _groupRepository.GetGroupsByUserIdAsync(userId);
+
+            if (groups == null)
+                return null;
+
+            var results = new List<GetGroupResponseDTO>();
+
+            foreach (var group in groups) {
+                results.Add(new GetGroupResponseDTO {
+                    Id = group.Id,
+                    Title = group.Title,
+                    OwnerId = group.OwnerId,
+                    IsVisible = group.IsVisible,
+                    AgeRange = group.AgeRange,
+                    Description = group.Description,
+                    MaxMembers = group.MaxMembers,
+                    Tags = group.Tags,
+                    NonUserMembers = group.NonUserMembers,
+                    Members = group.Members
+                        .Select(p => new MemberDTO {
+                            UserId = p.UserId,
+                            Username = p.User.Username ?? "No Username",
+                            GroupStatus = p.Status
+                        })
+                        .ToList(),
+                    Chat = group.Chat != null ? new ChatDTO {
+                        ChatId = group.Chat.ChatId,
+                        SessionId = group.Chat.GroupId
+                    } : null
+                });
+            }
+
+            return results;
+        }
+
+
+        /// <summary>
         /// Allows a user to join a specified group if they are not already a participant.
         /// </summary>
         public async Task<bool> JoinGroupAsync(int userId, int groupId) {

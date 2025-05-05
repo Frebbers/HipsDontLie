@@ -29,6 +29,14 @@ namespace GameTogetherAPI.Services {
         Task<List<GetGroupResponseDTO>> GetGroupsAsync(int? userId = null);
 
         /// <summary>
+        /// Retrieves all groups that a specific user is participating in.
+        /// </summary>
+        /// <param name="userId">The unique identifier of the user.</param>
+        /// <returns>A task representing the asynchronous operation, returning a list of groups the user is part of.</returns>
+        Task<List<GetGroupResponseDTO>> GetGroupsByUserIdAsync(int userId);
+
+
+        /// <summary>
         /// Allows a user to join a specified group.
         /// </summary>
         /// <param name="userId">The unique identifier of the user joining the group.</param>
