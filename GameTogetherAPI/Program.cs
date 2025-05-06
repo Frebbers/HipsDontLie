@@ -121,28 +121,22 @@ namespace GameTogetherAPI {
                     options.RoutePrefix = "";
                 });
             }
-            app.Use(async (context, next) =>
-            {
-                if (context.Request.Path == "/ws/chat")
-                {
-                    if (context.WebSockets.IsWebSocketRequest)
-                    {
+            app.UseWebSockets();
+
+            app.Use(async (context, next) => {
+                if (context.Request.Path == "/ws/chat") {
+                    if (context.WebSockets.IsWebSocketRequest) {
                         var handler = context.RequestServices.GetRequiredService<ChatWebSocketHandler>();
                         var socket = await context.WebSockets.AcceptWebSocketAsync();
                         await handler.HandleSocketAsync(context, socket);
-                    }
-                    else
-                    {
+                    } else {
                         context.Response.StatusCode = 400;
                     }
-                }
-                else
-                {
+                } else {
                     await next();
                 }
             });
 
-            app.UseWebSockets();
 
             // Enable CORS before authentication
             app.UseCors("AllowFrontend");

@@ -42,6 +42,7 @@ namespace GameTogetherAPI.WebSockets
             var principal = ValidateToken(token);
             if (principal == null)
             {
+                Console.WriteLine("WebSocket token validation failed.");
                 context.Response.StatusCode = 401;
                 return;
             }
