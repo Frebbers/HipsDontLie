@@ -1,97 +1,110 @@
 ﻿using GameTogetherAPI.DTO;
 using GameTogetherAPI.Models;
 using GameTogetherAPI.Repository;
+using GameTogetherAPI.WebSockets;
+using Microsoft.EntityFrameworkCore;
 
 namespace GameTogetherAPI.Services
 {
     public class ChatService : IChatService
     {
         private readonly IChatRepository _chatRepository;
-        public ChatService(IChatRepository chatRepository)
+        private readonly ChatWebSocketHandler _chatWebSocketHandler;
+        private readonly IUserService _userService;
+
+        public ChatService(
+            IChatRepository chatRepository,
+            ChatWebSocketHandler chatWebSocketHandler,
+            IUserService userService)
         {
             _chatRepository = chatRepository;
+            _chatWebSocketHandler = chatWebSocketHandler;
+            _userService = userService;
         }
 
         public async Task<List<GetMessagesInChatResponseDTO>> GetMessagesByChatIdAsync(int chatId, int userId)
         {
             var messages = await _chatRepository.GetMessagesByChatIdAsync(chatId, userId);
 
-
-            var result = messages.Select(message => new GetMessagesInChatResponseDTO
+            return messages.Select(m => new GetMessagesInChatResponseDTO
             {
-                MessageId = message.Id,
-                SenderName = message.Sender.Username,
-                SenderId = message.SenderId ?? 0,
-                Content = message.Content,
-                TimeStamp = message.TimeStamp
+                MessageId = m.Id,
+                SenderName = m.Sender?.Username ?? "Unknown",
+                SenderId = m.SenderId ?? 0,
+                Content = m.Content,
+                TimeStamp = m.TimeStamp,
+                ChatId = m.ChatId
             }).ToList();
-
-            return result;
         }
 
         public async Task<List<GetUserInboxResponseDTO>> GetUserInboxAsync(int userId)
         {
             var inbox = await _chatRepository.GetUserInboxAsync(userId);
 
-            var result = new List<GetUserInboxResponseDTO>();
-
-            foreach (var chat in inbox)
+            return inbox.Select(chat => new GetUserInboxResponseDTO
             {
-                var participants = chat.UserChats
+                ChatId = chat.ChatId,
+                SessionId = chat.GroupId,
+                SessionTitle = chat.Group?.Title,
+                Participants = chat.UserChats
                     .Where(uc => uc.UserId != userId)
                     .Select(uc => new ChatParticipantDTO
                     {
                         UserId = uc.UserId,
-                        Name = uc.User?.Username ?? "No Username",//when testing some users do not have a profile
-                    })
-                    .ToList();
-
-                result.Add(new GetUserInboxResponseDTO()
-                {
-                    ChatId = chat.ChatId,
-                    SessionId = chat.GroupId,
-                    SessionTitle = chat.Group?.Title,
-                    Participants = participants
-                });
-            }
-
-            return result;
+                        Name = uc.User?.Username ?? "No Username"
+                    }).ToList()
+            }).ToList();
         }
 
         public async Task<bool> SendMessageToSessionAsync(int sessionId, int userId, SendMessageRequestDTO messageDto)
         {
             var chat = await _chatRepository.GetChatByGroupId(sessionId);
-            if (chat == null)
-                return false;
+            if (chat == null) return false;
 
-            var message = new Message()
+            var message = new Message
             {
                 ChatId = chat.ChatId,
                 SenderId = userId,
                 Content = messageDto.Content,
-                TimeStamp = DateTime.Now,
+                TimeStamp = DateTime.UtcNow
             };
 
             await _chatRepository.SendMessageToSessionAsync(message);
 
+            var user = await _userService.GetProfileByIdAsync(userId);
+            var senderName = user?.Username ?? "Unknown";
+
+            var dto = new GetMessagesInChatResponseDTO
+            {
+                MessageId = message.Id,
+                SenderId = userId,
+                SenderName = senderName,
+                Content = message.Content,
+                TimeStamp = message.TimeStamp,
+                ChatId = chat.ChatId
+            };
+
+            await _chatWebSocketHandler.BroadcastMessageAsync(dto, chat.ChatId);
             return true;
         }
 
         public async Task<bool> SendMessageToUserAsync(int senderId, int receiverId, SendMessageRequestDTO messageDto)
         {
             var chat = await _chatRepository.GetPrivateChatBetweenUsersAsync(senderId, receiverId);
+
             if (chat == null)
             {
-                chat = new Chat()
+                chat = new Chat
                 {
-                    UserChats = new List<UserChat>{
+                    UserChats = new List<UserChat>
+                    {
                         new UserChat { UserId = senderId },
                         new UserChat { UserId = receiverId }
                     }
                 };
-                var createdChat = await _chatRepository.CreatePrivateChatAsync(chat);
-                if (!createdChat)
-                    return false;
+
+                var created = await _chatRepository.CreatePrivateChatAsync(chat);
+                if (!created) return false;
             }
 
             var message = new Message
@@ -103,8 +116,22 @@ namespace GameTogetherAPI.Services
             };
 
             await _chatRepository.SendMessageToUserAsync(message);
-            return true;
 
+            var user = await _userService.GetProfileByIdAsync(senderId);
+            var senderName = user?.Username ?? "Unknown";
+
+            var dto = new GetMessagesInChatResponseDTO
+            {
+                MessageId = message.Id,
+                SenderId = senderId,
+                SenderName = senderName,
+                Content = message.Content,
+                TimeStamp = message.TimeStamp,
+                ChatId = chat.ChatId
+            };
+
+            await _chatWebSocketHandler.BroadcastMessageAsync(dto, chat.ChatId);
+            return true;
         }
     }
 }

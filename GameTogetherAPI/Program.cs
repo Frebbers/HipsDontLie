@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using System.Text;
+using GameTogetherAPI.WebSockets;
 
 namespace GameTogetherAPI {
     public class Program {
@@ -51,6 +52,8 @@ namespace GameTogetherAPI {
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IGroupRepository, GroupRepository>();
             builder.Services.AddScoped<IChatRepository, ChatRepository>();
+            builder.Services.AddSingleton<WebSocketConnectionManager>();
+            builder.Services.AddSingleton<ChatWebSocketHandler>();
 
             // Health Check setup
             builder.Services.AddHealthChecks()
@@ -118,6 +121,28 @@ namespace GameTogetherAPI {
                     options.RoutePrefix = "";
                 });
             }
+            app.Use(async (context, next) =>
+            {
+                if (context.Request.Path == "/ws/chat")
+                {
+                    if (context.WebSockets.IsWebSocketRequest)
+                    {
+                        var handler = context.RequestServices.GetRequiredService<ChatWebSocketHandler>();
+                        var socket = await context.WebSockets.AcceptWebSocketAsync();
+                        await handler.HandleSocketAsync(context, socket);
+                    }
+                    else
+                    {
+                        context.Response.StatusCode = 400;
+                    }
+                }
+                else
+                {
+                    await next();
+                }
+            });
+
+            app.UseWebSockets();
 
             // Enable CORS before authentication
             app.UseCors("AllowFrontend");
