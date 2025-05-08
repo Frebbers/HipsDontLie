@@ -1,6 +1,6 @@
 ﻿using GameTogetherAPI.Database;
 using GameTogetherAPI.DTO;
-using GameTogetherAPI.WebSockets;
+using GameTogetherAPI.WebSockets.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -54,7 +54,6 @@ namespace GameTogetherAPI.WebSockets
                 return;
             }
 
-            // Check user has access to this chat
             var dbContext = context.RequestServices.GetRequiredService<ApplicationDbContext>();
             var isInChat = await dbContext.UserChats.AnyAsync(uc => uc.UserId == userId && uc.ChatId == chatId);
             if (!isInChat)
@@ -73,13 +72,44 @@ namespace GameTogetherAPI.WebSockets
             {
                 while (socket.State == WebSocketState.Open)
                 {
-                    var result = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+                    using var cts = new CancellationTokenSource(TimeSpan.FromMinutes(5));
+                    var result = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), cts.Token);
 
                     if (result.MessageType == WebSocketMessageType.Close)
                         break;
 
-                    // Optional: handle any incoming client messages here
+                    var json = Encoding.UTF8.GetString(buffer, 0, result.Count);
+
+                    try
+                    {
+                        var doc = JsonDocument.Parse(json);
+                        if (!doc.RootElement.TryGetProperty("type", out var typeProp))
+                            continue;
+
+                        var type = typeProp.GetString();
+                        if (string.IsNullOrWhiteSpace(type))
+                            continue;
+
+                        IWebSocketMessage? parsed = type switch
+                        {
+                            "typing" => JsonSerializer.Deserialize<TypingMessage>(json),
+                            _ => null
+                        };
+
+                        if (parsed is TypingMessage)
+                        {
+                            await BroadcastTypingAsync(userId, chatId);
+                        }
+                    }
+                    catch (JsonException ex)
+                    {
+                        Console.WriteLine($"Failed to parse WebSocket message: {ex.Message}");
+                    }
                 }
+            }
+            catch (OperationCanceledException)
+            {
+                Console.WriteLine("WebSocket timed out");
             }
             finally
             {
@@ -91,17 +121,49 @@ namespace GameTogetherAPI.WebSockets
 
         public async Task BroadcastMessageAsync(GetMessagesInChatResponseDTO dto, int chatId)
         {
-            var json = JsonSerializer.Serialize(dto);
+            var messagePayload = new ChatMessage
+            {
+                MessageId = dto.MessageId,
+                SenderId = dto.SenderId,
+                SenderName = dto.SenderName,
+                Content = dto.Content,
+                TimeStamp = dto.TimeStamp,
+                ChatId = dto.ChatId
+            };
+
+            await BroadcastToChatAsync(chatId, messagePayload);
+        }
+
+        private async Task BroadcastTypingAsync(int userId, int chatId)
+        {
+            var senderConnId = _userSocketMap.TryGetValue(userId.ToString(), out var connId) ? connId : null;
+
+            var typingPayload = new TypingMessage
+            {
+                ChatId = chatId,
+                UserId = userId
+            };
+
+            await BroadcastToChatAsync(chatId, typingPayload, excludeConnectionId: senderConnId);
+        }
+
+        private async Task BroadcastToChatAsync(int chatId, object payload, string? excludeConnectionId = null)
+        {
+            var json = JsonSerializer.Serialize(payload, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
             var buffer = Encoding.UTF8.GetBytes(json);
 
-            var openSocketsInSameChat = _manager.GetAll()
+            var recipients = _manager.GetAll()
                 .Where(pair =>
                     pair.Value.State == WebSocketState.Open &&
                     _connectionChatMap.TryGetValue(pair.Key, out var mappedChatId) &&
-                    mappedChatId == chatId
+                    mappedChatId == chatId &&
+                    (excludeConnectionId == null || pair.Key != excludeConnectionId)
                 );
 
-            var tasks = openSocketsInSameChat.Select(pair =>
+            var tasks = recipients.Select(pair =>
                 pair.Value.SendAsync(
                     new ArraySegment<byte>(buffer),
                     WebSocketMessageType.Text,
