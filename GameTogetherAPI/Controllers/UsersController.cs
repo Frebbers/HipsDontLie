@@ -3,6 +3,7 @@ using GameTogetherAPI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using GameTogetherAPI.Models;
 
 namespace GameTogetherAPI.Controllers
 {
@@ -85,11 +86,11 @@ namespace GameTogetherAPI.Controllers
             {
                 var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
-                bool success = await _userService.AddOrUpdateProfileAsync(userId, profile);
+                UpdateProfileStatus status = await _userService.AddOrUpdateProfileAsync(userId, profile);
 
-                if (!success)
-                    return BadRequest(new { message = "Profile creation failed due to a bad request" });
-
+                if (status != UpdateProfileStatus.Success) {
+                    return BadRequest(new { message = "Profile creation failed. Detected cause: " + status });
+                }
                 return Ok(new { message = "Profile updated successfully!" });
             }
             catch (Exception ex)

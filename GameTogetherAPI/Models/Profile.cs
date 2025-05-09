@@ -38,5 +38,16 @@ namespace GameTogetherAPI.Models {
         /// Gets or sets the user associated with this profile.
         /// </summary>
         public User User { get; set; }
+        
+
+    }
+    public enum UpdateProfileStatus
+    {
+        Success,
+        InvalidBirthDate,
+        InvalidProfilePicture,
+        InvalidDescription,
+        InvalidRegion,
+        UnknownFailure
     }
 }

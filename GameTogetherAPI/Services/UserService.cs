@@ -1,4 +1,6 @@
-﻿using GameTogetherAPI.DTO;
+﻿using System.Text.RegularExpressions;
+using FluentAssertions.Common;
+using GameTogetherAPI.DTO;
 using GameTogetherAPI.Models;
 using GameTogetherAPI.Repository;
 
@@ -26,7 +28,7 @@ namespace GameTogetherAPI.Services
         /// <param name="userId">The unique identifier of the user.</param>
         /// <param name="profileDto">The profile data to be added or updated.</param>
         /// <returns>A task representing the asynchronous operation, returning true if the operation is successful.</returns>
-        public async Task<bool> AddOrUpdateProfileAsync(int userId, UpdateProfileRequestDTO profileDto)
+        public async Task<UpdateProfileStatus> AddOrUpdateProfileAsync(int userId, UpdateProfileRequestDTO profileDto)
         {
             var profile = new Profile
             {
@@ -37,13 +39,12 @@ namespace GameTogetherAPI.Services
                 Region = profileDto.Region,
             };
 
-            bool isSuccess = await _userRepository.AddOrUpdateProfileAsync(profile);
-
-            if (!isSuccess)
-            {
-                return false;
-            }
-            return true;
+            bool isSuccess = false;
+            if (!IsValidBirthDate(profile.BirthDate)) return UpdateProfileStatus.InvalidBirthDate;
+            if (!isValidDescription(profile.Description)) return UpdateProfileStatus.InvalidDescription;
+            isSuccess = await _userRepository.AddOrUpdateProfileAsync(profile);
+            if (isSuccess) return UpdateProfileStatus.Success;
+            return UpdateProfileStatus.UnknownFailure;
         }
 
         /// <summary>
@@ -80,6 +81,21 @@ namespace GameTogetherAPI.Services
                 Region = profile.Region,
                 ProfilePicture = profile.ProfilePicture
             };
+        }
+        private bool IsValidBirthDate(DateTime birthDate)
+        {
+            var currentDate = DateTime.UtcNow;
+            return birthDate < currentDate && birthDate > currentDate.AddYears(-130);
+        }
+        private bool isValidDescription(string description)
+        {
+            if (string.IsNullOrEmpty(description)) return true; // Allow empty descriptions
+            bool isLengthValid = (description.Length <= 500);
+            //bool isValidCharacters = Regex.IsMatch(description, @"^[a-zA-Z0-9\s.,!?]+$");
+            bool containsLinks = Regex.IsMatch(description, @"\b(https?://|www\.)\S+\b");
+            return isLengthValid 
+                   //&& isValidCharacters 
+                   && !containsLinks;
         }
     }
 }

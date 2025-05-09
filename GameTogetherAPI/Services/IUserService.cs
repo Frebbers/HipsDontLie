@@ -21,7 +21,7 @@ namespace GameTogetherAPI.Services
         /// <param name="userId">The unique identifier of the user.</param>
         /// <param name="profileDto">The profile data to be added or updated.</param>
         /// <returns>A task representing the asynchronous operation, returning true if the operation is successful.</returns>
-        Task<bool> AddOrUpdateProfileAsync(int userId, UpdateProfileRequestDTO profileDto);
+        Task<UpdateProfileStatus> AddOrUpdateProfileAsync(int userId, UpdateProfileRequestDTO profileDto);
 
         /// <summary>
         /// Retrieves the profile information of a specified user.
