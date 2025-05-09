@@ -41,7 +41,7 @@ namespace GameTogetherAPI.Services
 
             bool isSuccess = false;
             if (!IsValidBirthDate(profile.BirthDate)) return UpdateProfileStatus.InvalidBirthDate;
-            if (!isValidDescription(profile.Description)) return UpdateProfileStatus.InvalidDescription;
+            if (!IsValidDescription(profile.Description)) return UpdateProfileStatus.InvalidDescription;
             isSuccess = await _userRepository.AddOrUpdateProfileAsync(profile);
             if (isSuccess) return UpdateProfileStatus.Success;
             return UpdateProfileStatus.UnknownFailure;
@@ -85,9 +85,11 @@ namespace GameTogetherAPI.Services
         private bool IsValidBirthDate(DateTime birthDate)
         {
             var currentDate = DateTime.UtcNow;
-            return birthDate < currentDate && birthDate > currentDate.AddYears(-130);
+            int maxAge = 130;
+            int minAge = 13;
+            return birthDate < currentDate.AddYears(-minAge) && birthDate > currentDate.AddYears(-maxAge);
         }
-        private bool isValidDescription(string description)
+        private bool IsValidDescription(string? description)
         {
             if (string.IsNullOrEmpty(description)) return true; // Allow empty descriptions
             bool isLengthValid = (description.Length <= 500);
