@@ -69,13 +69,13 @@ namespace GameTogetherAPI.Repository
         public async Task<List<Chat>> GetUserInboxAsync(int userId)
         {
             return await _context.Chats
-                            .Where(c => c.UserChats.Any(uc => uc.UserId == userId))
-                            .Include(c => c.UserChats)
-                                .ThenInclude(uc => uc.User)
-                                    .ThenInclude(u => u.Profile)
-                            .Include(c => c.Group)
-                            .Include(c => c.Messages)
-                            .ToListAsync();
+                .Where(c => c.UserChats.Any(uc => uc.UserId == userId))
+                .Include(c => c.UserChats)
+                .ThenInclude(uc => uc.User)
+                .ThenInclude(u => u.Profile)
+                .Include(c => c.Group)
+                .Include(c => c.Messages)
+                .ToListAsync();
         }
 
         public async Task<List<Message>> GetMessagesByChatIdAsync(int chatId, int userId)
