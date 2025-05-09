@@ -15,6 +15,7 @@ namespace GameTogetherAPI.WebSockets
     {
         private readonly WebSocketConnectionManager _manager;
         private readonly IConfiguration _configuration;
+        private readonly IServiceProvider _serviceProvider;
 
         // userId -> connectionId
         private readonly Dictionary<string, string> _userSocketMap = new();
@@ -22,103 +23,97 @@ namespace GameTogetherAPI.WebSockets
         // connectionId -> chatId
         private readonly Dictionary<string, int> _connectionChatMap = new();
 
-        public ChatWebSocketHandler(WebSocketConnectionManager manager, IConfiguration configuration)
+        public ChatWebSocketHandler(WebSocketConnectionManager manager, IConfiguration configuration, IServiceProvider serviceProvider)
         {
             _manager = manager;
             _configuration = configuration;
+            _serviceProvider = serviceProvider;
+        }
+    public async Task HandleSocketAsync(HttpContext context, WebSocket socket)
+    {
+        var token = context.Request.Query["token"].ToString();
+        var principal = ValidateToken(token);
+
+        if (principal == null)
+        {
+            Console.WriteLine("WebSocket token validation failed.");
+            await socket.CloseAsync(WebSocketCloseStatus.PolicyViolation, "Invalid token", CancellationToken.None);
+            return;
         }
 
-        public async Task HandleSocketAsync(HttpContext context, WebSocket socket)
+        var userIdClaim = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
         {
-            var token = context.Request.Query["token"].ToString();
-            var chatIdStr = context.Request.Query["chatId"].ToString();
+            await socket.CloseAsync(WebSocketCloseStatus.PolicyViolation, "Missing user ID", CancellationToken.None);
+            return;
+        }
 
-            if (!int.TryParse(chatIdStr, out int chatId))
+        var connectionId = _manager.AddSocket(socket);
+        _userSocketMap[userIdClaim] = connectionId;
+
+        var buffer = new byte[1024 * 4];
+
+        try
+        {
+            while (socket.State == WebSocketState.Open)
             {
-                context.Response.StatusCode = 400;
-                return;
-            }
+                var result = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+                if (result.MessageType == WebSocketMessageType.Close)
+                    break;
 
-            var principal = ValidateToken(token);
-            if (principal == null)
-            {
-                Console.WriteLine("WebSocket token validation failed.");
-                context.Response.StatusCode = 401;
-                return;
-            }
-
-            var userIdClaim = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
-            {
-                context.Response.StatusCode = 403;
-                return;
-            }
-
-            var dbContext = context.RequestServices.GetRequiredService<ApplicationDbContext>();
-            var isInChat = await dbContext.UserChats.AnyAsync(uc => uc.UserId == userId && uc.ChatId == chatId);
-            if (!isInChat)
-            {
-                context.Response.StatusCode = 403;
-                return;
-            }
-
-            var connectionId = _manager.AddSocket(socket);
-            _userSocketMap[userIdClaim] = connectionId;
-            _connectionChatMap[connectionId] = chatId;
-
-            var buffer = new byte[1024 * 4];
-
-            try
-            {
-                while (socket.State == WebSocketState.Open)
+                var json = Encoding.UTF8.GetString(buffer, 0, result.Count);
+                try
                 {
-                    using var cts = new CancellationTokenSource(TimeSpan.FromMinutes(5));
-                    var result = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), cts.Token);
+                    var doc = JsonDocument.Parse(json);
+                    if (!doc.RootElement.TryGetProperty("type", out var typeProp))
+                        continue;
 
-                    if (result.MessageType == WebSocketMessageType.Close)
-                        break;
+                    var type = typeProp.GetString();
+                    if (string.IsNullOrWhiteSpace(type))
+                        continue;
 
-                    var json = Encoding.UTF8.GetString(buffer, 0, result.Count);
-
-                    try
+                    var options = new JsonSerializerOptions
                     {
-                        var doc = JsonDocument.Parse(json);
-                        if (!doc.RootElement.TryGetProperty("type", out var typeProp))
-                            continue;
+                        PropertyNameCaseInsensitive = true,
+                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                    };
+                    IWebSocketMessage? parsed = type switch
+                    {
+                        "typing" or "stopTyping" => JsonSerializer.Deserialize<TypingMessage>(json,options),
+                        "message" => JsonSerializer.Deserialize<ChatMessage>(json,options),
+                        // add other message types here
+                        _ => null
+                    };
 
-                        var type = typeProp.GetString();
-                        if (string.IsNullOrWhiteSpace(type))
-                            continue;
-
-                        IWebSocketMessage? parsed = type switch
+                    if (parsed is TypingMessage typingMsg)
+                    {
+                        if (type == "typing")
                         {
-                            "typing" => JsonSerializer.Deserialize<TypingMessage>(json),
-                            _ => null
-                        };
-
-                        if (parsed is TypingMessage)
+                            await BroadcastTypingAsync(userId, typingMsg.ChatId);
+                        }
+                        else if (type == "stopTyping")
                         {
-                            await BroadcastTypingAsync(userId, chatId);
+                            await BroadcastStopTypingAsync(userId, typingMsg.ChatId);
                         }
                     }
-                    catch (JsonException ex)
-                    {
-                        Console.WriteLine($"Failed to parse WebSocket message: {ex.Message}");
-                    }
+
+                    // Handle other types here
+
+                }
+                catch (JsonException ex)
+                {
+                    Console.WriteLine($"Failed to parse WebSocket message: {ex.Message}");
                 }
             }
-            catch (OperationCanceledException)
-            {
-                Console.WriteLine("WebSocket timed out");
-            }
-            finally
-            {
-                await _manager.RemoveSocket(connectionId);
-                _userSocketMap.Remove(userIdClaim);
-                _connectionChatMap.Remove(connectionId);
-            }
         }
+        finally
+        {
+            await _manager.RemoveSocket(connectionId);
+            _userSocketMap.Remove(userIdClaim);
+        }
+    }
 
+        //Broadcast for messages to a chat in a group
         public async Task BroadcastMessageAsync(GetMessagesInChatResponseDTO dto, int chatId)
         {
             var messagePayload = new ChatMessage
@@ -134,12 +129,31 @@ namespace GameTogetherAPI.WebSockets
             await BroadcastToChatAsync(chatId, messagePayload);
         }
 
+        //Broadcast for a user that is currently typing in a chat
         private async Task BroadcastTypingAsync(int userId, int chatId)
+        {
+            var senderConnId = _userSocketMap.TryGetValue(userId.ToString(), out var connId) ? connId : null;
+
+            var username = await GetUsername(userId);
+
+            var typingPayload = new TypingMessage
+            {
+                ChatId = chatId,
+                UserId = userId,
+                Username = username
+            };
+
+            await BroadcastToChatAsync(chatId, typingPayload, excludeConnectionId: senderConnId);
+        }
+
+         //Broadcast for a user that stopped typing in a chat
+        private async Task BroadcastStopTypingAsync(int userId, int chatId)
         {
             var senderConnId = _userSocketMap.TryGetValue(userId.ToString(), out var connId) ? connId : null;
 
             var typingPayload = new TypingMessage
             {
+                Type = "stopTyping",
                 ChatId = chatId,
                 UserId = userId
             };
@@ -147,21 +161,21 @@ namespace GameTogetherAPI.WebSockets
             await BroadcastToChatAsync(chatId, typingPayload, excludeConnectionId: senderConnId);
         }
 
+        //Handles the broadcasts and sends them along to the connections
         private async Task BroadcastToChatAsync(int chatId, object payload, string? excludeConnectionId = null)
         {
             var json = JsonSerializer.Serialize(payload, new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             });
+
             var buffer = Encoding.UTF8.GetBytes(json);
 
             var recipients = _manager.GetAll()
                 .Where(pair =>
                     pair.Value.State == WebSocketState.Open &&
-                    _connectionChatMap.TryGetValue(pair.Key, out var mappedChatId) &&
-                    mappedChatId == chatId &&
                     (excludeConnectionId == null || pair.Key != excludeConnectionId)
-                );
+            );
 
             var tasks = recipients.Select(pair =>
                 pair.Value.SendAsync(
@@ -172,6 +186,25 @@ namespace GameTogetherAPI.WebSockets
                 ));
 
             await Task.WhenAll(tasks);
+        }
+
+        private async Task<string?> GetUsername(int userId)
+        {
+            try
+            {
+                using var scope = _serviceProvider.CreateScope();
+                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+                return await dbContext.Users
+                    .Where(u => u.Id == userId)
+                    .Select(u => u.Username)
+                    .FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to get username: {ex.Message}");
+                return null;
+            }
         }
 
         private ClaimsPrincipal? ValidateToken(string token)
