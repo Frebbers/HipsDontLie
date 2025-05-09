@@ -92,7 +92,7 @@ namespace GameTogetherAPI.Services
         private bool IsValidDescription(string? description)
         {
             if (string.IsNullOrEmpty(description)) return true; // Allow empty descriptions
-            bool isLengthValid = (description.Length <= 500);
+            bool isLengthValid = (description.Length <= 5000);
             //bool isValidCharacters = Regex.IsMatch(description, @"^[a-zA-Z0-9\s.,!?]+$");
             bool containsLinks = Regex.IsMatch(description, @"\b(https?://|www\.)\S+\b");
             return isLengthValid 
