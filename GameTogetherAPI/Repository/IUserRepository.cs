@@ -48,5 +48,11 @@ namespace GameTogetherAPI.Repository {
         Task<bool> DeleteUserAsync(int userId);
 
         Task<User> GetUserByIdAsync(int userId);
+        /// <summary>
+        /// Retrieves a user's ID by their username.
+        /// </summary>
+        /// <param name="username">The username of the user.</param>
+        /// <returns>A task that represents the asynchronous operation, returning the user's ID if found, otherwise null.</returns>
+        Task<int?> GetUserIdByUsernameAsync(string username);
     }
 }

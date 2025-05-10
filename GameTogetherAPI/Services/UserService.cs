@@ -99,5 +99,14 @@ namespace GameTogetherAPI.Services
                    //&& isValidCharacters 
                    && !containsLinks;
         }
+        /// <summary>
+        /// Retrieves a user's ID based on their username.
+        /// </summary>
+        /// <param name="username">The username of the user.</param>
+        /// <returns>A task representing the asynchronous operation, returning the user's ID if found, otherwise null.</returns>
+        public async Task<int?> GetUserIdByUsernameAsync(string username)
+        {
+            return await _userRepository.GetUserIdByUsernameAsync(username);
+        }
     }
 }

@@ -98,6 +98,25 @@ namespace GameTogetherAPI.Controllers
                 return StatusCode(500, new { message = "An unexpected error occurred." });
             }
         }
+        
+        /// <summary>
+        /// Retrieves a user's ID by their username.
+        /// </summary>
+        /// <param name="username">The username of the user.</param>
+        /// <returns>
+        /// Returns a 200 OK response with the user's ID.
+        /// Returns a 404 Not Found response if the user does not exist.
+        /// </returns>
+        [HttpGet("profile/name/{username}")]
+        public async Task<IActionResult> GetUserIdByUsernameAsync(string username)
+        {
+            var userId = await _userService.GetUserIdByUsernameAsync(username);
+            
+            if (userId == null)
+                return NotFound(new { message = "User not found" });
+            
+            return Ok(new { userId });
+        }
 
     }
 }

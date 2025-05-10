@@ -29,5 +29,11 @@ namespace GameTogetherAPI.Services
         /// <param name="userId">The unique identifier of the user.</param>
         /// <returns>A task representing the asynchronous operation, returning the user's profile details.</returns>
         Task<GetProfileResponseDTO> GetProfileByIdAsync(int userId);
+        /// <summary>
+        /// Retrieves a user's ID based on their username.
+        /// </summary>
+        /// <param name="username">The username of the user.</param>
+        /// <returns>A task representing the asynchronous operation, returning the user's ID if found, otherwise null.</returns>
+        Task<int?> GetUserIdByUsernameAsync(string username);
     }
 }
