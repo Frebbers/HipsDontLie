@@ -143,7 +143,7 @@ JoinGroupStatus status = await _groupService.JoinGroupAsync(userId, groupId);
             case JoinGroupStatus.GroupNotFound:
                 return BadRequest(new { message = "Group does not exist." });
             case JoinGroupStatus.AlreadyMember:
-                return BadRequest(new { message = "You are already a participant of this group." });
+                return BadRequest(new { message = "You are already a member of this group." });
             case JoinGroupStatus.GroupFull:
                 return BadRequest(new { message = "Group is full." });
             default:
