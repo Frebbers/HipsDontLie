@@ -55,7 +55,7 @@ namespace GameTogetherAPI.Controllers
         /// Returns a 200 OK response with the user's profile.  
         /// Returns a 404 Not Found response if the user does not exist.
         /// </returns>
-        [HttpGet("{id}/profile")]
+        [HttpGet("/profile/{id}")]
         [Authorize]
         public async Task<IActionResult> GetProfileByIdAsync(int id)
         {
