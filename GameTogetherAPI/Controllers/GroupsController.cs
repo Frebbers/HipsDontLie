@@ -139,7 +139,7 @@ JoinGroupStatus status = await _groupService.JoinGroupAsync(userId, groupId);
         switch (status)
         {
             case JoinGroupStatus.Success:
-                return Ok(new { message = "Successfully joined the group!" });
+                return Ok(new { message = "Group joined successfully!" });
             case JoinGroupStatus.GroupNotFound:
                 return BadRequest(new { message = "Group does not exist." });
             case JoinGroupStatus.AlreadyMember:
