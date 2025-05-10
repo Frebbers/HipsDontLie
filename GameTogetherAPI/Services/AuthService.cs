@@ -15,10 +15,12 @@ namespace GameTogetherAPI.Services
     /// </summary>
     public class AuthService : IAuthService
     {
-        private readonly string[] testEmails = { "user@example.com", "user2@example.com" }; // Test emails
+
+
 
         private readonly IUserRepository _userRepository;
         private readonly IConfiguration _configuration;
+        private readonly string[] _testEmails;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthService"/> class.
@@ -29,6 +31,12 @@ namespace GameTogetherAPI.Services
         {
             _userRepository = userRepository;
             _configuration = configuration;
+            // Check if environment is Development
+                var env = configuration["ASPNETCORE_ENVIRONMENT"];
+                if (env == "Development")
+                {
+                    _testEmails = new[] { "user@example.com", "user1@example.com", "user2@example.com" };
+                }
         }
 
         /// <summary>
@@ -47,7 +55,7 @@ namespace GameTogetherAPI.Services
 
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
             bool isTestEmail = false;
-            foreach (var testEmail in testEmails)
+            foreach (var testEmail in _testEmails)
             {
                 if (testEmail == email)
                 {
