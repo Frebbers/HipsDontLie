@@ -124,6 +124,13 @@ namespace GameTogetherAPI.Repository
                 .Include(p => p.User)
                 .FirstOrDefaultAsync(p => p.Id == userId);
         }
+
+        public async Task<User> GetUserByIdAsync(int userId)
+        {
+            return await _context.Users
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Id == userId);
+        }
     }
 }
 

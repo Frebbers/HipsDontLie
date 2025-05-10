@@ -1,11 +1,14 @@
 ﻿using System.Collections.Concurrent;
 using System.Net.WebSockets;
+using System.Text;
+using System.Text.Json;
 
 namespace GameTogetherAPI.WebSockets
 {
     public class WebSocketConnectionManager
     {
         private readonly ConcurrentDictionary<string, WebSocket> _sockets = new();
+        private readonly ConcurrentDictionary<int, string> _userConnections = new();
 
         public string AddSocket(WebSocket socket)
         {
@@ -13,6 +16,15 @@ namespace GameTogetherAPI.WebSockets
             _sockets.TryAdd(connectionId, socket);
             Console.WriteLine($"Added connection: {connectionId}");
             return connectionId;
+        }
+        public void MapUserToConnection(int userId, string connectionId)
+        {
+            _userConnections[userId] = connectionId;
+        }
+
+        public string? GetConnectionIdForUser(int userId)
+        {
+            return _userConnections.TryGetValue(userId, out var connId) ? connId : null;
         }
 
         public ConcurrentDictionary<string, WebSocket> GetAll() => _sockets;
@@ -28,10 +40,38 @@ namespace GameTogetherAPI.WebSockets
                 {
                     await socket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed", CancellationToken.None);
                 }
+                _userConnections
+                .Where(pair => pair.Value == id)
+                .Select(pair => pair.Key)
+                .ToList()
+                .ForEach(userId => _userConnections.TryRemove(userId, out _));
 
                 socket.Dispose();
                 Console.WriteLine($"Removed connection: {id}");
             }
+        }
+
+        public async Task SendToUserAsync(int userId, object payload, JsonSerializerOptions? options = null)
+        {
+            var connectionId = GetConnectionIdForUser(userId);
+            if (connectionId == null) return;
+
+            var socket = GetSocketById(connectionId);
+            if (socket?.State != WebSocketState.Open) return;
+
+            var json = JsonSerializer.Serialize(payload, options ?? new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+
+            var buffer = Encoding.UTF8.GetBytes(json);
+
+            await socket.SendAsync(
+                new ArraySegment<byte>(buffer),
+                WebSocketMessageType.Text,
+                true,
+                CancellationToken.None
+            );
         }
 
         public void CleanupClosedSockets()

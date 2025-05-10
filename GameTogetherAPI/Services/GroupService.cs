@@ -1,6 +1,7 @@
 ﻿using GameTogetherAPI.DTO;
 using GameTogetherAPI.Models;
 using GameTogetherAPI.Repository;
+using GameTogetherAPI.WebSockets;
 
 namespace GameTogetherAPI.Services {
     /// <summary>
@@ -10,14 +11,18 @@ namespace GameTogetherAPI.Services {
         private readonly IGroupRepository _groupRepository;
         private readonly IUserRepository _userRepository;
         private readonly IChatRepository _chatRepository;
+        private readonly WebSocketEventHandler _webSocketEventHandler;
+
 
         /// <summary>
         /// Provides group management services, including group creation, retrieval, joining, and leaving.
         /// </summary>
-        public GroupService(IChatRepository chatRepository, IUserRepository userRepository, IGroupRepository groupRepository) {
+        public GroupService(IChatRepository chatRepository, IUserRepository userRepository, IGroupRepository groupRepository, WebSocketEventHandler webSocketEventHandler)
+        {
             _groupRepository = groupRepository;
             _userRepository = userRepository;
             _chatRepository = chatRepository;
+            _webSocketEventHandler = webSocketEventHandler;
         }
 
         /// <summary>
@@ -169,11 +174,19 @@ namespace GameTogetherAPI.Services {
         /// <summary>
         /// Allows a user to join a specified group if they are not already a participant.
         /// </summary>
-        public async Task<bool> JoinGroupAsync(int userId, int groupId) {
+        public async Task<bool> JoinGroupAsync(int userId, int groupId)
+        {
             if (!await _groupRepository.ValidateUserGroupAsync(userId, groupId))
                 return false;
 
-            var userGroup = new UserGroup {
+            var group = await _groupRepository.GetGroupByIdAsync(groupId);
+            if (group == null) return false;
+
+            var requester = await _userRepository.GetUserByIdAsync(userId);
+            if (requester == null) return false;
+
+            var userGroup = new UserGroup
+            {
                 UserId = userId,
                 GroupId = groupId,
                 Status = UserGroupStatus.Pending
@@ -181,8 +194,16 @@ namespace GameTogetherAPI.Services {
 
             await _groupRepository.AddUserToGroupAsync(userGroup);
 
+            await _webSocketEventHandler.SendPendingJoinRequestAsync(
+                ownerId: group.OwnerId,
+                groupId: group.Id,
+                requesterId: requester.Id,
+                requesterName: requester.Username ?? "Unknown"
+            );
+
             return true;
         }
+
 
         /// <summary>
         /// Allows a user to leave a specified group.
@@ -216,6 +237,7 @@ namespace GameTogetherAPI.Services {
                 await _chatRepository.AddUserToChatAsync(userChat);
             }
 
+            await _webSocketEventHandler.SendGroupAcceptedAsync(userId, ownerId ,groupId, group.Title);
             return true;
         }
 

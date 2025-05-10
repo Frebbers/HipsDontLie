@@ -53,7 +53,7 @@ namespace GameTogetherAPI {
             builder.Services.AddScoped<IGroupRepository, GroupRepository>();
             builder.Services.AddScoped<IChatRepository, ChatRepository>();
             builder.Services.AddSingleton<WebSocketConnectionManager>();
-            builder.Services.AddSingleton<ChatWebSocketHandler>();
+            builder.Services.AddSingleton<WebSocketEventHandler>();
 
             // Health Check setup
             builder.Services.AddHealthChecks()
@@ -124,9 +124,9 @@ namespace GameTogetherAPI {
             app.UseWebSockets();
 
             app.Use(async (context, next) => {
-                if (context.Request.Path == "/ws/chat") {
+                if (context.Request.Path == "/ws/events") {
                     if (context.WebSockets.IsWebSocketRequest) {
-                        var handler = context.RequestServices.GetRequiredService<ChatWebSocketHandler>();
+                        var handler = context.RequestServices.GetRequiredService<WebSocketEventHandler>();
                         var socket = await context.WebSockets.AcceptWebSocketAsync();
                         await handler.HandleSocketAsync(context, socket);
                     } else {

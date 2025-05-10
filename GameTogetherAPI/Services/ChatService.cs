@@ -9,16 +9,16 @@ namespace GameTogetherAPI.Services
     public class ChatService : IChatService
     {
         private readonly IChatRepository _chatRepository;
-        private readonly ChatWebSocketHandler _chatWebSocketHandler;
+        private readonly WebSocketEventHandler _webSocketEventHandler;
         private readonly IUserService _userService;
 
         public ChatService(
             IChatRepository chatRepository,
-            ChatWebSocketHandler chatWebSocketHandler,
+            WebSocketEventHandler webSocketEventHandler,
             IUserService userService)
         {
             _chatRepository = chatRepository;
-            _chatWebSocketHandler = chatWebSocketHandler;
+            _webSocketEventHandler = webSocketEventHandler;
             _userService = userService;
         }
 
@@ -84,7 +84,7 @@ namespace GameTogetherAPI.Services
                 ChatId = chat.ChatId
             };
 
-            await _chatWebSocketHandler.BroadcastMessageAsync(dto, chat.ChatId);
+            await _webSocketEventHandler.BroadcastMessageAsync(dto, chat.ChatId);
             return true;
         }
 
@@ -130,7 +130,7 @@ namespace GameTogetherAPI.Services
                 ChatId = chat.ChatId
             };
 
-            await _chatWebSocketHandler.BroadcastMessageAsync(dto, chat.ChatId);
+            await _webSocketEventHandler.BroadcastMessageAsync(dto, chat.ChatId);
             return true;
         }
     }
