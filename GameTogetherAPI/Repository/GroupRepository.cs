@@ -31,7 +31,7 @@ namespace GameTogetherAPI.Repository {
         /// <summary>
         /// Retrieves a group by its unique identifier, including its participants and their profiles.
         /// </summary>
-        public async Task<Group> GetGroupByIdAsync(int groupId) {
+        public async Task<Group> GetGroupByIdAsync(int? groupId) {
             return await _context.Groups
                 .Include(g => g.Members)
                     .ThenInclude(p => p.User)

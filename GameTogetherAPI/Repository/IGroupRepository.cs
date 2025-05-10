@@ -53,7 +53,7 @@ namespace GameTogetherAPI.Repository {
         /// </summary>
         /// <param name="groupId">The unique identifier of the group.</param>
         /// <returns>A task representing the asynchronous operation, returning the group if found, otherwise null.</returns>
-        Task<Group> GetGroupByIdAsync(int groupId);
+        Task<Group> GetGroupByIdAsync(int? groupId);
 
         /// <summary>
         /// Validates whether the group owner can accept a user into the group.

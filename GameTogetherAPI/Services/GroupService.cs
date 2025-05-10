@@ -174,34 +174,31 @@ namespace GameTogetherAPI.Services {
         /// <summary>
         /// Allows a user to join a specified group if they are not already a participant.
         /// </summary>
-        public async Task<bool> JoinGroupAsync(int userId, int groupId)
+        public async Task<JoinGroupStatus> JoinGroupAsync(int userId, int groupId)
         {
-            if (!await _groupRepository.ValidateUserGroupAsync(userId, groupId))
-                return false;
-
-            var group = await _groupRepository.GetGroupByIdAsync(groupId);
-            if (group == null) return false;
-
             var requester = await _userRepository.GetUserByIdAsync(userId);
-            if (requester == null) return false;
-
+            if (requester == null) return JoinGroupStatus.RequesterNotFound;
+            if (!await _groupRepository.ValidateUserGroupAsync(userId, groupId)){
+                return JoinGroupStatus.AlreadyMember;
+            }
+            var group = await _groupRepository.GetGroupByIdAsync(groupId);
+            if (group == null) return JoinGroupStatus.GroupNotFound;
             var userGroup = new UserGroup
             {
                 UserId = userId,
                 GroupId = groupId,
                 Status = UserGroupStatus.Pending
             };
-
-            await _groupRepository.AddUserToGroupAsync(userGroup);
-
-            await _webSocketEventHandler.SendPendingJoinRequestAsync(
+            bool success = await _groupRepository.AddUserToGroupAsync(userGroup);
+            if (!success) return JoinGroupStatus.UnknownFailure;
+            await _webSocketEventHandler.SendPendingJoinRequestAsync( 
                 ownerId: group.OwnerId,
                 groupId: group.Id,
                 requesterId: requester.Id,
                 requesterName: requester.Username ?? "Unknown"
             );
 
-            return true;
+            return JoinGroupStatus.Success;
         }
 
 

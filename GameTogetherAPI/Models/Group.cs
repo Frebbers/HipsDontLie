@@ -59,4 +59,13 @@ namespace GameTogetherAPI.Models {
 
         public Chat Chat { get; set; }
     }
+    public enum JoinGroupStatus
+    {
+        Success,
+        AlreadyMember,
+        GroupNotFound,
+        GroupFull,
+        RequesterNotFound,
+        UnknownFailure
+    }
 }

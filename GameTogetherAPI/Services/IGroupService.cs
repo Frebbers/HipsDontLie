@@ -42,7 +42,7 @@ namespace GameTogetherAPI.Services {
         /// <param name="userId">The unique identifier of the user joining the group.</param>
         /// <param name="groupId">The unique identifier of the group to join.</param>
         /// <returns>A task representing the asynchronous operation, returning true if the user successfully joins the group.</returns>
-        Task<bool> JoinGroupAsync(int userId, int groupId);
+        Task<JoinGroupStatus> JoinGroupAsync(int userId, int groupId);
 
         /// <summary>
         /// Allows a user to leave a specified group.

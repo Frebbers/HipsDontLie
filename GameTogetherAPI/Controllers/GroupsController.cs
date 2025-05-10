@@ -135,12 +135,21 @@ namespace GameTogetherAPI.Controllers {
         public async Task<IActionResult> JoinGroup(int groupId) {
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
-            bool success = await _groupService.JoinGroupAsync(userId, groupId);
-
-            if (!success)
-                return BadRequest(new { message = "Failed to join group. Either it does not exist or you're already a participant." });
-
-            return Ok(new { message = "Successfully joined the group!" });
+JoinGroupStatus status = await _groupService.JoinGroupAsync(userId, groupId);
+        switch (status)
+        {
+            case JoinGroupStatus.Success:
+                return Ok(new { message = "Successfully joined the group!" });
+            case JoinGroupStatus.GroupNotFound:
+                return BadRequest(new { message = "Group does not exist." });
+            case JoinGroupStatus.AlreadyMember:
+                return BadRequest(new { message = "You are already a participant of this group." });
+            case JoinGroupStatus.GroupFull:
+                return BadRequest(new { message = "Group is full." });
+            default:
+                return BadRequest(new { message = "Unknown failure occurred while joining group." });
+        }
+        
         }
 
         /// <summary>
