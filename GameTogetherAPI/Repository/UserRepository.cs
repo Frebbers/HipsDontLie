@@ -131,19 +131,7 @@ namespace GameTogetherAPI.Repository
             .AsNoTracking()
             .FirstOrDefaultAsync(u => u.Id == userId);
         }
-        /// <summary>
-        /// Retrieves a user's ID by their username.
-        /// </summary>
-        /// <param name="username">The username of the user.</param>
-        /// <returns>A task representing the asynchronous operation, returning the user's ID if found, otherwise null.</returns>
-        public async Task<int?> GetUserIdByUsernameAsync(string username)
-        {
-            var user = await _context.Users
-                .AsNoTracking()
-                .FirstOrDefaultAsync(u => u.Username == username);
-            
-            return user?.Id;
-        }
+
     }
 }
 

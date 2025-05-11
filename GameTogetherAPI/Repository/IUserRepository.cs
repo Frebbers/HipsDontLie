@@ -23,7 +23,7 @@ namespace GameTogetherAPI.Repository {
         /// Retrieves a user by their email asynchronously.
         /// </summary>
         /// <param name="email">The email address of the user.</param>
-        /// <returns>A task that represents the asynchronous operation, returning the user if found, otherwise null.</returns>
+        /// <returns>Returning the user object if found, otherwise null.</returns>
         Task<User> GetUserByEmailAsync(string email);
 
         /// <summary>
@@ -48,11 +48,8 @@ namespace GameTogetherAPI.Repository {
         Task<bool> DeleteUserAsync(int userId);
 
         Task<User> GetUserByIdAsync(int userId);
-        /// <summary>
-        /// Retrieves a user's ID by their username.
-        /// </summary>
-        /// <param name="username">The username of the user.</param>
-        /// <returns>A task that represents the asynchronous operation, returning the user's ID if found, otherwise null.</returns>
-        Task<int?> GetUserIdByUsernameAsync(string username);
+        
+        
+
     }
 }

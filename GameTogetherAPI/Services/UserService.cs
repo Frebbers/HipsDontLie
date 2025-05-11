@@ -104,9 +104,10 @@ namespace GameTogetherAPI.Services
         /// </summary>
         /// <param name="username">The username of the user.</param>
         /// <returns>A task representing the asynchronous operation, returning the user's ID if found, otherwise null.</returns>
-        public async Task<int?> GetUserIdByUsernameAsync(string username)
+        public async Task<int?> GetUserIdByEmailAsync(string username)
         {
-            return await _userRepository.GetUserIdByUsernameAsync(username);
+            var user = await _userRepository.GetUserByEmailAsync(username);
+            return user.Id;
         }
     }
 }
