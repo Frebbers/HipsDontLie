@@ -136,5 +136,16 @@ namespace GameTogetherAPI.Controllers {
             var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
             return Ok(new { Email = userEmail });
         }
+
+        /// <summary>
+        /// Validates the current JWT token and returns 200 OK if valid.
+        /// </summary>
+        /// <returns>A 200 OK response if the token is valid, otherwise 401 Unauthorized.</returns>
+        [HttpGet("validate-token")]
+        [Authorize]
+        public IActionResult ValidateToken() {
+            // If the request reaches here, the token is valid
+            return Ok(new { message = "Token is valid." });
+        }
     }
 }
