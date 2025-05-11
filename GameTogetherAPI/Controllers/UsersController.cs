@@ -53,9 +53,9 @@ namespace GameTogetherAPI.Controllers
         /// </summary>
         /// <returns>
         /// Returns a 200 OK response with the user's profile.  
-        /// Returns a 404 Not Found response if the user does not exist.
+        /// Returns a 400 Bad request response if the user does not exist.
         /// </returns>
-        [HttpGet("/profile/{id}")]
+        [HttpGet("profile/{id}")]
         [Authorize]
         public async Task<IActionResult> GetProfileByIdAsync(int id)
         {
@@ -63,7 +63,7 @@ namespace GameTogetherAPI.Controllers
             var profile = await _userService.GetProfileByIdAsync(id);
 
             if (profile == null)
-                return NotFound(new { message = "Profile not found" });
+                return BadRequest(new { message = "Profile not found" });
 
             return Ok(profile);
         }
@@ -114,7 +114,7 @@ namespace GameTogetherAPI.Controllers
             var userId = await _userService.GetUserIdByEmailAsync(username);
             
             if (userId == null)
-                return NotFound(new { message = "User not found" });
+                return BadRequest(new { message = "User not found" });
             
             return Ok(new { userId });
         }
