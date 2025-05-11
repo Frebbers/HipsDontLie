@@ -32,8 +32,8 @@ namespace GameTogetherAPI.Services
         /// <summary>
         /// Retrieves a user's ID based on their username.
         /// </summary>
-        /// <param name="username">The username of the user.</param>
+        /// <param name="email">The username of the user.</param>
         /// <returns>A task representing the asynchronous operation, returning the user's ID if found, otherwise null.</returns>
-        Task<int?> GetUserIdByUsernameAsync(string username);
+        Task<int?> GetUserIdByEmailAsync(string email);
     }
 }

@@ -102,15 +102,16 @@ namespace GameTogetherAPI.Controllers
         /// <summary>
         /// Retrieves a user's ID by their username.
         /// </summary>
-        /// <param name="username">The username of the user.</param>
+        /// <param name="email">The username of the user.</param>
         /// <returns>
         /// Returns a 200 OK response with the user's ID.
         /// Returns a 404 Not Found response if the user does not exist.
         /// </returns>
-        [HttpGet("profile/name/{username}")]
-        public async Task<IActionResult> GetUserIdByUsernameAsync(string username)
+        [HttpGet("profile/e-mail/{username}")]
+        [Authorize]
+        public async Task<IActionResult> GetUserIdByEmail(string username)
         {
-            var userId = await _userService.GetUserIdByUsernameAsync(username);
+            var userId = await _userService.GetUserIdByEmailAsync(username);
             
             if (userId == null)
                 return NotFound(new { message = "User not found" });
