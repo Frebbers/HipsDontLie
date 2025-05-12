@@ -35,6 +35,10 @@ namespace GameTogetherAPI.Controllers {
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
+            if (model == null || model.Username == null || model.Username == null || model.Password == null)
+            {
+                return BadRequest("Username, email and password are required.");
+            }
             AuthStatus status = await _authService.RegisterUserAsync(model.Email, model.Username, model.Password);
             if (status == AuthStatus.UserExists)
             {
