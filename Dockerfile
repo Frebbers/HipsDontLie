@@ -1,7 +1,8 @@
 # Dockerfile for ASP.NET Core 8 application
 # Use official .NET SDK to build
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG ENVIRONMENT=Development #Takes an environment name as argument. Defaults to dev
+#Takes an environment name as argument. Defaults to dev
+ARG ENVIRONMENT=Development
 ENV PATH $PATH:/root/.dotnet/tools
 RUN dotnet tool install -g dotnet-ef --version 8.0.5
 # Set working directory for build stage
