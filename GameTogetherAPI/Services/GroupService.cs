@@ -195,7 +195,8 @@ namespace GameTogetherAPI.Services {
                 ownerId: group.OwnerId,
                 groupId: group.Id,
                 requesterId: requester.Id,
-                requesterName: requester.Username ?? "Unknown"
+                requesterName: requester.Username ?? "Unknown",
+                title: group.Title
             );
 
             return JoinGroupStatus.Success;

@@ -231,14 +231,15 @@ namespace GameTogetherAPI.WebSockets
             await Task.WhenAll(tasks);
         }
 
-        public async Task SendPendingJoinRequestAsync(int ownerId, int groupId, int requesterId, string requesterName)
+        public async Task SendPendingJoinRequestAsync(int ownerId, int groupId, int requesterId, string requesterName, string title)
         {
             var payload = new PendingJoinRequestMessage
             {
                 GroupId = groupId,
                 OwnerId = ownerId,
                 RequestUserId = requesterId,
-                RequesterName = requesterName
+                RequesterName = requesterName,
+                Title = title
             };
 
             await _manager.SendToUserAsync(ownerId, payload, options);
