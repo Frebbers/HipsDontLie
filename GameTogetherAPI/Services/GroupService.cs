@@ -255,5 +255,29 @@ namespace GameTogetherAPI.Services {
 
             return true;
         }
+
+        /// <summary>
+        /// Updates a group's details if the user is the group owner.
+        /// </summary>
+        /// <param name="groupId">The ID of the group to update.</param>
+        /// <param name="userId">The ID of the user making the request.</param>
+        /// <param name="dto">The updated group data.</param>
+        /// <returns>True if the update is successful; otherwise, false.</returns>
+        public async Task<bool> UpdateGroupAsync(int groupId, int userId, UpdateGroupRequestDTO dto) {
+            var group = await _groupRepository.GetGroupByIdAsync(groupId);
+            if (group == null || group.OwnerId != userId)
+                return false;
+
+            // Apply updates
+            group.Title = dto.Title;
+            group.AgeRange = dto.AgeRange;
+            group.Description = dto.Description;
+            group.IsVisible = dto.IsVisible;
+            group.MaxMembers = dto.MaxMembers;
+            group.Tags = dto.Tags;
+            group.NonUserMembers = dto.NonUserMembers;
+
+            return await _groupRepository.UpdateGroupAsync(groupId, group);
+        }
     }
 }

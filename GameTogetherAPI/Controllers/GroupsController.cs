@@ -135,21 +135,19 @@ namespace GameTogetherAPI.Controllers {
         public async Task<IActionResult> JoinGroup(int groupId) {
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
-JoinGroupStatus status = await _groupService.JoinGroupAsync(userId, groupId);
-        switch (status)
-        {
-            case JoinGroupStatus.Success:
+            JoinGroupStatus status = await _groupService.JoinGroupAsync(userId, groupId);
+            switch (status) {
+                case JoinGroupStatus.Success:
                 return Ok(new { message = "Group joined successfully!" });
-            case JoinGroupStatus.GroupNotFound:
+                case JoinGroupStatus.GroupNotFound:
                 return BadRequest(new { message = "Group does not exist." });
-            case JoinGroupStatus.AlreadyMember:
+                case JoinGroupStatus.AlreadyMember:
                 return BadRequest(new { message = "You are already a member of this group." });
-            case JoinGroupStatus.GroupFull:
+                case JoinGroupStatus.GroupFull:
                 return BadRequest(new { message = "Group is full." });
-            default:
+                default:
                 return BadRequest(new { message = "Unknown failure occurred while joining group." });
-        }
-        
+            }     
         }
 
         /// <summary>
@@ -212,6 +210,27 @@ JoinGroupStatus status = await _groupService.JoinGroupAsync(userId, groupId);
                 return BadRequest(new { message = "Failed to leave group. Either it does not exist or you've already left." });
 
             return Ok(new { message = "Successfully left the group!" });
+        }
+
+        /// <summary>
+        /// Updates a group's details if the authenticated user is the owner.
+        /// </summary>
+        /// <param name="groupId">The ID of the group to update.</param>
+        /// <param name="dto">The updated group details.</param>
+        /// <returns>
+        /// Returns a 200 OK response if the update is successful.  
+        /// Returns a 403 Forbidden response if the user is not the owner.  
+        /// Returns a 404 Not Found response if the group does not exist.
+        /// </returns>
+        [HttpPut("{groupId}")]
+        public async Task<IActionResult> UpdateGroup(int groupId, [FromBody] UpdateGroupRequestDTO dto) {
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            bool success = await _groupService.UpdateGroupAsync(groupId, userId, dto);
+
+            if (!success)
+                return Forbid("You are not the owner or the group does not exist.");
+
+            return Ok(new { message = "Group updated successfully." });
         }
     }
 }

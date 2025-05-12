@@ -63,5 +63,13 @@ namespace GameTogetherAPI.Repository {
         /// <param name="ownerId">The ID of the group owner.</param>
         /// <returns>A task that represents the asynchronous operation, returning true if the owner can accept the user.</returns>
         Task<bool> ValidateAcceptGroupAsync(int userId, int groupId, int ownerId);
+
+        /// <summary>
+        /// Updates the details of a group in the database.
+        /// </summary>
+        /// <param name="groupId">The unique identifier of the group to update.</param>
+        /// <param name="updatedGroup">The updated group entity with new values.</param>
+        /// <returns>A task that represents the asynchronous operation, returning true if the update is successful.</returns>
+        Task<bool> UpdateGroupAsync(int groupId, Group updatedGroup);
     }
 }

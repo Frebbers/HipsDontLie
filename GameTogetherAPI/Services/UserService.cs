@@ -57,6 +57,7 @@ namespace GameTogetherAPI.Services
             var profile = await _userRepository.GetProfileAsync(userId);
             return new GetProfileResponseDTO
             {
+                UserId = profile.User.Id,
                 Username = profile.User.Username,
                 BirthDate = profile.BirthDate,
                 Description = profile.Description,
@@ -75,6 +76,7 @@ namespace GameTogetherAPI.Services
             var profile = await _userRepository.GetProfileAsync(userId);
             return new GetProfileResponseDTO
             {
+                UserId = profile.User.Id,
                 Username = profile.User?.Username,
                 BirthDate = profile.BirthDate,
                 Description = profile.Description,

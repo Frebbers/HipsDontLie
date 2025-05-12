@@ -61,5 +61,14 @@ namespace GameTogetherAPI.Services {
         /// Rejects a pending user from a group if the requester is the group owner.
         /// </summary>
         Task<bool> RejectUserInGroupAsync(int userId, int groupId, int ownerId);
+
+        /// <summary>
+        /// Updates the details of a group if the user is the group owner.
+        /// </summary>
+        /// <param name="groupId">The unique identifier of the group to update.</param>
+        /// <param name="userId">The unique identifier of the user performing the update.</param>
+        /// <param name="dto">The updated group data.</param>
+        /// <returns>A task that represents the asynchronous operation, returning true if the update is successful.</returns>
+        Task<bool> UpdateGroupAsync(int groupId, int userId, UpdateGroupRequestDTO dto);
     }
 }

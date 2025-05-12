@@ -132,5 +132,29 @@ namespace GameTogetherAPI.Repository {
                 .Include(g => g.Chat)
                 .ToListAsync();
         }
+
+        /// <summary>
+        /// Updates an existing group with new values.
+        /// </summary>
+        /// <param name="groupId">The ID of the group to update.</param>
+        /// <param name="updatedGroup">The updated group values.</param>
+        /// <returns>True if the update was successful; otherwise, false.</returns>
+        public async Task<bool> UpdateGroupAsync(int groupId, Group updatedGroup) {
+            var existingGroup = await _context.Groups.FindAsync(groupId);
+            if (existingGroup == null)
+                return false;
+
+            existingGroup.Title = updatedGroup.Title;
+            existingGroup.Description = updatedGroup.Description;
+            existingGroup.IsVisible = updatedGroup.IsVisible;
+            existingGroup.MaxMembers = updatedGroup.MaxMembers;
+            existingGroup.AgeRange = updatedGroup.AgeRange;
+            existingGroup.Tags = updatedGroup.Tags;
+            existingGroup.NonUserMembers = updatedGroup.NonUserMembers;
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
     }
 }

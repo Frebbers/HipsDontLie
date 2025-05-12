@@ -4,6 +4,11 @@
     /// </summary>
     public class GetProfileResponseDTO {
         /// <summary>
+        /// Gets or sets the unique user ID.
+        /// </summary>
+        public int UserId { get; set; }
+
+        /// <summary>
         /// Gets or sets the username of the user.
         /// </summary>
         public string Username { get; set; }
