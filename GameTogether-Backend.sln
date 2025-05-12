@@ -16,7 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTogether.Test", "GameTogether.Test\GameTogether.Test.csproj", "{EC98F77D-66B0-4529-9C46-CFDF28696E49}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTogetherAPI.Test", "GameTogetherAPI.Test\GameTogetherAPI.Test.csproj", "{EC98F77D-66B0-4529-9C46-CFDF28696E49}"
 	ProjectSection(ProjectDependencies) = postProject
 		{56360629-DE98-4AA7-BC08-C914B5591AF8} = {56360629-DE98-4AA7-BC08-C914B5591AF8}
 	EndProjectSection

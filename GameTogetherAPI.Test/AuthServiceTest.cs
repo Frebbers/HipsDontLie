@@ -8,7 +8,7 @@ using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 
-namespace GameTogether.Test
+namespace GameTogetherAPI.Test
 // <summary>
 // Unit tests for the AuthService class.
 // </summary>
