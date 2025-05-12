@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using GameTogetherAPI.Test.Drivers;
-using GameTogetherAPI.Test.Factories;
+using GameTogetherAPI.Test.Old.Drivers;
+using GameTogetherAPI.Test.Old.Factories;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
 
-namespace GameTogetherAPI.Test.Fixtures
+namespace GameTogetherAPI.Test.Old.Fixtures
 {
     public class APITestContext
     {

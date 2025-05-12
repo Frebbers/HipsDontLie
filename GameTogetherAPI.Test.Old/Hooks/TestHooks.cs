@@ -1,8 +1,8 @@
-﻿using GameTogetherAPI.Test.Factories;
-using GameTogetherAPI.Test.Fixtures;
-using GameTogetherAPI.Test.Util;
+﻿using GameTogetherAPI.Test.Old.Factories;
+using GameTogetherAPI.Test.Old.Fixtures;
+using GameTogetherAPI.Test.Old.Util;
 
-namespace GameTogetherAPI.Test.Hooks
+namespace GameTogetherAPI.Test.Old.Hooks
 {
     //Responsible for setting up the test environment
     //Losely based on previous project WorkFlowAPI

@@ -1,13 +1,14 @@
 ﻿using GameTogetherAPI.DTO;
 using GameTogetherAPI.Models;
-using GameTogetherAPI.Test.Drivers;
-using GameTogetherAPI.Test.Fixtures;
-using GameTogetherAPI.Test.Hooks;
-using GameTogetherAPI.Test.Util;
+using GameTogetherAPI.Test.Old.Fixtures;
+using GameTogetherAPI.Test.Old.Drivers;
+using GameTogetherAPI.Test.Old.Hooks;
+using GameTogetherAPI.Test.Old.Models;
+using GameTogetherAPI.Test.Old.Util;
 
-namespace GameTogetherAPI.Test.StepDefinitions;
+namespace GameTogetherAPI.Test.Old.StepDefinitions;
 using FluentAssertions;
-using GameTogetherAPI.Test.Models;
+using Old.Models;
 using SpecFlow.Internal.Json;
 
 [Binding]

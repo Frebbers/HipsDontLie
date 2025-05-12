@@ -5,7 +5,7 @@ using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GameTogetherAPI.Test.Util
+namespace GameTogetherAPI.Test.Old.Util
 {
     internal static class APIConstants
     {
