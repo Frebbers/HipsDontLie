@@ -10,7 +10,7 @@
 // ------------------------------------------------------------------------------
 #region Designer generated code
 #pragma warning disable
-namespace GameTogetherAPI.Test.Features
+namespace GameTogetherAPI.Test.Old.Features
 {
     using Reqnroll;
     using System;

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using JsonConverter = System.Text.Json.Serialization.JsonConverter;
 
-namespace GameTogetherAPI.Test.Drivers
+namespace GameTogetherAPI.Test.Old.Drivers
 {
     /// <summary>
     /// Provides an abstraction for sending HTTP requests to an API.

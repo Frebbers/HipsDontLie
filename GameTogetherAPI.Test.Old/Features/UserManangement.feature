@@ -1,4 +1,5 @@
-Feature: UserManagement
+#depreciated. This test is no longer in use
+Feature: UserManagement 
 This feature file describes the process of logging in and managing one's user account.
 
     Background:

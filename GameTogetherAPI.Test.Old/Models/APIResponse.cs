@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CucumberExpressions.Ast;
 
-namespace GameTogetherAPI.Test.Models
+namespace GameTogetherAPI.Test.Old.Models
 {
     internal class APIResponse
     {

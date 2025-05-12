@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 
-namespace GameTogetherAPI.Test.Factories
+namespace GameTogetherAPI.Test.Old.Factories
 {
     public class APIFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
     {
