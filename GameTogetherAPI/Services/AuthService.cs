@@ -55,7 +55,7 @@ namespace GameTogetherAPI.Services
 
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
             bool isTestEmail = false;
-            if (_testEmails != null) // Check if the environment is Development
+            if (_testEmails != null && _testEmails.Length > 0) // Check if the environment is Development
             {
                 foreach (var testEmail in _testEmails)
                 {
