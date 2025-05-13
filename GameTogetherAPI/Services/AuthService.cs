@@ -31,11 +31,12 @@ namespace GameTogetherAPI.Services
         {
             _userRepository = userRepository;
             _configuration = configuration;
-            // Check if environment is Development
-                var env = configuration["ASPNETCORE_ENVIRONMENT"];
-                _testEmails = env == "Development"
-                    ? new[] { "user@example.com", "user1@example.com", "user2@example.com" }
-                    : Array.Empty<string>();
+            
+            // Safely check environment
+            var env = configuration["ASPNETCORE_ENVIRONMENT"] ?? "Production";
+            _testEmails = env.Equals("Development", StringComparison.OrdinalIgnoreCase)
+                ? new[] { "user@example.com", "user1@example.com", "user2@example.com" }
+                : Array.Empty<string>();
         }
 
         /// <summary>

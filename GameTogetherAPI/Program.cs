@@ -98,22 +98,26 @@ namespace GameTogetherAPI {
             {
                 options.AddPolicy("AllowFrontend", policy =>
                 {
-                    var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-                    if (env == "Development") {
+                    var env = builder.Environment.EnvironmentName;
+                    if (env == "Development") 
+                    {
                         policy.AllowAnyOrigin()
-                                .AllowAnyHeader()
-                                .AllowAnyMethod();
-                        
-                    } else {
-                        var frontendUrl = Environment.GetEnvironmentVariable("FRONTEND_BASE_URL");
-                        if (string.IsNullOrEmpty(frontendUrl)) {
-                            throw new Exception("FRONTEND_BASE_URL is not set in the environment variables.");
-                        }
-                        else
+                              .AllowAnyHeader()
+                              .AllowAnyMethod();
+                    } 
+                    else 
+                    {
+                        var frontendUrl = builder.Configuration["FRONTEND_BASE_URL"];
+                        if (string.IsNullOrEmpty(frontendUrl)) 
                         {
-                            Console.WriteLine($"FRONTEND_BASE_URL: {frontendUrl}");
+                            throw new Exception("FRONTEND_BASE_URL is not set in configuration.");
                         }
-                        policy.WithOrigins(Environment.GetEnvironmentVariable("FRONTEND_BASE_URL"))
+                        
+                        // Extract the base domain without protocol and port
+                        var uri = new Uri(frontendUrl);
+                        var domain = uri.Host;
+                        
+                        policy.SetIsOriginAllowed(origin => new Uri(origin).Host.EndsWith(domain))
                               .AllowAnyHeader()
                               .AllowAnyMethod();
                     }
