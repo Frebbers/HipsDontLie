@@ -20,7 +20,7 @@ namespace GameTogetherAPI.Services
 
         private readonly IUserRepository _userRepository;
         private readonly IConfiguration _configuration;
-        private readonly string[] _testEmails = new string[]{};
+        private readonly string[] _testEmails;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthService"/> class.
@@ -33,10 +33,9 @@ namespace GameTogetherAPI.Services
             _configuration = configuration;
             // Check if environment is Development
                 var env = configuration["ASPNETCORE_ENVIRONMENT"];
-                if (env == "Development")
-                {
-                    _testEmails = new[] { "user@example.com", "user1@example.com", "user2@example.com" };
-                }
+                _testEmails = env == "Development"
+                    ? new[] { "user@example.com", "user1@example.com", "user2@example.com" }
+                    : Array.Empty<string>();
         }
 
         /// <summary>
