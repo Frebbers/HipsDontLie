@@ -20,7 +20,7 @@ namespace GameTogetherAPI.Services
 
         private readonly IUserRepository _userRepository;
         private readonly IConfiguration _configuration;
-        private readonly string[] _testEmails;
+        private readonly string[] _testEmails = new string[]{};
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthService"/> class.
@@ -55,13 +55,17 @@ namespace GameTogetherAPI.Services
 
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
             bool isTestEmail = false;
-            foreach (var testEmail in _testEmails)
+            if (_testEmails != null) // Check if the environment is Development
             {
-                if (testEmail == email)
+                foreach (var testEmail in _testEmails)
                 {
-                    isTestEmail = true;
+                    if (testEmail == email)
+                    {
+                        isTestEmail = true;
+                    }
                 }
             }
+
             var user = new User { Email = email, Username = username, PasswordHash = hashedPassword, IsEmailVerified = false };
             
             if (isTestEmail) // If the email is a test email, set IsEmailVerified to true
