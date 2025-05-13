@@ -98,11 +98,21 @@ namespace GameTogetherAPI {
             {
                 options.AddPolicy("AllowFrontend", policy =>
                 {
-                    if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development") {
+                    var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+                    if (env == "Development") {
                         policy.AllowAnyOrigin()
                                 .AllowAnyHeader()
                                 .AllowAnyMethod();
+                        
                     } else {
+                        var frontendUrl = Environment.GetEnvironmentVariable("FRONTEND_BASE_URL");
+                        if (string.IsNullOrEmpty(frontendUrl)) {
+                            throw new Exception("FRONTEND_BASE_URL is not set in the environment variables.");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"FRONTEND_BASE_URL: {frontendUrl}");
+                        }
                         policy.WithOrigins(Environment.GetEnvironmentVariable("FRONTEND_BASE_URL"))
                               .AllowAnyHeader()
                               .AllowAnyMethod();
