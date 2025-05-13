@@ -62,7 +62,7 @@ namespace GameTogetherAPI.Services
                     isTestEmail = true;
                 }
             }
-            var user = new User { Email = email, Username = username, PasswordHash = hashedPassword };
+            var user = new User { Email = email, Username = username, PasswordHash = hashedPassword, IsEmailVerified = false };
             
             if (isTestEmail) // If the email is a test email, set IsEmailVerified to true
             {
