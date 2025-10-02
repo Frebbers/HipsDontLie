@@ -1,18 +1,22 @@
-/GameTogetherAPI/.vs/*
-/GameTogetherAPI/bin/*
-/GameTogetherAPI/obj/*
-GameTogetherAPI.Test/obj/*
-/GameTogetherAPI.Test/bin/*
+/HipsDontLie/.vs/*
+/HipsDontLie/bin/*
+/HipsDontLie/obj/*
+HipsDontLie.Test/obj/*
+HipsDontLie.Test/bin/*
+HipsDontLie.Blazor/bin/*
+HipsDontLie.Blazor/obj/*
+HipsDontLie.Shared/bin/*
+HipsDontLie.Shared/obj/*
 
 /certs
 /.vs
 /.vscode
 /.idea
-/GameTogetherAPI/.idea/*
-GameTogetherAPI.Test/obj/*
+/HipsDontLie/.idea/*
+HipsDontLie.Test/obj/*
 
-/GameTogetherAPI/appsettings.json
-/GameTogetherAPI/appsettings.Development.json
+/HipsDontLie/appsettings.json
+/HipsDontLie/appsettings.Development.json
 
 .DS_Store
 /certs
