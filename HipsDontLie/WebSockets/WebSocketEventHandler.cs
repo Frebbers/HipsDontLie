@@ -6,7 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using HipsDontLie.Database;
-using HipsDontLie.DTO;
+using HipsDontLie.Shared.DTO;
 using HipsDontLie.WebSockets.Models;
 
 namespace HipsDontLie.WebSockets

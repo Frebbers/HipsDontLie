@@ -1,4 +1,4 @@
-﻿using HipsDontLie.DTO;
+﻿using HipsDontLie.Shared.DTO;
 
 namespace HipsDontLie.Services
 {

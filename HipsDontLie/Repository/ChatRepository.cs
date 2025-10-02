@@ -1,4 +1,4 @@
-﻿using HipsDontLie.DTO;
+﻿using HipsDontLie.Shared.DTO;
 using HipsDontLie.Database;
 using HipsDontLie.Models;
 using Microsoft.EntityFrameworkCore;

@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using FluentAssertions.Common;
-using HipsDontLie.DTO;
+using HipsDontLie.Shared.DTO;
 using HipsDontLie.Models;
 using HipsDontLie.Repository;
 

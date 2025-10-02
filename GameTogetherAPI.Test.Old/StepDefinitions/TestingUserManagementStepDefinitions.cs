@@ -1,4 +1,4 @@
-﻿using HipsDontLie.DTO;
+﻿using HipsDontLie.Shared.DTO;
 using HipsDontLie.Models;
 using HipsDontLie.Test.Old.Fixtures;
 using HipsDontLie.Test.Old.Drivers;

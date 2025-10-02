@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using HipsDontLie.DTO;
+using HipsDontLie.Shared.DTO;
 using HipsDontLie.Models;
 using HipsDontLie.Services;
 
