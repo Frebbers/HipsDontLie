@@ -1,4 +1,4 @@
-﻿namespace HipsDontLie.DTO
+﻿namespace HipsDontLie.Shared.DTO
 {
     public class GetUserInboxResponseDTO
     {

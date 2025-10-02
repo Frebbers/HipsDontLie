@@ -1,4 +1,4 @@
-﻿namespace HipsDontLie.DTO {
+﻿namespace HipsDontLie.Shared.DTO {
     /// <summary>
     /// Represents the response data for retrieving a user profile.
     /// </summary>

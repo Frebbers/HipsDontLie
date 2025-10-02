@@ -1,4 +1,4 @@
-﻿namespace HipsDontLie.DTO {
+﻿namespace HipsDontLie.Shared.DTO {
     /// <summary>
     /// Represents the request data for updating a user profile.
     /// </summary>

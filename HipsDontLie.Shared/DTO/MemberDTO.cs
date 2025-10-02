@@ -1,4 +1,8 @@
-﻿/// <summary>
+﻿namespace HipsDontLie.Shared.DTO
+{
+    
+
+/// <summary>
 /// Represents a participant in a session.
 /// </summary>
 public class MemberDTO {
@@ -13,4 +17,5 @@ public class MemberDTO {
     public string Username { get; set; }
 
     public UserGroupStatus GroupStatus { get; set; }
+}
 }

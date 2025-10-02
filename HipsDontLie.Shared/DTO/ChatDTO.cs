@@ -1,4 +1,4 @@
-﻿namespace HipsDontLie.DTO {
+﻿namespace HipsDontLie.Shared.DTO {
     /// <summary>
     /// Data Transfer Object representing a chat instance within the application.
     /// </summary>

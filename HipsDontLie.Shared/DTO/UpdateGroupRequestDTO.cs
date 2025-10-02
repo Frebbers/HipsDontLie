@@ -1,4 +1,4 @@
-﻿namespace HipsDontLie.DTO {
+﻿namespace HipsDontLie.Shared.DTO {
     /// <summary>
     /// Represents the data required to update a group.
     /// </summary>

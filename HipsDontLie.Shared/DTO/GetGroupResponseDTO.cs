@@ -1,4 +1,4 @@
-﻿using HipsDontLie.Models;
+﻿using HipsDontLie.Shared.DTO;
 
 namespace HipsDontLie.DTO {
     /// <summary>

@@ -1,4 +1,4 @@
-﻿using HipsDontLie.Models;
+﻿using HipsDontLie.Shared.DTO;
 using System.ComponentModel.DataAnnotations;
 
 namespace HipsDontLie.DTO
