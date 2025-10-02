@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GameTogetherAPI\GameTogetherAPI.csproj" />
+    <ProjectReference Include="..\HipsDontLie\HipsDontLie.csproj" />
   </ItemGroup>
 
 </Project>

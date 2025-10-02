@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using GameTogetherAPI.Test.Old.Drivers;
-using GameTogetherAPI.Test.Old.Factories;
+using HipsDontLie.Test.Old.Drivers;
+using HipsDontLie.Test.Old.Factories;
 using Microsoft.VisualStudio.TestPlatform.TestHost;
 
 namespace GameTogetherAPI.Test.Old.Fixtures

@@ -1,10 +1,10 @@
-﻿using GameTogetherAPI.DTO;
-using GameTogetherAPI.Models;
-using GameTogetherAPI.Test.Old.Fixtures;
-using GameTogetherAPI.Test.Old.Drivers;
-using GameTogetherAPI.Test.Old.Hooks;
-using GameTogetherAPI.Test.Old.Models;
-using GameTogetherAPI.Test.Old.Util;
+﻿using HipsDontLie.DTO;
+using HipsDontLie.Models;
+using HipsDontLie.Test.Old.Fixtures;
+using HipsDontLie.Test.Old.Drivers;
+using HipsDontLie.Test.Old.Hooks;
+using HipsDontLie.Test.Old.Models;
+using HipsDontLie.Test.Old.Util;
 
 namespace GameTogetherAPI.Test.Old.StepDefinitions;
 using FluentAssertions;

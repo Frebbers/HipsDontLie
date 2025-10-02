@@ -1,6 +1,6 @@
-﻿using GameTogetherAPI.Test.Old.Factories;
-using GameTogetherAPI.Test.Old.Fixtures;
-using GameTogetherAPI.Test.Old.Util;
+﻿using HipsDontLie.Test.Old.Factories;
+using HipsDontLie.Test.Old.Fixtures;
+using HipsDontLie.Test.Old.Util;
 
 namespace GameTogetherAPI.Test.Old.Hooks
 {
