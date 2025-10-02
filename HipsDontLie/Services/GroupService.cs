@@ -1,4 +1,5 @@
-﻿using HipsDontLie.Shared.DTO;
+﻿using HipsDontLie.DTO;
+using HipsDontLie.Shared.DTO;
 using HipsDontLie.Models;
 using HipsDontLie.Repository;
 using HipsDontLie.WebSockets;

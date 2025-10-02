@@ -26,4 +26,8 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\HipsDontLie.Shared\HipsDontLie.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

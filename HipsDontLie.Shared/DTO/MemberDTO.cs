@@ -16,6 +16,6 @@ public class MemberDTO {
     /// </summary>
     public string Username { get; set; }
 
-    public UserGroupStatus GroupStatus { get; set; }
+    public UserGroupStatus GroupStatus { get; set; } //TODO create a DTO for this
 }
 }
