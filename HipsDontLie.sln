@@ -20,6 +20,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HipsDontLie.Test", "HipsDon
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HipsDontLie.Blazor", "HipsDontLie.Blazor\HipsDontLie.Blazor.csproj", "{44C69879-BE32-4E97-85BE-AF66DE1B5855}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HipsDontLie.Shared", "HipsDontLie.Shared\HipsDontLie.Shared.csproj", "{1F5F9C3A-6F99-4F2A-A87C-F50D74C8FEAC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,10 @@ Global
 		{44C69879-BE32-4E97-85BE-AF66DE1B5855}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44C69879-BE32-4E97-85BE-AF66DE1B5855}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{44C69879-BE32-4E97-85BE-AF66DE1B5855}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F5F9C3A-6F99-4F2A-A87C-F50D74C8FEAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F5F9C3A-6F99-4F2A-A87C-F50D74C8FEAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F5F9C3A-6F99-4F2A-A87C-F50D74C8FEAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F5F9C3A-6F99-4F2A-A87C-F50D74C8FEAC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
