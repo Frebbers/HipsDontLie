@@ -1,4 +1,6 @@
-﻿namespace HipsDontLie.Shared.DTO
+﻿using HipsDontLie.Shared.Enum;
+
+namespace HipsDontLie.Shared.DTO
 {
     
 
@@ -16,6 +18,6 @@ public class MemberDTO {
     /// </summary>
     public string Username { get; set; }
 
-    public UserGroupStatus GroupStatus { get; set; } //TODO create a DTO for this
+    public SharedEnums.UserGroupStatus GroupStatus { get; set; }
 }
 }

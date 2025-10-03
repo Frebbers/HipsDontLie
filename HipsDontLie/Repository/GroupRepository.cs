@@ -1,5 +1,6 @@
 ﻿using HipsDontLie.Database;
 using HipsDontLie.Models;
+using HipsDontLie.Shared.Enum;
 using Microsoft.EntityFrameworkCore;
 
 namespace HipsDontLie.Repository {
@@ -99,11 +100,14 @@ namespace HipsDontLie.Repository {
         /// <summary>
         /// Validates whether a group owner can accept a pending user.
         /// </summary>
-        public async Task<bool> ValidateAcceptGroupAsync(int userId, int groupId, int ownerId) {
+        public async Task<bool> ValidateAcceptGroupAsync(int userId, int groupId, int ownerId)
+        {
             return await _context.Groups
                 .Where(g => g.Id == groupId && g.OwnerId == ownerId)
                 .Select(g => _context.UserGroups.Any(
-                    ug => ug.UserId == userId && ug.GroupId == groupId && ug.Status == UserGroupStatus.Pending
+                    ug => ug.UserId == userId 
+                          && ug.GroupId == groupId 
+                          && ug.Status == SharedEnums.UserGroupStatus.Pending
                 ))
                 .FirstOrDefaultAsync();
         }

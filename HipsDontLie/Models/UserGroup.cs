@@ -1,4 +1,6 @@
-﻿namespace HipsDontLie.Models {
+﻿using HipsDontLie.Shared.Enum;
+
+namespace HipsDontLie.Models {
     /// <summary>
     /// Represents the relationship between a user and a group, indicating that a user has joined a group.
     /// </summary>
@@ -21,7 +23,7 @@
         /// <summary>
         /// Gets or sets the status of the participant.
         /// </summary>
-        public UserGroupStatus Status { get; set; }
+        public SharedEnums.UserGroupStatus Status { get; set; }
 
         /// <summary>
         /// Gets or sets the group associated with the user.
@@ -30,9 +32,9 @@
     }
 }
 
-public enum UserGroupStatus
-{
-    Pending,
-    Accepted,
-    Rejected
-}
+// public enum UserGroupStatus use shared library enum instead
+// {
+//     Pending,
+//     Accepted,
+//     Rejected
+// }

@@ -2,6 +2,7 @@
 using HipsDontLie.Shared.DTO;
 using HipsDontLie.Models;
 using HipsDontLie.Repository;
+using HipsDontLie.Shared.Enum;
 using HipsDontLie.WebSockets;
 
 namespace HipsDontLie.Services {
@@ -49,7 +50,7 @@ namespace HipsDontLie.Services {
             var userGroup = new UserGroup {
                 UserId = userId,
                 GroupId = savedGroup.Id,
-                Status = UserGroupStatus.Accepted
+                Status = SharedEnums.UserGroupStatus.Accepted
             };
             await _groupRepository.AddUserToGroupAsync(userGroup);
 
@@ -188,7 +189,7 @@ namespace HipsDontLie.Services {
             {
                 UserId = userId,
                 GroupId = groupId,
-                Status = UserGroupStatus.Pending
+                Status = SharedEnums.UserGroupStatus.Pending
             };
             bool success = await _groupRepository.AddUserToGroupAsync(userGroup);
             if (!success) return JoinGroupStatus.UnknownFailure;
@@ -221,7 +222,7 @@ namespace HipsDontLie.Services {
             var userGroup = new UserGroup {
                 UserId = userId,
                 GroupId = groupId,
-                Status = UserGroupStatus.Accepted
+                Status = SharedEnums.UserGroupStatus.Accepted
             };
 
             await _groupRepository.AddUserToGroupAsync(userGroup);
@@ -250,7 +251,7 @@ namespace HipsDontLie.Services {
             var userGroup = new UserGroup {
                 UserId = userId,
                 GroupId = groupId,
-                Status = UserGroupStatus.Rejected
+                Status = SharedEnums.UserGroupStatus.Rejected
             };
 
             await _groupRepository.AddUserToGroupAsync(userGroup);
