@@ -5,17 +5,16 @@ using HipsDontLie.Models;
 using HipsDontLie.Services;
 
 namespace HipsDontLie.Controllers {
+    
     [Route("api/auth")]
     [ApiController]
-    /// <summary>
-    /// Handles user authentication, including registration, login, and user account management.
-    /// </summary>
     public class AuthController : ControllerBase {
         private readonly IAuthService _authService;
         private readonly IConfiguration _configuration;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AuthController"/> class.
+        /// Initializes a new instance of the <see cref="AuthController"/> class which handles user authentication,
+        /// including registration, login, and user account management.
         /// </summary>
         /// <param name="authService">The authentication service used to handle user authentication and management.</param>
         public AuthController(IAuthService authService, IConfiguration configuration) {
