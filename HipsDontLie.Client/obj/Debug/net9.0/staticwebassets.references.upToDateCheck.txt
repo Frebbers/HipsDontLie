@@ -1,0 +1,1 @@
+C:\Development\School\2025 Complex Systems and DevOps\HipsDontLie\HipsDontLie.Shared\obj\Debug\net9.0\staticwebassets.build.json
