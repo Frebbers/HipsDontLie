@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HipsDontLie", "HipsDontLie\HipsDontLie.csproj", "{56360629-DE98-4AA7-BC08-C914B5591AF8}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameTogetherAPI.Test.Old", "GameTogetherAPI.Test.Old\GameTogetherAPI.Test.Old.csproj", "{886AC128-925E-4E18-B180-87DEFB6376F6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E88BEEE9-5479-4A9B-BD4F-B97CDDB9BA27}"
@@ -14,13 +12,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HipsDontLie.Test", "HipsDontLie.Test\HipsDontLie.Test.csproj", "{EC98F77D-66B0-4529-9C46-CFDF28696E49}"
-	ProjectSection(ProjectDependencies) = postProject
-		{56360629-DE98-4AA7-BC08-C914B5591AF8} = {56360629-DE98-4AA7-BC08-C914B5591AF8}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HipsDontLie.Blazor", "HipsDontLie.Blazor\HipsDontLie.Blazor.csproj", "{44C69879-BE32-4E97-85BE-AF66DE1B5855}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HipsDontLie.Shared", "HipsDontLie.Shared\HipsDontLie.Shared.csproj", "{1F5F9C3A-6F99-4F2A-A87C-F50D74C8FEAC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HipsDontLie.Client", "HipsDontLie.Client\HipsDontLie.Client.csproj", "{89A88007-7AC5-47B3-8EC4-7B1F8E6DE330}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HipsDontLie.Server", "HipsDontLie.Server\HipsDontLie.Server.csproj", "{F2A5AB4C-78D6-4686-8FD3-47813253EECE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,10 +25,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{56360629-DE98-4AA7-BC08-C914B5591AF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{56360629-DE98-4AA7-BC08-C914B5591AF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{56360629-DE98-4AA7-BC08-C914B5591AF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{56360629-DE98-4AA7-BC08-C914B5591AF8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{886AC128-925E-4E18-B180-87DEFB6376F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{886AC128-925E-4E18-B180-87DEFB6376F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{886AC128-925E-4E18-B180-87DEFB6376F6}.Release|Any CPU.Build.0 = Release|Any CPU
@@ -39,14 +32,18 @@ Global
 		{EC98F77D-66B0-4529-9C46-CFDF28696E49}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC98F77D-66B0-4529-9C46-CFDF28696E49}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC98F77D-66B0-4529-9C46-CFDF28696E49}.Release|Any CPU.Build.0 = Release|Any CPU
-		{44C69879-BE32-4E97-85BE-AF66DE1B5855}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{44C69879-BE32-4E97-85BE-AF66DE1B5855}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{44C69879-BE32-4E97-85BE-AF66DE1B5855}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{44C69879-BE32-4E97-85BE-AF66DE1B5855}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1F5F9C3A-6F99-4F2A-A87C-F50D74C8FEAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1F5F9C3A-6F99-4F2A-A87C-F50D74C8FEAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F5F9C3A-6F99-4F2A-A87C-F50D74C8FEAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F5F9C3A-6F99-4F2A-A87C-F50D74C8FEAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89A88007-7AC5-47B3-8EC4-7B1F8E6DE330}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89A88007-7AC5-47B3-8EC4-7B1F8E6DE330}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89A88007-7AC5-47B3-8EC4-7B1F8E6DE330}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89A88007-7AC5-47B3-8EC4-7B1F8E6DE330}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2A5AB4C-78D6-4686-8FD3-47813253EECE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2A5AB4C-78D6-4686-8FD3-47813253EECE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2A5AB4C-78D6-4686-8FD3-47813253EECE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2A5AB4C-78D6-4686-8FD3-47813253EECE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

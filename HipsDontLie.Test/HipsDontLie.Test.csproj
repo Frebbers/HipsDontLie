@@ -26,7 +26,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\HipsDontLie\HipsDontLie.csproj" />
+      <ProjectReference Include="..\HipsDontLie.Server\HipsDontLie.Server.csproj" />
     </ItemGroup>
 
 </Project>
