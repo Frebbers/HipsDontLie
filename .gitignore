@@ -3,10 +3,12 @@
 /HipsDontLie/obj/*
 HipsDontLie.Test/obj/*
 HipsDontLie.Test/bin/*
-HipsDontLie.Blazor/bin/*
-HipsDontLie.Blazor/obj/*
+HipsDontLie.Client/bin/*
+HipsDontLie.Client/obj/*
 HipsDontLie.Shared/bin/*
 HipsDontLie.Shared/obj/*
+HipsDontLie.Server/bin/*
+HipsDontLie.Server/obj/*
 
 /certs
 /.vs
@@ -20,3 +22,7 @@ HipsDontLie.Test/obj/*
 
 .DS_Store
 /certs
+
+# Build artifacts
+**/bin/
+**/obj/

@@ -1,13 +1,15 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
-using System.Text;
-using HipsDontLie.Database;
+﻿using HipsDontLie.Database;
+using HipsDontLie.Models;
 using HipsDontLie.Repository;
 using HipsDontLie.Services;
 using HipsDontLie.WebSockets;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text;
 
 namespace HipsDontLie {
     public class Program {
@@ -20,6 +22,18 @@ namespace HipsDontLie {
                     builder.Configuration.GetConnectionString("DefaultConnection"),
                     ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
                 ));
+            builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
+                options.SignIn.RequireConfirmedEmail = true;
+                options.Password.RequireDigit = true;
+                options.Password.RequiredLength = 6;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+            })
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
 
             // JWT setup
             var jwtSettings = builder.Configuration.GetSection("JwtSettings");
@@ -148,10 +162,6 @@ namespace HipsDontLie {
                     await next();
                 }
             });
-
-            // Serve Blazor WebAssembly Files
-            app.UseBlazorFrameworkFiles();
-            app.UseStaticFiles();
 
             // Enable CORS before authentication
             app.UseCors("AllowFrontend");

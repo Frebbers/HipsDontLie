@@ -1,22 +1,19 @@
 ﻿using HipsDontLie.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace HipsDontLie.Database {
     /// <summary>
     /// Represents the database context for the application, handling entity configurations and database interactions.
     /// </summary>
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, int>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ApplicationDbContext"/> class with the specified database options.
         /// </summary>
         /// <param name="options">The database context options.</param>
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
-
-        /// <summary>
-        /// Represents the users in the database.
-        /// </summary>
-        public DbSet<User> Users { get; set; }
 
         /// <summary>
         /// Represents user profiles associated with users in the database.
