@@ -42,18 +42,35 @@ namespace HipsDontLie {
             }
 
             var key = Encoding.UTF8.GetBytes(jwtSettings["SecretKey"] ?? throw new Exception("JWT SecretKey is missing."));
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options => {
-                    options.TokenValidationParameters = new TokenValidationParameters {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(key),
-                        ValidateIssuer = true,
-                        ValidIssuer = jwtSettings["Issuer"],
-                        ValidateAudience = true,
-                        ValidAudience = jwtSettings["Audience"],
-                        ValidateLifetime = true
-                    };
-                });
+
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+                {
+                        options.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            ValidateIssuerSigningKey = true,
+                            IssuerSigningKey = new SymmetricSecurityKey(key),
+                            ValidateIssuer = true,
+                            ValidIssuer = jwtSettings["Issuer"],
+                            ValidateAudience = true,
+                            ValidAudience = jwtSettings["Audience"],
+                            ValidateLifetime = true,
+                            ClockSkew = TimeSpan.Zero
+                        };
+
+                        options.Events = new JwtBearerEvents
+                        {
+                            OnChallenge = context =>
+                            {
+                                // Skip the default behavior
+                                context.HandleResponse();
+
+                                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                                context.Response.ContentType = "application/json";
+
+                                return context.Response.WriteAsync("{\"error\": \"Unauthorized or invalid token\"}");
+                            }
+                        };
+                    });
 
             builder.Services.AddAuthorization();
 
@@ -145,23 +162,7 @@ namespace HipsDontLie {
                 });
             }
 
-            app.UseWebSockets();
-
-            app.Use(async (context, next) => {
-                if (context.Request.Path == "/ws/events") {
-                    if (context.WebSockets.IsWebSocketRequest) {
-                        var handler = context.RequestServices.GetRequiredService<WebSocketEventHandler>();
-                        var socket = await context.WebSockets.AcceptWebSocketAsync();
-                        await handler.HandleSocketAsync(context, socket);
-                    }
-                    else {
-                        context.Response.StatusCode = 400;
-                    }
-                }
-                else {
-                    await next();
-                }
-            });
+            
 
             // Enable CORS before authentication
             app.UseCors("AllowFrontend");
@@ -171,11 +172,32 @@ namespace HipsDontLie {
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.UseWebSockets();
+            app.Use(async (context, next) => {
+                if (context.Request.Path == "/ws/events")
+                {
+                    if (context.WebSockets.IsWebSocketRequest)
+                    {
+                        var handler = context.RequestServices.GetRequiredService<WebSocketEventHandler>();
+                        var socket = await context.WebSockets.AcceptWebSocketAsync();
+                        await handler.HandleSocketAsync(context, socket);
+                    }
+                    else
+                    {
+                        context.Response.StatusCode = 400;
+                    }
+                }
+                else
+                {
+                    await next();
+                }
+            });
+
             // Map Controllers
             app.MapControllers();
 
             // Map fallback to Blazor index.html
-            app.MapFallbackToFile("index.html");
+            //app.MapFallbackToFile("index.html");
 
             // Map Health Check Endpoint
             app.MapHealthChecks("/healthz");

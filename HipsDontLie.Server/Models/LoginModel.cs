@@ -8,7 +8,7 @@ namespace HipsDontLie.Models {
         /// <summary>
         /// Gets or sets the email address of the user.
         /// </summary>
-        [Required]
+        [Required, EmailAddress]
         public string Email { get; set; }
 
         /// <summary>
@@ -17,10 +17,5 @@ namespace HipsDontLie.Models {
         [Required]
         public string Password { get; set; }
 
-        public LoginModel(string email, string password)
-        {
-            Email = email;
-            Password = password;
-        }
     }
 }

@@ -28,8 +28,8 @@ namespace GameTogetherAPI.Test.Old.Features
         
         private static string[] featureTags = ((string[])(null));
         
-        private static global::Reqnroll.FeatureInfo featureInfo = new global::Reqnroll.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Features", "UserManagement", ("This feature file describes the process of logging in and managing one\'s user acc" +
-                "ount."), global::Reqnroll.ProgrammingLanguage.CSharp, featureTags);
+        private static global::Reqnroll.FeatureInfo featureInfo = new global::Reqnroll.FeatureInfo(new System.Globalization.CultureInfo("en-US"), "Features", "UserManagement", "This feature file describes the process of logging in and managing one\'s user acc" +
+                "ount.", global::Reqnroll.ProgrammingLanguage.CSharp, featureTags);
         
 #line 1 "UserManangement.feature"
 #line hidden
@@ -84,15 +84,15 @@ namespace GameTogetherAPI.Test.Old.Features
         
         public virtual async System.Threading.Tasks.Task FeatureBackgroundAsync()
         {
-#line 4
+#line 5
     #line hidden
-#line 6
+#line 7
         await testRunner.GivenAsync("TestUser is reset", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
 #line hidden
-#line 7
+#line 8
         await testRunner.AndAsync("I send a create account request", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 8
+#line 9
         await testRunner.ThenAsync("I assert that the account is created", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
         }
@@ -104,7 +104,7 @@ namespace GameTogetherAPI.Test.Old.Features
             string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("log in", null, tagsOfScenario, argumentsOfScenario, featureTags);
-#line 13
+#line 14
     this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -114,13 +114,13 @@ namespace GameTogetherAPI.Test.Old.Features
             else
             {
                 await this.ScenarioStartAsync();
-#line 4
+#line 5
     await this.FeatureBackgroundAsync();
 #line hidden
-#line 14
+#line 15
         await testRunner.WhenAsync("I send a log in request", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 15
+#line 16
   await testRunner.ThenAsync("I assert that the account is logged in", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
@@ -134,7 +134,7 @@ namespace GameTogetherAPI.Test.Old.Features
             string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Log off", null, tagsOfScenario, argumentsOfScenario, featureTags);
-#line 17
+#line 18
     this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -144,13 +144,13 @@ namespace GameTogetherAPI.Test.Old.Features
             else
             {
                 await this.ScenarioStartAsync();
-#line 4
+#line 5
     await this.FeatureBackgroundAsync();
 #line hidden
-#line 18
+#line 19
         await testRunner.GivenAsync("I am logged in", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
 #line hidden
-#line 19
+#line 20
         await testRunner.ThenAsync("I am no longer logged in", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
@@ -164,7 +164,7 @@ namespace GameTogetherAPI.Test.Old.Features
             string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Group request accepted", null, tagsOfScenario, argumentsOfScenario, featureTags);
-#line 21
+#line 22
     this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -174,22 +174,22 @@ namespace GameTogetherAPI.Test.Old.Features
             else
             {
                 await this.ScenarioStartAsync();
-#line 4
+#line 5
     await this.FeatureBackgroundAsync();
 #line hidden
-#line 22
+#line 23
         await testRunner.GivenAsync("I am logged in", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
 #line hidden
-#line 23
+#line 24
         await testRunner.AndAsync("i create a second user", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 24
+#line 25
         await testRunner.AndAsync("a group has been created", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 25
+#line 26
         await testRunner.WhenAsync("I send a join request", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 26
+#line 27
         await testRunner.ThenAsync("I join a group", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
