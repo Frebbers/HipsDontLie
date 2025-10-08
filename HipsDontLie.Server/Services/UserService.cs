@@ -58,7 +58,7 @@ namespace HipsDontLie.Services
             return new GetProfileResponseDTO
             {
                 UserId = profile.User.Id,
-                Username = profile.User.Username,
+                Username = profile.User.UserName,
                 BirthDate = profile.BirthDate,
                 Description = profile.Description,
                 Region = profile.Region,
@@ -77,7 +77,7 @@ namespace HipsDontLie.Services
             return new GetProfileResponseDTO
             {
                 UserId = profile.User.Id,
-                Username = profile.User?.Username,
+                Username = profile.User?.UserName,
                 BirthDate = profile.BirthDate,
                 Description = profile.Description,
                 Region = profile.Region,

@@ -51,7 +51,7 @@ namespace HipsDontLie.Services
                     .Select(uc => new ChatParticipantDTO
                     {
                         UserId = uc.UserId,
-                        Name = uc.User?.Username ?? "No Username"
+                        Name = uc.User?.UserName ?? "No Username"
                     }).ToList()
             }).ToList();
         }

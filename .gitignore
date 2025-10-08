@@ -1,12 +1,15 @@
-*/.vs/*
+/HipsDontLie/.vs/*
+/HipsDontLie/bin/*
+/HipsDontLie/obj/*
+HipsDontLie.Test/obj/*
+HipsDontLie.Test/bin/*
+HipsDontLie.Client/bin/*
+HipsDontLie.Client/obj/*
+HipsDontLie.Shared/bin/*
+HipsDontLie.Shared/obj/*
+HipsDontLie.Server/bin/*
+HipsDontLie.Server/obj/*
 
-*/.vscode/*
-*/.idea/*
-*/bin/
-*/obj/
-**/bin/
-**/obj/
-.idea/
 /certs
 /.vs
 
@@ -15,3 +18,7 @@
 *.log
 .DS_Store
 /certs
+
+# Build artifacts
+**/bin/
+**/obj/
