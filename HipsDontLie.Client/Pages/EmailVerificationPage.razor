@@ -1,0 +1,39 @@
+﻿@page "/verify"
+@layout BlankLayout
+@inject NavigationManager Nav
+
+<MudPaper Class="pa-6 mx-auto mt-10 text-center" MaxWidth="400px">
+    @if (status == "success")
+    {
+        <MudAlert Severity="Severity.Success">
+            Your email has been successfully verified!  
+            You can now <MudLink Href="/login">log in</MudLink>.
+        </MudAlert>
+    }
+    else if (status == "failed")
+    {
+        <MudAlert Severity="Severity.Error">
+            Verification failed.  
+            The link may have expired or was already used.
+        </MudAlert>
+    }
+    else
+    {
+        <MudAlert Severity="Severity.Info">
+            Welcome! Please check your email to verify your account.
+        </MudAlert>
+    }
+</MudPaper>
+
+@code {
+    private string? status;
+
+    protected override void OnInitialized()
+    {
+        var uri = Nav.ToAbsoluteUri(Nav.Uri);
+        var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+
+        if (query.TryGetValue("status", out var value))
+            status = value.ToString();
+    }
+}

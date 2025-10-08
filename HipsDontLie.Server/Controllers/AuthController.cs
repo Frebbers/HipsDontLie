@@ -74,10 +74,10 @@ namespace HipsDontLie.Controllers {
 
             bool success = await _authService.ConfirmEmailAsync(userId, token);
 
-            string redirectUrl = _configuration["FRONTEND_BASE_URL"] ?? "https://localhost:7191";
+            string redirectUrl = _configuration["FRONTEND_BASE_URL"] ?? "https://localhost:7057";
             string status = success ? "success" : "failed";
 
-            return Redirect($"{redirectUrl}/?verification={status}");
+            return Redirect($"{redirectUrl}/verify?status={(success ? "success" : "failed")}");
         }
 
         /// <summary>

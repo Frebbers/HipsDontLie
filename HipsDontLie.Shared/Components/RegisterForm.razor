@@ -1,0 +1,93 @@
+﻿@using System.ComponentModel.DataAnnotations
+@using System.Text.RegularExpressions
+@using MudBlazor
+
+<MudPaper Class="pa-6 mx-auto mt-10" MaxWidth="400px">
+    <MudForm @ref="Form" @bind-IsValid="@IsValid">
+        <MudText Typo="Typo.h5" Class="mb-4">Create Account</MudText>
+
+        <MudTextField @bind-Value="Username"
+                      Label="Username"
+                      Required="true"
+                      RequiredError="Username is required." />
+
+        <MudTextField @bind-Value="Email"
+                      Label="Email"
+                      Required="true"
+                      RequiredError="Email is required."
+                      Validation="@(new EmailAddressAttribute() { ErrorMessage = "Invalid email address." })" />
+
+        <MudTextField @bind-Value="Password"
+                      Label="Password"
+                      InputType="InputType.Password"
+                      Required="true"
+                      RequiredError="Password is required."
+                      Validation="@(new Func<string, IEnumerable<string>>(ValidatePassword))" />
+
+        <MudTextField @bind-Value="ConfirmPassword"
+                      Label="Confirm Password"
+                      InputType="InputType.Password"
+                      Validation="@(new Func<string, string>(ValidateConfirmPassword))" />
+
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   Disabled="!IsValid"
+                   Class="mt-4 w-100"
+                   OnClick="@OnSubmitClicked">
+            Register
+        </MudButton>
+
+        <MudDivider Class="my-4" />
+
+        <MudText Typo="Typo.subtitle2" Align="Align.Center">
+            Already have an account?
+            <MudLink Href="/login">Login here</MudLink>
+        </MudText>
+    </MudForm>
+</MudPaper>
+
+@code {
+    [Parameter] public EventCallback<(string Email, string Username, string Password)> OnSubmit { get; set; }
+
+    public MudForm Form { get; private set; }
+    public bool IsValid { get; set; }
+
+    public string Username { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
+    public string ConfirmPassword { get; set; } = string.Empty;
+
+    private IEnumerable<string> ValidatePassword(string pw)
+    {
+        if (string.IsNullOrWhiteSpace(pw))
+        {
+            yield return "Password is required.";
+            yield break;
+        }
+
+        if (pw.Length < 8)
+            yield return "At least 8 characters.";
+        if (!Regex.IsMatch(pw, "[A-Z]"))
+            yield return "One uppercase letter required.";
+        if (!Regex.IsMatch(pw, "[a-z]"))
+            yield return "One lowercase letter required.";
+        if (!Regex.IsMatch(pw, "[0-9]"))
+            yield return "One number required.";
+    }
+
+    private string ValidateConfirmPassword(string confirm)
+    {
+        if (confirm != Password)
+            return "Passwords do not match.";
+        return null;
+    }
+
+    private async Task OnSubmitClicked()
+    {
+        await Form.Validate();
+        if (IsValid)
+        {
+            await OnSubmit.InvokeAsync((Email, Username, Password));
+        }
+    }
+}

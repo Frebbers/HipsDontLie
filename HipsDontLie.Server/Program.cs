@@ -197,7 +197,7 @@ namespace HipsDontLie {
             app.MapControllers();
 
             // Map fallback to Blazor index.html
-            //app.MapFallbackToFile("index.html");
+            app.MapFallbackToFile("index.html");
 
             // Map Health Check Endpoint
             app.MapHealthChecks("/healthz");
