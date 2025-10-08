@@ -1,3 +1,13 @@
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# VS Code
+.vscode/
+.idea/
+.vs/
 /HipsDontLie/.vs/*
 /HipsDontLie/bin/*
 /HipsDontLie/obj/*
@@ -20,5 +30,39 @@ HipsDontLie.Server/obj/*
 /certs
 
 # Build artifacts
+bin/
+obj/
 **/bin/
 **/obj/
+
+# Test results
+TestResult*/
+*.TestResult.xml
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+
+# Logs and caches
+*.log
+*.cache
+*.tmp
+*.dbmdl
+
+# Publish outputs
+publish/
+wwwroot/dist/
+wwwroot/build/
+
+# Certificates
+certs/
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# App settings (local secrets)
+appsettings.Development.json
+appsettings.Local.json
