@@ -1,28 +1,48 @@
-/HipsDontLie/.vs/*
-/HipsDontLie/bin/*
-/HipsDontLie/obj/*
-HipsDontLie.Test/obj/*
-HipsDontLie.Test/bin/*
-HipsDontLie.Client/bin/*
-HipsDontLie.Client/obj/*
-HipsDontLie.Shared/bin/*
-HipsDontLie.Shared/obj/*
-HipsDontLie.Server/bin/*
-HipsDontLie.Server/obj/*
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
 
-/certs
-/.vs
-/.vscode
-/.idea
-/HipsDontLie/.idea/*
-HipsDontLie.Test/obj/*
-
-/HipsDontLie/appsettings.json
-/HipsDontLie/appsettings.Development.json
-
-.DS_Store
-/certs
+# VS Code
+.vscode/
+.idea/
+.vs/
 
 # Build artifacts
+bin/
+obj/
 **/bin/
 **/obj/
+
+# Test results
+TestResult*/
+*.TestResult.xml
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+
+# Logs and caches
+*.log
+*.cache
+*.tmp
+*.dbmdl
+
+# Publish outputs
+publish/
+wwwroot/dist/
+wwwroot/build/
+
+# Certificates
+certs/
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# App settings (local secrets)
+appsettings.Development.json
+appsettings.Local.json
