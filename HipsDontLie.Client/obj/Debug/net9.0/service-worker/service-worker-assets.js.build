@@ -1,17 +1,17 @@
 self.assetsManifest = {
-  "version": "jK9MBYj2",
+  "version": "XhBmOcNz",
   "assets": [
     {
       "hash": "sha256-OijFBvy/bKNmh8f+BF+5feBwXvHYoe/Nd0RO44Q/si8=",
       "url": "HipsDontLie.Client.styles.css"
     },
     {
-      "hash": "sha256-4qpsa1ZdN7f0zcu77SAvgRk0ii3OAtlnDr1rrVIGSrs=",
-      "url": "_framework/HipsDontLie.Client.y394a556yq.wasm"
+      "hash": "sha256-BFVWhih6aYw7VGVMUllLWKelgmuQvdAqBiN30I0Frvs=",
+      "url": "_framework/HipsDontLie.Client.4oqwmw3m4b.pdb"
     },
     {
-      "hash": "sha256-teSw04mItqzl26FWpsWC9TcMwkyfSzVIzRJsBQ/buGk=",
-      "url": "_framework/HipsDontLie.Client.zej01emjil.pdb"
+      "hash": "sha256-fP3vMSVWqSeM0Ym03Wwh3qdsumcE2C6r6RmvfgFtQhE=",
+      "url": "_framework/HipsDontLie.Client.kgnbztet6j.wasm"
     },
     {
       "hash": "sha256-K6OmidmaPQRsA0Dh6wvXHS4gZ4wMUz7m0ZtNDzkdZzQ=",
@@ -778,7 +778,7 @@ self.assetsManifest = {
       "url": "_framework/WindowsBase.vy2l5u79y6.wasm"
     },
     {
-      "hash": "sha256-l0Vrh9h6383XKhC5iT+kk0jkG4uPuz3V33eUV3NcVHU=",
+      "hash": "sha256-JyxMGPtIPlfmDhKIy4S+HZXyO8bIl0fL80YvDi7Y2+E=",
       "url": "_framework/blazor.boot.json"
     },
     {
