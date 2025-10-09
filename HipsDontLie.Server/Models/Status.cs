@@ -7,7 +7,8 @@
             UserNotExist,
             UserCreated,
             TestUserCreated,
-            WeakPassword
+            WeakPassword,
+            InvalidRole
         }
     }
     

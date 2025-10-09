@@ -1,6 +1,7 @@
 ﻿using HipsDontLie.Database;
 using HipsDontLie.Models;
 using HipsDontLie.Repository;
+using HipsDontLie.Server.Database;
 using HipsDontLie.Services;
 using HipsDontLie.WebSockets;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -21,7 +22,7 @@ using HipsDontLie.Server.Repository;
 
 namespace HipsDontLie {
     public class Program {
-        private static void Main(string[] args) {
+        private static async Task Main(string[] args) {
             var builder = WebApplication.CreateBuilder(args);
 
             // Database setup
@@ -41,44 +42,35 @@ namespace HipsDontLie {
                 options.Password.RequireLowercase = false;
             })
             .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddRoles<IdentityRole<int>>()
             .AddDefaultTokenProviders();
 
+
+            // JWT setup
             // JWT setup
             var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-            if (jwtSettings == null) {
-                throw new Exception("JWT settings are missing in appsettings.json.");
-            }
+            var key = Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]!);
 
-            var key = Encoding.UTF8.GetBytes(jwtSettings["SecretKey"] ?? throw new Exception("JWT SecretKey is missing."));
-
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
-                        options.TokenValidationParameters = new TokenValidationParameters
-                        {
-                            ValidateIssuerSigningKey = true,
-                            IssuerSigningKey = new SymmetricSecurityKey(key),
-                            ValidateIssuer = true,
-                            ValidIssuer = jwtSettings["Issuer"],
-                            ValidateAudience = true,
-                            ValidAudience = jwtSettings["Audience"],
-                            ValidateLifetime = true,
-                            ClockSkew = TimeSpan.Zero
-                        };
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = true,
+                    ValidIssuer = jwtSettings["Issuer"],
+                    ValidateAudience = true,
+                    ValidAudience = jwtSettings["Audience"],
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
+                };
+            });
 
-                        options.Events = new JwtBearerEvents
-                        {
-                            OnChallenge = context =>
-                            {
-                                // Skip the default behavior
-                                context.HandleResponse();
-
-                                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                                context.Response.ContentType = "application/json";
-
-                                return context.Response.WriteAsync("{\"error\": \"Unauthorized or invalid token\"}");
-                            }
-                        };
-                    });
 
             builder.Services.AddAuthorization();
 
@@ -182,7 +174,10 @@ namespace HipsDontLie {
                 });
             }
 
-            
+            using (var scope = app.Services.CreateScope())
+            {
+               await IdentitySeeder.SeedAsync(scope.ServiceProvider);
+            }
 
             // Enable CORS before authentication
             app.UseCors("AllowFrontend");
@@ -217,7 +212,7 @@ namespace HipsDontLie {
             app.MapControllers();
 
             // Map fallback to Blazor index.html
-            app.MapFallbackToFile("index.html");
+            //app.MapFallbackToFile("index.html");
 
             // Map Health Check Endpoint
             app.MapHealthChecks("/healthz");
