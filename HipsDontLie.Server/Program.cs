@@ -63,7 +63,7 @@ namespace HipsDontLie {
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options => {
                 options.SwaggerDoc("v1", new OpenApiInfo {
-                    Title = "GameTogether API",
+                    Title = "HipsDontLie API",
                     Version = "v1",
                     Description = "API for user authentication and management"
                 });
