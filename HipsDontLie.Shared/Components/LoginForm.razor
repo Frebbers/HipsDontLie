@@ -1,0 +1,59 @@
+﻿@using System.ComponentModel.DataAnnotations
+
+
+<MudPaper Class="pa-6 mx-auto mt-10" MaxWidth="400px">
+    <MudForm @ref="form" @bind-IsValid="@isValid">
+        <MudText Typo="Typo.h5" Class="mb-4">Sign In</MudText>
+
+        <MudTextField @bind-Value="Email"
+                      Label="Email"
+                      Required="true"
+                      RequiredError="Email is required."
+                      Validation="@(new EmailAddressAttribute() { ErrorMessage = "Invalid email format." })" />
+
+        <MudTextField @bind-Value="Password"
+                      Label="Password"
+                      InputType="InputType.Password"
+                      Required="true"
+                      RequiredError="Password is required." />
+
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   Disabled="!isValid"
+                   OnClick="HandleLogin"
+                   Class="mt-4 w-100">
+            Log In
+        </MudButton>
+
+        @if (!string.IsNullOrEmpty(ErrorMessage))
+        {
+            <MudAlert Severity="Severity.Error" Class="mt-3">@ErrorMessage</MudAlert>
+        }
+
+        <MudDivider Class="my-4" />
+
+        <MudText Typo="Typo.subtitle2" Align="Align.Center">
+            Don’t have an account?
+            <MudLink Href="/register">Register here</MudLink>
+        </MudText>
+    </MudForm>
+</MudPaper>
+
+@code {
+    [Parameter] public EventCallback<(string Email, string Password)> OnSubmit { get; set; }
+
+    private MudForm form;
+    private bool isValid;
+    private string Email = string.Empty;
+    private string Password = string.Empty;
+    private string? ErrorMessage;
+
+    private async Task HandleLogin()
+    {
+        await form.Validate();
+        if (isValid)
+        {
+            await OnSubmit.InvokeAsync((Email, Password));
+        }
+    }
+}

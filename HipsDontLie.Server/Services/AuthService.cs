@@ -21,6 +21,7 @@ namespace HipsDontLie.Services
         private readonly IConfiguration _configuration;
 
         private readonly UserManager<User> _userManager;
+        private readonly RoleManager<IdentityRole<int>> _roleManager;
         private readonly SignInManager<User> _signInManager;
 
         private readonly string[] _testEmails;
@@ -30,10 +31,11 @@ namespace HipsDontLie.Services
         /// </summary>
         /// <param name="userRepository">The repository for user-related database operations.</param>
         /// <param name="configuration">The configuration settings for authentication.</param>
-        public AuthService(IConfiguration configuration, UserManager<User> userManager)
+        public AuthService(IConfiguration configuration, UserManager<User> userManager, RoleManager<IdentityRole<int>> roleManager)
         {
             _configuration = configuration;
             _userManager = userManager;
+            _roleManager = roleManager;
 
             var env = configuration["ASPNETCORE_ENVIRONMENT"] ?? "Production";
             _testEmails = env.Equals("Development", StringComparison.OrdinalIgnoreCase)
@@ -44,7 +46,7 @@ namespace HipsDontLie.Services
         /// <summary>
         /// Registers a new user using ASP.NET Core Identity.
         /// </summary>
-        public async Task<AuthStatus> RegisterUserAsync(string email, string username, string password)
+        public async Task<AuthStatus> RegisterUserAsync(string email, string username, string password, string? requestedRole = null)
         {
             // Check for existing user
             var existingUser = await _userManager.FindByEmailAsync(email);
@@ -74,9 +76,15 @@ namespace HipsDontLie.Services
                 // If password or validation failed, you can inspect errors if needed
                 return AuthStatus.WeakPassword;
             }
+            var roleToAssign = string.IsNullOrWhiteSpace(requestedRole) ? "Participant" : requestedRole;
 
-            if (isTestEmail)
-                return AuthStatus.TestUserCreated;
+            if (!await _roleManager.RoleExistsAsync(roleToAssign)) return AuthStatus.InvalidRole; 
+
+            // Assign role
+            var roleAdd = await _userManager.AddToRoleAsync(user, roleToAssign);
+            if (!roleAdd.Succeeded) return AuthStatus.InvalidRole;
+
+            if (isTestEmail) return AuthStatus.TestUserCreated;
 
             // If not test user, they need to confirm email
             return AuthStatus.UserCreated;
@@ -188,7 +196,7 @@ namespace HipsDontLie.Services
             if (!user.EmailConfirmed)
                 return null;
 
-            return GenerateJwtToken(user);
+            return await GenerateJwtToken(user);
         }
 
         /// <summary>
@@ -196,20 +204,19 @@ namespace HipsDontLie.Services
         /// </summary>
         /// <param name="user">The authenticated user for whom the token is generated.</param>
         /// <returns>A string representing the generated JWT token.</returns>
-        private string GenerateJwtToken(User user)
+        private async Task<string> GenerateJwtToken(User user)
         {
 
-            //TO-DO: Roles
-            //var roles = await _userManager.GetRolesAsync(user);
-            //foreach (var role in roles)
-                //claims.Add(new Claim(ClaimTypes.Role, role));
-
             var key = Encoding.UTF8.GetBytes(_configuration["JwtSettings:SecretKey"]);
-            var claims = new[]
+            var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Email, user.Email)
+                new Claim(ClaimTypes.Email, user.Email!)
             };
+
+            var roles = await _userManager.GetRolesAsync(user);
+            foreach (var role in roles)
+                claims.Add(new Claim(ClaimTypes.Role, role));
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
