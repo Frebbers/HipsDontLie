@@ -1,25 +1,25 @@
 self.assetsManifest = {
-  "version": "NqraGMuY",
+  "version": "jK9MBYj2",
   "assets": [
     {
       "hash": "sha256-OijFBvy/bKNmh8f+BF+5feBwXvHYoe/Nd0RO44Q/si8=",
       "url": "HipsDontLie.Client.styles.css"
     },
     {
-      "hash": "sha256-pE+yIieFSRqqYb3bbqRIB8TxrRBQ20IlYuDagT0yy54=",
-      "url": "_framework/HipsDontLie.Client.8t8bfoeohf.pdb"
+      "hash": "sha256-4qpsa1ZdN7f0zcu77SAvgRk0ii3OAtlnDr1rrVIGSrs=",
+      "url": "_framework/HipsDontLie.Client.y394a556yq.wasm"
     },
     {
-      "hash": "sha256-/1xzScmKSVM6b38eUKSoHnc0GI2ke2y0IKqxK1K+Qo0=",
-      "url": "_framework/HipsDontLie.Client.n22m9wo0n2.wasm"
+      "hash": "sha256-teSw04mItqzl26FWpsWC9TcMwkyfSzVIzRJsBQ/buGk=",
+      "url": "_framework/HipsDontLie.Client.zej01emjil.pdb"
     },
     {
-      "hash": "sha256-yYjnO/gZzTqs4YUGF/xO5furBCf0K42+bjL2aHNWqdQ=",
-      "url": "_framework/HipsDontLie.Shared.jho5olu0iu.pdb"
+      "hash": "sha256-K6OmidmaPQRsA0Dh6wvXHS4gZ4wMUz7m0ZtNDzkdZzQ=",
+      "url": "_framework/HipsDontLie.Shared.3yeu466xun.pdb"
     },
     {
-      "hash": "sha256-+O4QOl3BFrvncBQ84AQHc7kPeeoK/Fmf9Rgr3AvtvwE=",
-      "url": "_framework/HipsDontLie.Shared.kh1609kznh.wasm"
+      "hash": "sha256-9pKuaaL1Pcb0CNIS91O+ok4cyoLTovEfvF7pYX6C2mQ=",
+      "url": "_framework/HipsDontLie.Shared.yiqjk3yv1m.wasm"
     },
     {
       "hash": "sha256-h2pKkq57/vS3mbEFyiqoupHb66C30OMHzjlzDqfbD40=",
@@ -778,7 +778,7 @@ self.assetsManifest = {
       "url": "_framework/WindowsBase.vy2l5u79y6.wasm"
     },
     {
-      "hash": "sha256-6apXcfuIue9Fqj/P95um1/ZFZCln2ITKXet/0+efrqc=",
+      "hash": "sha256-l0Vrh9h6383XKhC5iT+kk0jkG4uPuz3V33eUV3NcVHU=",
       "url": "_framework/blazor.boot.json"
     },
     {

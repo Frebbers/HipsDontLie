@@ -16,8 +16,25 @@ services:
       JwtSettings__SecretKey: "C6821CD46246E81E9B481CD9D4D9A123C6821CD46246E81E9B481CD9D4D9A123"
       JwtSettings__Issuer: "HipsDontLie"
       JwtSettings__Audience: "HipsDontLieApp"
+      ConnectionStrings__DefaultConnection: "server=db;port=3306;database=hips;user=appuser;password=apppass"
     volumes:
       - ./logs:/app/logs
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: mysql:8
+    container_name: hipsdontlie-db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: hips
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: apppass
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
     restart: unless-stopped
 
   nginx:
@@ -31,3 +48,6 @@ services:
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     restart: unless-stopped
+
+volumes:
+  db_data:
