@@ -1,0 +1,24 @@
+﻿@using HipsDontLie.Client.Services
+@inject AuthService AuthService
+@inject NavigationManager Navigation
+
+<AuthorizeView>
+    <Authorized>
+        <MudButton IconClass="logout" OnClick="@BeginLogOut" Style="margin-right: 16px;">Logout</MudButton>
+    </Authorized>
+    <NotAuthorized>
+        <MudButton  IconClass="login" OnClick="@BeginLogIn" Style="margin-right: 16px; color: #fff">Login</MudButton>
+    </NotAuthorized>
+</AuthorizeView>
+@code {
+    private async Task BeginLogOut()
+    {
+        await AuthService.LogoutAsync();
+    }
+
+    private void BeginLogIn()
+    {
+        Navigation.NavigateTo("login");
+    }
+
+}
