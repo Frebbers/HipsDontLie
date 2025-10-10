@@ -1,11 +1,12 @@
 using HipsDontLie.Models;
 using HipsDontLie.Repository;
 using HipsDontLie.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Moq;
-using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 
 namespace HipsDontLie.Test
@@ -21,6 +22,8 @@ namespace HipsDontLie.Test
         private Mock<IUserRepository> _mockUserRepository;
         private IConfiguration _configuration;
         private AuthService _authService;
+        private Mock<UserManager<User>> _mockUserManager;
+        private Mock<RoleManager<IdentityRole<int>>> _mockRoleManager;
 
         [SetUp]
         public void Setup()
@@ -37,11 +40,13 @@ namespace HipsDontLie.Test
                 .AddInMemoryCollection(inMemorySettings)
                 .Build();
 
-            // Create mock repository
+            // Create mock repositories
+            _mockUserManager = MockUserManager();
+            _mockRoleManager = MockRoleManager();
             _mockUserRepository = new Mock<IUserRepository>();
 
             // Create auth service with real configuration but mock repository
-            _authService = new AuthService(_mockUserRepository.Object, _configuration);
+            _authService = new AuthService(_configuration, _mockUserManager.Object, _mockRoleManager.Object);
         }
 
         #region RegisterUserAsync Tests
@@ -64,7 +69,7 @@ namespace HipsDontLie.Test
             Assert.That(result, Is.EqualTo(AuthStatus.TestUserCreated));
             _mockUserRepository.Verify(r => r.AddUserAsync(It.Is<User>(u => 
                 u.Email == email && 
-                u.Username == username && 
+                u.UserName == username && 
                 u.PasswordHash != password)), Times.Once);
         }
 
@@ -121,7 +126,7 @@ namespace HipsDontLie.Test
 
             // Assert
             Assert.That(result, Is.EqualTo(AuthStatus.TestUserCreated));
-            _mockUserRepository.Verify(r => r.AddUserAsync(It.Is<User>(u => u.IsEmailVerified == true)), Times.Once);
+            _mockUserRepository.Verify(r => r.AddUserAsync(It.Is<User>(u => u.EmailConfirmed == true)), Times.Once);
         }
 
         #endregion
@@ -245,7 +250,7 @@ namespace HipsDontLie.Test
             _mockUserRepository.Setup(r => r.ConfirmEmailAsync(userId)).ReturnsAsync(true);
 
             // Act
-            var result = await _authService.ConfirmEmailAsync(validToken);
+            var result = await _authService.ConfirmEmailAsync(userId,validToken);
 
             // Assert
             Assert.IsTrue(result);
@@ -257,9 +262,10 @@ namespace HipsDontLie.Test
         {
             // Arrange
             string invalidToken = "invalid.token.string";
+            int userId = 1;
 
             // Act
-            var result = await _authService.ConfirmEmailAsync(invalidToken);
+            var result = await _authService.ConfirmEmailAsync(userId, invalidToken);
 
             // Assert
             Assert.IsFalse(result);
@@ -284,7 +290,7 @@ namespace HipsDontLie.Test
                     Id = 1, 
                     Email = email, 
                     PasswordHash = hashedPassword,
-                    IsEmailVerified = true 
+                    EmailConfirmed = true 
                 });
 
             // Act
@@ -327,7 +333,7 @@ namespace HipsDontLie.Test
                     Id = 1, 
                     Email = email, 
                     PasswordHash = hashedPassword,
-                    IsEmailVerified = true 
+                    EmailConfirmed = true 
                 });
 
             // Act
@@ -351,7 +357,7 @@ namespace HipsDontLie.Test
                     Id = 1, 
                     Email = email, 
                     PasswordHash = hashedPassword,
-                    IsEmailVerified = false // Not verified
+                    EmailConfirmed = false // Not verified
                 });
 
             // Act
@@ -361,6 +367,26 @@ namespace HipsDontLie.Test
             Assert.IsNull(token);
         }
 
+        #endregion
+
+        #region Helpers
+        private static Mock<UserManager<User>> MockUserManager()
+        {
+            var store = new Mock<IUserStore<User>>();
+            return new Mock<UserManager<User>>(
+                store.Object,
+                null, null, null, null, null, null, null, null
+            );
+        }
+
+        private static Mock<RoleManager<IdentityRole<int>>> MockRoleManager()
+        {
+            var store = new Mock<IRoleStore<IdentityRole<int>>>();
+            return new Mock<RoleManager<IdentityRole<int>>>(
+                store.Object,
+                null, null, null, null
+            );
+        }
         #endregion
     }
 }
