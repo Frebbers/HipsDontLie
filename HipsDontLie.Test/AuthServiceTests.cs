@@ -278,7 +278,7 @@ namespace HipsDontLie.Test
 
         [Test]
         public async Task AuthenticateUserAsync_ValidCredentials_ReturnsToken()
-        {
+        { 
             // Arrange
             string email = "user@example.com";
             string password = "Password123";
