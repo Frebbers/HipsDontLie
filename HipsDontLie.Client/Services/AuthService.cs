@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Headers;
+﻿using Microsoft.JSInterop;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
@@ -8,24 +9,26 @@ namespace HipsDontLie.Client.Services
     public class AuthService
     {
         private readonly HttpClient _http;
-        private string? _token;
+        private readonly CustomAuthStateProvider _authProvider;
 
-        public AuthService(HttpClient http) => _http = http;
+        public AuthService(HttpClient http, CustomAuthStateProvider authProvider)
+        {
+            _authProvider = (CustomAuthStateProvider)authProvider;
+            _http = http;
+        }
 
         public async Task<bool> LoginAsync(string email, string password)
         {
             var json = JsonSerializer.Serialize(new { email, password });
-            var res = await _http.PostAsync("api/auth/login",
-                new StringContent(json, Encoding.UTF8, "application/json"));
+            var res = await _http.PostAsync("api/auth/login", new StringContent(json, Encoding.UTF8, "application/json"));
 
             if (!res.IsSuccessStatusCode) return false;
 
             var body = await res.Content.ReadAsStringAsync();
             using var doc = JsonDocument.Parse(body);
-            _token = doc.RootElement.GetProperty("token").GetString();
+            var token = doc.RootElement.GetProperty("token").GetString();
 
-            _http.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", _token);
+            await _authProvider.MarkUserAsAuthenticated(token);
             return true;
         }
 
@@ -51,12 +54,7 @@ namespace HipsDontLie.Client.Services
             return new RegisterResult { Success = false, Message = body };
         }
 
-        public async Task LogoutAsync()
-        {
-            _token = null;
-            _http.DefaultRequestHeaders.Authorization = null;
-        }
+        public async Task LogoutAsync() => await _authProvider.LogoutAsync();
 
-        public string? GetToken() => _token;
     }
 }

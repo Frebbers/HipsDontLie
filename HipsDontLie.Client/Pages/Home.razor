@@ -2,6 +2,20 @@
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<AuthorizeView Context="context">
+    <Authorized>
+        <p>Welcome, @context.User.Identity.Name!</p>
+    </Authorized>
+    <NotAuthorized>
+        <p>Please <a href="/login">log in</a> to continue.</p>
+    </NotAuthorized>
+</AuthorizeView>
 
-Welcome to your new app.
+<AuthorizeView Roles="Instructor">
+    <p>You are an Instructor.</p>
+</AuthorizeView>
+
+<AuthorizeView Roles="Participant">
+    <p>You are a Participant.</p>
+</AuthorizeView>
+
