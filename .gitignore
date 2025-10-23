@@ -12,6 +12,6 @@
 
 /HipsDontLie/appsettings.json
 /HipsDontLie/appsettings.Development.json
-
+*.log
 .DS_Store
 /certs
