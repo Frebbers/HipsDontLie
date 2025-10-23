@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("HipsDontLie.Server")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+50675282e9f42730d9afb48fd441a1c847611920")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1fdb84412030da12000c0bf2e37772c31b3a63e0")]
 [assembly: System.Reflection.AssemblyProductAttribute("HipsDontLie.Server")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HipsDontLie.Server")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

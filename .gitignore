@@ -8,6 +8,13 @@ HipsDontLie.Blazor/obj/*
 HipsDontLie.Shared/bin/*
 HipsDontLie.Shared/obj/*
 
+bin/
+obj/
+*/bin/
+*/obj/
+**/bin/
+**/obj/
+
 /certs
 /.vs
 /.vscode

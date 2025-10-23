@@ -160,3 +160,4 @@ C:\Development\School\2025 Complex Systems and DevOps\HipsDontLie\HipsDontLie.Se
 C:\Development\School\2025 Complex Systems and DevOps\HipsDontLie\HipsDontLie.Server\obj\Debug\net9.0\HipsDontLie.Server.genruntimeconfig.cache
 C:\Development\School\2025 Complex Systems and DevOps\HipsDontLie\HipsDontLie.Server\obj\Debug\net9.0\ref\HipsDontLie.Server.dll
 C:\Development\School\2025 Complex Systems and DevOps\HipsDontLie\HipsDontLie.Server\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
+C:\Development\School\2025 Complex Systems and DevOps\HipsDontLie\HipsDontLie.Server\bin\Debug\net9.0\HipsDontLie.Shared.staticwebassets.runtime.json
