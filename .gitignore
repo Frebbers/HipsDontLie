@@ -1,15 +1,7 @@
-/HipsDontLie/.vs/*
-/HipsDontLie/bin/*
-/HipsDontLie/obj/*
-HipsDontLie.Test/obj/*
-HipsDontLie.Test/bin/*
-HipsDontLie.Blazor/bin/*
-HipsDontLie.Blazor/obj/*
-HipsDontLie.Shared/bin/*
-HipsDontLie.Shared/obj/*
+*/.vs/*
 
-bin/
-obj/
+*/.vscode/*
+*/.idea/*
 */bin/
 */obj/
 **/bin/
@@ -17,10 +9,6 @@ obj/
 
 /certs
 /.vs
-/.vscode
-/.idea
-/HipsDontLie/.idea/*
-HipsDontLie.Test/obj/*
 
 /HipsDontLie/appsettings.json
 /HipsDontLie/appsettings.Development.json
