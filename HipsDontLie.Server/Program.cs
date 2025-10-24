@@ -8,6 +8,9 @@ using HipsDontLie.Database;
 using HipsDontLie.Repository;
 using HipsDontLie.Services;
 using HipsDontLie.WebSockets;
+using HipsDontLie.Server.Settings;
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 
 namespace HipsDontLie {
     public class Program {
@@ -54,6 +57,17 @@ namespace HipsDontLie {
             builder.Services.AddScoped<IChatRepository, ChatRepository>();
             builder.Services.AddSingleton<WebSocketConnectionManager>();
             builder.Services.AddSingleton<WebSocketEventHandler>();
+
+            // Bind Mongo chat settings
+            builder.Services.Configure<MongoChatSettings>(
+                builder.Configuration.GetSection("MongoChat"));
+
+            // Register IMongoClient as singleton
+            builder.Services.AddSingleton<IMongoClient>(sp =>
+            {
+                var settings = sp.GetRequiredService<IOptions<MongoChatSettings>>().Value;
+                return new MongoClient(settings.ConnectionString);
+            });
 
             // Health Check setup
             builder.Services.AddHealthChecks()
