@@ -6,7 +6,7 @@
 */obj/
 **/bin/
 **/obj/
-
+.idea/
 /certs
 /.vs
 
