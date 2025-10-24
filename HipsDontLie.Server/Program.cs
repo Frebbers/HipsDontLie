@@ -11,6 +11,7 @@ using HipsDontLie.WebSockets;
 using HipsDontLie.Server.Settings;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using HipsDontLie.Server.Repository;
 
 namespace HipsDontLie {
     public class Program {
@@ -54,7 +55,8 @@ namespace HipsDontLie {
 
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IGroupRepository, GroupRepository>();
-            builder.Services.AddScoped<IChatRepository, ChatRepository>();
+            //builder.Services.AddScoped<IChatRepository, ChatRepository>(); sql based chat repository using ef core
+            builder.Services.AddScoped<IChatRepository, MongoChatRepository>(); // mongo based chat repository
             builder.Services.AddSingleton<WebSocketConnectionManager>();
             builder.Services.AddSingleton<WebSocketEventHandler>();
 
