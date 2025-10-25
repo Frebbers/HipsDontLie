@@ -56,7 +56,7 @@ services:
       - mongo_data:/data/db
     restart: unless-stopped
 
-  tests:
+  test:
     build:
       context: .
       dockerfile: Dockerfile
