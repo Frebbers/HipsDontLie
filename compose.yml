@@ -1,3 +1,15 @@
+x-common-env: &app-env
+  ASPNETCORE_ENVIRONMENT: Development
+  DOTNET_RUNNING_IN_CONTAINER: "true"
+  DOTNET_USE_POLLING_FILE_WATCHER: "true"
+  JwtSettings__SecretKey: "C6821CD46246E81E9B481CD9D4D9A123C6821CD46246E81E9B481CD9D4D9A123"
+  JwtSettings__Issuer: "HipsDontLie"
+  JwtSettings__Audience: "HipsDontLieApp"
+  ConnectionStrings__DefaultConnection: "server=db;port=3306;database=hips;user=appuser;password=apppass"
+  MongoChat__ConnectionString: "mongodb://root:example@mongodb:27017/?authSource=admin"
+  MongoChat__DatabaseName: "hips_chat"
+  MongoChat__MessagesCollectionName: "messages"
+
 services:
   hipsdontlie:
     build:
@@ -9,17 +21,8 @@ services:
     expose:
       - "80"
       - "443"
-    environment: #We can use these as defaults for dev and testing, but we need to use a .env file with gha secrets for prod.
-      ASPNETCORE_ENVIRONMENT: Development
-      DOTNET_RUNNING_IN_CONTAINER: "true"
-      DOTNET_USE_POLLING_FILE_WATCHER: "true"
-      JwtSettings__SecretKey: "C6821CD46246E81E9B481CD9D4D9A123C6821CD46246E81E9B481CD9D4D9A123"
-      JwtSettings__Issuer: "HipsDontLie"
-      JwtSettings__Audience: "HipsDontLieApp"
-      ConnectionStrings__DefaultConnection: "server=db;port=3306;database=hips;user=appuser;password=apppass"
-      MongoChat__ConnectionString: "mongodb://root:example@mongodb:27017/?authSource=admin"
-      MongoChat__DatabaseName: "hips_chat"
-      MongoChat__MessagesCollectionName: "messages"
+    environment: # defaults for dev/testing; Production should supply via secrets/env file
+      <<: *app-env
     volumes:
       - ./logs:/app/logs
     depends_on:
@@ -52,6 +55,21 @@ services:
     volumes:
       - mongo_data:/data/db
     restart: unless-stopped
+
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        ENVIRONMENT: Development
+    container_name: hipsdontlie-tests
+    environment:
+      <<: *app-env
+    depends_on:
+      - db
+      - mongodb
+    command: ["dotnet", "test", "HipsDontLie.Test/HipsDontLie.Test.csproj", "--no-build"]
+    restart: "no"
 
   nginx:
     image: nginx:alpine
