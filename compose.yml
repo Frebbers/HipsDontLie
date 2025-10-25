@@ -57,18 +57,17 @@ services:
     restart: unless-stopped
 
   test:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        ENVIRONMENT: Development
+    image: mcr.microsoft.com/dotnet/sdk:9.0
     container_name: hipsdontlie-tests
+    working_dir: /src
+    volumes:
+      - ./:/src
     environment:
       <<: *app-env
     depends_on:
       - db
       - mongodb
-    command: ["dotnet", "test", "HipsDontLie.Test/HipsDontLie.Test.csproj", "--no-build"]
+    entrypoint: ["dotnet", "test", "HipsDontLie.Test/HipsDontLie.Test.csproj"]
     restart: "no"
 
   nginx:
