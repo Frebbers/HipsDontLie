@@ -1,14 +1,14 @@
 x-common-env: &app-env
-  ASPNETCORE_ENVIRONMENT: Development
-  DOTNET_RUNNING_IN_CONTAINER: "true"
-  DOTNET_USE_POLLING_FILE_WATCHER: "true"
-  JwtSettings__SecretKey: "C6821CD46246E81E9B481CD9D4D9A123C6821CD46246E81E9B481CD9D4D9A123"
-  JwtSettings__Issuer: "HipsDontLie"
-  JwtSettings__Audience: "HipsDontLieApp"
-  ConnectionStrings__DefaultConnection: "server=db;port=3306;database=hips;user=appuser;password=apppass"
-  MongoChat__ConnectionString: "mongodb://root:example@mongodb:27017/?authSource=admin"
-  MongoChat__DatabaseName: "hips_chat"
-  MongoChat__MessagesCollectionName: "messages"
+  ASPNETCORE_ENVIRONMENT: "${ASPNETCORE_ENVIRONMENT:-Development}"
+  DOTNET_RUNNING_IN_CONTAINER: "${DOTNET_RUNNING_IN_CONTAINER:-true}"
+  DOTNET_USE_POLLING_FILE_WATCHER: "${DOTNET_USE_POLLING_FILE_WATCHER:-true}"
+  JwtSettings__SecretKey: "${JwtSettings__SecretKey:-C6821CD46246E81E9B481CD9D4D9A123C6821CD46246E81E9B481CD9D4D9A123}"
+  JwtSettings__Issuer: "${JwtSettings__Issuer:-HipsDontLie}"
+  JwtSettings__Audience: "${JwtSettings__Audience:-HipsDontLieApp}"
+  ConnectionStrings__DefaultConnection: "${ConnectionStrings__DefaultConnection:-server=db;port=3306;database=hips;user=appuser;password=apppass}"
+  MongoChat__ConnectionString: "${MongoChat__ConnectionString:-mongodb://root:example@mongodb:27017/?authSource=admin}"
+  MongoChat__DatabaseName: "${MongoChat__DatabaseName:-hips_chat}"
+  MongoChat__MessagesCollectionName: "${MongoChat__MessagesCollectionName:-messages}"
 
 services:
   hipsdontlie:
