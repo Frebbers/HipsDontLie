@@ -34,40 +34,30 @@ namespace HipsDontLie.Controllers {
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
-            if (model == null || model.Username == null || model.Username == null || model.Password == null)
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            if (model == null || string.IsNullOrWhiteSpace(model.Email) || string.IsNullOrWhiteSpace(model.Username) || string.IsNullOrWhiteSpace(model.Password))
+                return BadRequest("Username, email, and password are required.");
+
+
+            var status = await _authService.RegisterUserAsync(model.Email, model.Username, model.Password);
+
+            return status switch
             {
-                return BadRequest("Username, email and password are required.");
-            }
-            AuthStatus status = await _authService.RegisterUserAsync(model.Email, model.Username, model.Password);
-            if (status == AuthStatus.UserExists)
-            {
-                return BadRequest("Email already taken.");
-            }
+                AuthStatus.UserExists => BadRequest("Email already taken."),
+                AuthStatus.WeakPassword => BadRequest("Password is too weak. It must be at least 6 characters long."),
+                AuthStatus.UserCreated => await HandleEmailVerification(model.Email),
+                AuthStatus.TestUserCreated => Ok("Test user created successfully."),
+                _ => StatusCode(StatusCodes.Status500InternalServerError, "Unknown registration error.")
+            };
+        }
 
-            if(status == AuthStatus.WeakPassword)
-                return BadRequest("Password must be atleast 8 characters long, contain at least one uppercase letter, one lowercase letter, one number.");
-
-            if (status == AuthStatus.UserCreated)
-            {
-                bool emailSent = await _authService.SendEmailVerificationAsync(model.Email);
-
-
-                if (!emailSent) //email sending fails
-                {
-                    try //Clean up the user to make registration transactional
-                    {
-                        
-                        _authService.DeleteUserAsync(0, model.Email);
-                    }
-                    catch (Exception ex) {
-                        Console.WriteLine($"Error parsing user ID: {ex.Message}");
-                        // We should consider handling cases where this parsing fails. Could the user still exist?
-                    }
-                    return StatusCode(StatusCodes.Status500InternalServerError, "Could not send verification email.");
-                }
-            }
-
-            return Ok("User registered successfully!");
+        private async Task<IActionResult> HandleEmailVerification(string email)
+        {
+            var sent = await _authService.SendEmailVerificationAsync(email);
+            if (!sent)
+                return StatusCode(StatusCodes.Status500InternalServerError, "Failed to send verification email.");
+            return Ok("User registered successfully. Please check your email for a verification link.");
         }
 
         /// <summary>
@@ -77,16 +67,17 @@ namespace HipsDontLie.Controllers {
         /// <param name="token">The email verification JWT token.</param>
         /// <returns>Redirects to the frontend URL with a verification status in the query string.</returns>
         [HttpGet("verify-email")]
-        public async Task<IActionResult> VerifyEmail([FromQuery] string token) {
-            bool success = await _authService.ConfirmEmailAsync(token);
+        public async Task<IActionResult> VerifyEmail([FromQuery] int userId, [FromQuery] string token)
+        {
+            if (string.IsNullOrEmpty(token) || userId <= 0)
+                return BadRequest("Invalid verification link.");
 
-            var redirectUrl = _configuration["FRONTEND_BASE_URL"];
+            bool success = await _authService.ConfirmEmailAsync(userId, token);
 
-            if (!success) {
-                return Redirect($"{redirectUrl}/?verification=failed");
-            }
+            string redirectUrl = _configuration["FRONTEND_BASE_URL"] ?? "https://localhost:7191";
+            string status = success ? "success" : "failed";
 
-            return Redirect($"{redirectUrl}/?verification=success");
+            return Redirect($"{redirectUrl}/?verification={status}");
         }
 
         /// <summary>
@@ -98,10 +89,17 @@ namespace HipsDontLie.Controllers {
         /// Returns a 401 Unauthorized response if credentials are invalid.
         /// </returns>
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginModel model) {
+        public async Task<IActionResult> Login([FromBody] LoginModel model)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            if (model == null || string.IsNullOrWhiteSpace(model.Email) || string.IsNullOrWhiteSpace(model.Password))
+                return BadRequest("Email and password are required.");
+
+
             var token = await _authService.AuthenticateUserAsync(model.Email, model.Password);
             if (token == null)
-                return Unauthorized("Invalid credentials or your user has not been verified.");
+                return Unauthorized("Invalid credentials or email not verified.");
 
             return Ok(new { Token = token });
         }
@@ -116,14 +114,15 @@ namespace HipsDontLie.Controllers {
         [HttpDelete("remove-user/")]
         [Authorize]
         public async Task<IActionResult> DeleteUser() {
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var userIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(userIdStr, out int userId))
+                return BadRequest("Invalid user ID.");
 
             bool success = await _authService.DeleteUserAsync(userId);
-
             if (!success)
-                return BadRequest(new { message = "Unable to delete user." });
+                return BadRequest("Unable to delete user.");
 
-            return Ok();
+            return Ok("User deleted successfully.");
         }
 
         /// <summary>
@@ -136,8 +135,10 @@ namespace HipsDontLie.Controllers {
         [Authorize]
         //public async Task<IActionResult> GetCurrentUser([FromBody] string token)
         public IActionResult GetCurrentUser() {
-            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
-            return Ok(new { Email = userEmail });
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+            var id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            return Ok(new { Id = id, Email = email });
         }
 
         /// <summary>

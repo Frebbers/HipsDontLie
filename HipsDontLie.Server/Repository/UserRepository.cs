@@ -25,23 +25,9 @@ namespace HipsDontLie.Repository
         /// </summary>
         /// <param name="user">The user to be added.</param>
         /// <returns>A task representing the asynchronous operation, returning true if successful, otherwise false.</returns>
-        public async Task<bool> AddUserAsync(User user)
+        public Task<bool> AddUserAsync(User user)
         {
-            try
-            {
-                await _context.Users.AddAsync(user);
-                await _context.SaveChangesAsync();
-                return true;
-
-            }
-            catch (DbUpdateException ex) 
-            {
-                return false;
-            }
-            catch (Exception ex) 
-            {
-                return false;
-            }
+            throw new NotSupportedException("Use UserManager<User> in AuthService instead of direct repository access.");
         }
 
         /// <summary>
@@ -92,7 +78,8 @@ namespace HipsDontLie.Repository
             var user = await _context.Users.FindAsync(userId);
             if (user == null) return false;
 
-            user.IsEmailVerified = true;
+            user.EmailConfirmed = true;
+            _context.Users.Update(user);
             await _context.SaveChangesAsync();
             return true;
         }
