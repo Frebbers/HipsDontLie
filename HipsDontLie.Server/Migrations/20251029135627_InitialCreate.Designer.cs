@@ -4,6 +4,7 @@ using HipsDontLie.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HipsDontLie.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251029135627_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -385,38 +388,6 @@ namespace HipsDontLie.Server.Migrations
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.OwnsMany("Radzen.Blazor.AppointmentData", "Appointments", b1 =>
-                        {
-                            b1.Property<int>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("int");
-
-                            MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b1.Property<int>("Id"));
-
-                            b1.Property<DateTime>("End")
-                                .HasColumnType("datetime(6)");
-
-                            b1.Property<int>("GroupId")
-                                .HasColumnType("int");
-
-                            b1.Property<DateTime>("Start")
-                                .HasColumnType("datetime(6)");
-
-                            b1.Property<string>("Text")
-                                .HasColumnType("longtext");
-
-                            b1.HasKey("Id");
-
-                            b1.HasIndex("GroupId");
-
-                            b1.ToTable("AppointmentData");
-
-                            b1.WithOwner()
-                                .HasForeignKey("GroupId");
-                        });
-
-                    b.Navigation("Appointments");
 
                     b.Navigation("Owner");
                 });

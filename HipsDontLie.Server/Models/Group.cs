@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using HipsDontLie.Server.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace HipsDontLie.Models {
     /// <summary>
@@ -55,9 +56,21 @@ namespace HipsDontLie.Models {
         /// Gets or sets a list of tags associated with the group for filtering and categorization.
         /// </summary>
         public List<string> Tags { get; set; } = new();
+
+        /// <summary>
+        /// Members who are not users.
+        /// </summary>
         public List<string>? NonUserMembers { get; set; } = new();
 
+        /// <summary>
+        /// The chat associated with the group.
+        /// </summary>
         public Chat Chat { get; set; }
+
+        /// <summary>
+        /// Gets or sets the list of appointments associated with the group.
+        /// </summary>
+        public List<Appointment> Appointments { get; set; } = new();
     }
     public enum JoinGroupStatus
     {

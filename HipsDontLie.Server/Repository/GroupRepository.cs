@@ -155,6 +155,7 @@ namespace HipsDontLie.Repository {
             existingGroup.AgeRange = updatedGroup.AgeRange;
             existingGroup.Tags = updatedGroup.Tags;
             existingGroup.NonUserMembers = updatedGroup.NonUserMembers;
+            existingGroup.Appointments = updatedGroup.Appointments;
 
             await _context.SaveChangesAsync();
             return true;
