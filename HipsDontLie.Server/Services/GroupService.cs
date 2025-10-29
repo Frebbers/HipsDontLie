@@ -82,7 +82,7 @@ namespace HipsDontLie.Services {
                 Members = group.Members
                     .Select(p => new MemberDTO {
                         UserId = p.UserId,
-                        Username = p.User.Username ?? "No Username",
+                        Username = p.User.UserName ?? "No Username",
                         GroupStatus = p.Status
                     })
                     .ToList(),
@@ -120,7 +120,7 @@ namespace HipsDontLie.Services {
                     Members = group.Members
                         .Select(p => new MemberDTO {
                             UserId = p.UserId,
-                            Username = p.User.Username ?? "No Username",
+                            Username = p.User.UserName ?? "No Username",
                             GroupStatus = p.Status
                         })
                         .ToList(),
@@ -158,7 +158,7 @@ namespace HipsDontLie.Services {
                     Members = group.Members
                         .Select(p => new MemberDTO {
                             UserId = p.UserId,
-                            Username = p.User.Username ?? "No Username",
+                            Username = p.User.UserName ?? "No Username",
                             GroupStatus = p.Status
                         })
                         .ToList(),
@@ -197,7 +197,7 @@ namespace HipsDontLie.Services {
                 ownerId: group.OwnerId,
                 groupId: group.Id,
                 requesterId: requester.Id,
-                requesterName: requester.Username ?? "Unknown",
+                requesterName: requester.UserName ?? "Unknown",
                 title: group.Title
             );
 

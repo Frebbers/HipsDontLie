@@ -1,0 +1,16 @@
+﻿@page "/register"
+@layout BlankLayout
+@using HipsDontLie.Client.Services
+@inject AuthService Auth
+@inject NavigationManager Nav
+
+<RegisterForm OnSubmit="HandleRegister" />
+
+@code {
+    private async Task HandleRegister((string Email, string Username, string Password) formData)
+    {
+        var result = await Auth.RegisterAsync(formData.Email, formData.Username, formData.Password);
+        if (result.Success)
+            Nav.NavigateTo("/login");
+    }
+}

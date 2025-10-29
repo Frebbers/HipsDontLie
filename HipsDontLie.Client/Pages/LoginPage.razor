@@ -1,0 +1,23 @@
+﻿@page "/login"
+@layout BlankLayout
+@inject AuthService Auth
+@inject NavigationManager Nav
+@using System.ComponentModel.DataAnnotations
+@using HipsDontLie.Client.Services
+@using MudBlazor
+
+<LoginForm OnSubmit="HandleLogin" />
+
+@code {
+    private async Task HandleLogin((string Email, string Password) formData)
+    {
+        var (Email, Password) = formData;
+
+        var success = await Auth.LoginAsync(Email, Password);
+
+        if (success)
+            Nav.NavigateTo("/", forceLoad: true);
+        else
+            Console.WriteLine("Invalid credentials or email not verified.");
+    }
+}

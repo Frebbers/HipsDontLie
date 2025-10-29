@@ -251,7 +251,7 @@ namespace HipsDontLie.WebSockets
             {
                 using var scope = _serviceProvider.CreateScope();
                 var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                return await db.Users.Where(u => u.Id == userId).Select(u => u.Username).FirstOrDefaultAsync();
+                return await db.Users.Where(u => u.Id == userId).Select(u => u.UserName).FirstOrDefaultAsync();
             }
             catch (Exception ex)
             {

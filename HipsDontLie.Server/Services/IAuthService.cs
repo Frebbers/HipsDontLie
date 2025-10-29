@@ -13,7 +13,7 @@ namespace HipsDontLie.Services
         /// <param name="email">The email address of the user.</param>
         /// <param name="password">The plaintext password to be stored securely.</param>
         /// <returns>A task representing the asynchronous operation, returning true if registration is successful, otherwise false.</returns>
-        Task<AuthStatus> RegisterUserAsync(string email, string username, string password);
+        Task<AuthStatus> RegisterUserAsync(string email, string username, string password, string? requestedRole = null);
 
         /// <summary>
         /// Sends an email verification link to the user's email address.
@@ -23,11 +23,9 @@ namespace HipsDontLie.Services
         Task<bool> SendEmailVerificationAsync(string email);
 
         /// <summary>
-        /// Confirms the user's email using a verification token.
+        /// Confirms a user's email using the verification token.
         /// </summary>
-        /// <param name="token">JWT verification token</param>
-        /// <returns>Task representing the async operation</returns>
-        Task<bool> ConfirmEmailAsync(string token);
+        Task<bool> ConfirmEmailAsync(int userId, string token);
 
         /// <summary>
         /// Authenticates a user by verifying their credentials and returning a JWT token if valid.
@@ -35,7 +33,7 @@ namespace HipsDontLie.Services
         /// <param name="email">The email address of the user.</param>
         /// <param name="password">The plaintext password provided for authentication.</param>
         /// <returns>A task representing the asynchronous operation, returning a JWT token if authentication is successful, otherwise null.</returns>
-        Task<string> AuthenticateUserAsync(string email, string password);
+        Task<string?> AuthenticateUserAsync(string email, string password);
 
         /// <summary>
         /// Deletes a user from the system.
