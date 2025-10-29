@@ -9,12 +9,16 @@ ARG ENVIRONMENT=Development
 COPY HipsDontLie.Server/HipsDontLie.Server.csproj HipsDontLie.Server/
 COPY HipsDontLie.Client/HipsDontLie.Client.csproj HipsDontLie.Client/
 COPY HipsDontLie.Shared/HipsDontLie.Shared.csproj HipsDontLie.Shared/
+COPY HipsDontLie.Test/HipsDontLie.Test.csproj HipsDontLie.Test/
 
 # Restore dependencies
 RUN dotnet restore "HipsDontLie.Server/HipsDontLie.Server.csproj"
 
 # Copy the rest of the source code
 COPY . .
+
+# Run tests before publish
+RUN dotnet test "HipsDontLie.Test/HipsDontLie.Test.csproj" --verbosity normal
 
 # Publish the Server (which automatically builds Client)
 RUN dotnet publish "HipsDontLie.Server/HipsDontLie.Server.csproj" \

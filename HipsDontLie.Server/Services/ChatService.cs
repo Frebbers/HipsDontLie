@@ -30,7 +30,7 @@ namespace HipsDontLie.Services
             {
                 MessageId = m.Id,
                 SenderName = m.Sender?.UserName ?? "Unknown",
-                SenderId = m.SenderId ?? 0,
+                SenderId = m.SenderId,
                 Content = m.Content,
                 TimeStamp = m.TimeStamp,
                 ChatId = m.ChatId

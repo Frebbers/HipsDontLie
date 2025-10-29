@@ -11,6 +11,10 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using HipsDontLie.Server.Settings;
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
+using HipsDontLie.Server.Repository;
 
 namespace HipsDontLie {
     public class Program {
@@ -36,9 +40,7 @@ namespace HipsDontLie {
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddRoles<IdentityRole<int>>()
             .AddDefaultTokenProviders();
-
-
-            // JWT setup
+            
             // JWT setup
             var jwtSettings = builder.Configuration.GetSection("JwtSettings");
             var key = Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]!);
@@ -74,9 +76,21 @@ namespace HipsDontLie {
 
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IGroupRepository, GroupRepository>();
-            builder.Services.AddScoped<IChatRepository, ChatRepository>();
+            //builder.Services.AddScoped<IChatRepository, ChatRepository>(); sql based chat repository using ef core
+            builder.Services.AddScoped<IChatRepository, MongoChatRepository>(); // mongo based chat repository
             builder.Services.AddSingleton<WebSocketConnectionManager>();
             builder.Services.AddSingleton<WebSocketEventHandler>();
+
+            // Bind Mongo chat settings
+            builder.Services.Configure<MongoChatSettings>(
+                builder.Configuration.GetSection("MongoChat"));
+
+            // Register IMongoClient as singleton
+            builder.Services.AddSingleton<IMongoClient>(sp =>
+            {
+                var settings = sp.GetRequiredService<IOptions<MongoChatSettings>>().Value;
+                return new MongoClient(settings.ConnectionString);
+            });
 
             // Health Check setup
             builder.Services.AddHealthChecks()
@@ -86,7 +100,7 @@ namespace HipsDontLie {
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options => {
                 options.SwaggerDoc("v1", new OpenApiInfo {
-                    Title = "GameTogether API",
+                    Title = "HipsDontLie API",
                     Version = "v1",
                     Description = "API for user authentication and management"
                 });
@@ -153,19 +167,6 @@ namespace HipsDontLie {
                     options.RoutePrefix = "swagger";
                 });
             }
-
-            using (var scope = app.Services.CreateScope())
-            {
-               await IdentitySeeder.SeedAsync(scope.ServiceProvider);
-            }
-
-            // Enable CORS before authentication
-            app.UseCors("AllowFrontend");
-
-            app.UseRouting();
-
-            app.UseAuthentication();
-            app.UseAuthorization();
 
             app.UseWebSockets();
             app.Use(async (context, next) => {

@@ -109,7 +109,7 @@ namespace HipsDontLie.Services
         public async Task<int?> GetUserIdByEmailAsync(string username)
         {
             var user = await _userRepository.GetUserByEmailAsync(username);
-            return user.Id;
+            return user?.Id;
         }
     }
 }
