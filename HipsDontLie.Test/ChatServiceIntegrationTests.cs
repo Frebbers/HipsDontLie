@@ -205,7 +205,7 @@ namespace HipsDontLie.Test
                 {
                     Id = id,
                     Email = email,
-                    Username = username,
+                    UserName = username,
                     PasswordHash = "hashed",
                     Profile = new Profile
                     {

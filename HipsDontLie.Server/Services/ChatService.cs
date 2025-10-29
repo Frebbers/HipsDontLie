@@ -29,7 +29,7 @@ namespace HipsDontLie.Services
             return messages.Select(m => new GetMessagesInChatResponseDTO
             {
                 MessageId = m.Id,
-                SenderName = m.Sender?.Username ?? "Unknown",
+                SenderName = m.Sender?.UserName ?? "Unknown",
                 SenderId = m.SenderId,
                 Content = m.Content,
                 TimeStamp = m.TimeStamp,

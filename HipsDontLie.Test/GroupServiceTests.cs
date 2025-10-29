@@ -55,7 +55,7 @@ namespace HipsDontLie.Test {
                 Id = 5,
                 Title = "Group A",
                 OwnerId = 1,
-                Members = new List<UserGroup> { new UserGroup { UserId = 2, User = new User { Username = "Bob" }, Status = SharedEnums.UserGroupStatus.Accepted } },
+                Members = new List<UserGroup> { new UserGroup { UserId = 2, User = new User { UserName = "Bob" }, Status = SharedEnums.UserGroupStatus.Accepted } },
                 Chat = new Chat { GroupId = 5, ChatId = 99 }
             };
             _mockGroupRepo.Setup(r => r.GetGroupByIdAsync(5)).ReturnsAsync(group);
@@ -96,7 +96,7 @@ namespace HipsDontLie.Test {
 
         [Test]
         public async Task JoinGroupAsync_Success_ReturnsSuccess() {
-            var requester = new User { Id = 1, Username = "User" };
+            var requester = new User { Id = 1, UserName = "User" };
             var group = new Group { Id = 2, Title = "Test Group", OwnerId = 10 };
             _mockUserRepo.Setup(r => r.GetUserByIdAsync(1)).ReturnsAsync(requester);
             _mockGroupRepo.Setup(r => r.ValidateUserGroupAsync(1, 2)).ReturnsAsync(true);

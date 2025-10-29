@@ -63,7 +63,7 @@ namespace HipsDontLie.Test {
 
         [Test]
         public async Task GetProfileAsync_ReturnsMappedDto() {
-            var user = new User { Id = 2, Username = "John" };
+            var user = new User { Id = 2, UserName = "John" };
             var profile = new Profile {
                 User = user,
                 BirthDate = new DateTime(2000, 1, 1),
