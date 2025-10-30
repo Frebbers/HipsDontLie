@@ -153,6 +153,7 @@ namespace HipsDontLie {
                               .AllowAnyHeader()
                               .AllowAnyMethod();
                     }
+                    Console.WriteLine($"starting with env: {env}");
                 });
             });
 
@@ -189,6 +190,7 @@ namespace HipsDontLie {
                 }
             });
 
+            app.UseCors("AllowFrontend");
             // Map Controllers
             app.MapControllers();
 
