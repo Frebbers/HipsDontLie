@@ -21,12 +21,50 @@ namespace HipsDontLie {
         private static async Task Main(string[] args) {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Database setup
+            // Data access setup
+            ConfigureDataAccess(builder);
+            ConfigureSecurity(builder);
+            ConfigureApplicationServices(builder);
+            ConfigureHealthChecks(builder);
+            ConfigureSwagger(builder);
+            ConfigureCors(builder);
+            builder.Services.AddControllers();
+
+            var app = builder.Build();
+            
+            UseSwaggerUI(app);
+            ConfigureWebSockets(app);
+            app.UseCors("AllowFrontend");
+            app.MapControllers();
+            app.MapHealthChecks("/healthz");
+
+            app.Run();
+        }
+
+        // --- Helpers ---
+
+        private static void ConfigureDataAccess(WebApplicationBuilder builder) {
+            // DbContext
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseMySql(
                     builder.Configuration.GetConnectionString("DefaultConnection"),
                     ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
                 ));
+
+            // Bind Mongo chat settings
+            builder.Services.Configure<MongoChatSettings>(
+                builder.Configuration.GetSection("MongoChat"));
+
+            // Register IMongoClient as singleton
+            builder.Services.AddSingleton<IMongoClient>(sp =>
+            {
+                var settings = sp.GetRequiredService<IOptions<MongoChatSettings>>().Value;
+                return new MongoClient(settings.ConnectionString);
+            });
+        }
+
+        private static void ConfigureSecurity(WebApplicationBuilder builder) {
+            // Identity
             builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
             {
                 options.User.RequireUniqueEmail = true;
@@ -40,8 +78,8 @@ namespace HipsDontLie {
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddRoles<IdentityRole<int>>()
             .AddDefaultTokenProviders();
-            
-            // JWT setup
+
+            // JWT
             var jwtSettings = builder.Configuration.GetSection("JwtSettings");
             var key = Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]!);
 
@@ -73,39 +111,33 @@ namespace HipsDontLie {
                 options.SignInScheme = "External";            
             });
 
-
-
             builder.Services.AddAuthorization();
+        }
 
-            // Service and repository setup
+        private static void ConfigureApplicationServices(WebApplicationBuilder builder) {
+            // Services
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IGroupService, GroupService>();
             builder.Services.AddScoped<IChatService, ChatService>();
 
+            // Repositories
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IGroupRepository, GroupRepository>();
-            //builder.Services.AddScoped<IChatRepository, ChatRepository>(); sql based chat repository using ef core
+            //builder.Services.AddScoped<IChatRepository, ChatRepository>(); // sql based chat repository using ef core
             builder.Services.AddScoped<IChatRepository, MongoChatRepository>(); // mongo based chat repository
+
+            // WebSocket helpers
             builder.Services.AddSingleton<WebSocketConnectionManager>();
             builder.Services.AddSingleton<WebSocketEventHandler>();
+        }
 
-            // Bind Mongo chat settings
-            builder.Services.Configure<MongoChatSettings>(
-                builder.Configuration.GetSection("MongoChat"));
-
-            // Register IMongoClient as singleton
-            builder.Services.AddSingleton<IMongoClient>(sp =>
-            {
-                var settings = sp.GetRequiredService<IOptions<MongoChatSettings>>().Value;
-                return new MongoClient(settings.ConnectionString);
-            });
-
-            // Health Check setup
+        private static void ConfigureHealthChecks(WebApplicationBuilder builder) {
             builder.Services.AddHealthChecks()
                 .AddCheck<HealthCheck>("Database_Health_Check");
+        }
 
-            // Swagger setup
+        private static void ConfigureSwagger(WebApplicationBuilder builder) {
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options => {
                 options.SwaggerDoc("v1", new OpenApiInfo {
@@ -138,8 +170,9 @@ namespace HipsDontLie {
                     }
                 });
             });
+        }
 
-            // Add CORS policy
+        private static void ConfigureCors(WebApplicationBuilder builder) {
             builder.Services.AddCors(options => {
                 options.AddPolicy("AllowFrontend", policy => {
                     var env = builder.Environment.EnvironmentName;
@@ -165,11 +198,9 @@ namespace HipsDontLie {
                     Console.WriteLine($"starting with env: {env}");
                 });
             });
+        }
 
-            builder.Services.AddControllers();
-
-            var app = builder.Build();
-
+        private static void UseSwaggerUI(WebApplication app) {
             if (app.Environment.IsDevelopment() || app.Environment.IsStaging() || app.Environment.IsProduction()) {
                 app.UseSwagger();
                 app.UseSwaggerUI(options => {
@@ -177,7 +208,9 @@ namespace HipsDontLie {
                     options.RoutePrefix = "swagger";
                 });
             }
+        }
 
+        private static void ConfigureWebSockets(WebApplication app) {
             app.UseWebSockets();
             app.Use(async (context, next) => {
                 if (context.Request.Path == "/ws/events")
@@ -198,18 +231,6 @@ namespace HipsDontLie {
                     await next();
                 }
             });
-
-            app.UseCors("AllowFrontend");
-            // Map Controllers
-            app.MapControllers();
-
-            // Map fallback to Blazor index.html
-            //app.MapFallbackToFile("index.html");
-
-            // Map Health Check Endpoint
-            app.MapHealthChecks("/healthz");
-
-            app.Run();
         }
     }
 }
