@@ -63,7 +63,16 @@ namespace HipsDontLie {
                     ValidateLifetime = true,
                     ClockSkew = TimeSpan.Zero
                 };
+            })
+            .AddCookie("External")
+            .AddGoogle(options =>
+            {
+                options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+                options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+                options.CallbackPath = "/signin-google";
+                options.SignInScheme = "External";            
             });
+
 
 
             builder.Services.AddAuthorization();
