@@ -20,7 +20,9 @@ namespace HipsDontLie {
     public class Program {
         private static async Task Main(string[] args) {
             var builder = WebApplication.CreateBuilder(args);
-
+            if(builder.Configuration == null) {
+                throw new Exception("Configuration does not exist. Check your appsettings.json file.");
+            }
             // Data access setup
             ConfigureDataAccess(builder);
             ConfigureSecurity(builder);
@@ -51,6 +53,9 @@ namespace HipsDontLie {
                     ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
                 ));
 
+            if (builder.Configuration.GetSection("MongoChat") == null) {
+                throw new Exception("MongoChat section is missing in configuration.");
+            }
             // Bind Mongo chat settings
             builder.Services.Configure<MongoChatSettings>(
                 builder.Configuration.GetSection("MongoChat"));
@@ -80,6 +85,9 @@ namespace HipsDontLie {
             .AddDefaultTokenProviders();
 
             // JWT
+            if (builder.Configuration.GetSection("JwtSettings") == null) {
+                throw new Exception("JwtSettings section is missing in configuration.");
+            }
             var jwtSettings = builder.Configuration.GetSection("JwtSettings");
             var key = Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]!);
 
