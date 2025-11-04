@@ -1,8 +1,41 @@
 ﻿@page "/mycourses"
+@using HipsDontLie.DTO
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize]
-<h3>My Courses</h3>
 
-<Calender/>
+<MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+    <MudTabPanel Text="Course List">
+        <CourseList GroupList="GroupList"/>
+    </MudTabPanel>
+    <MudTabPanel Text="Calender">
+        <Calender />
+    </MudTabPanel>
+</MudTabs>
 
-@code { }
+
+@code {
+
+    public List<GetGroupResponseDTO> GroupList { get; set; } = new();
+    protected override Task OnInitializedAsync()
+    {
+        //TO-DO: Implement fetch groupe instead of fake data
+        GroupList = new List<GetGroupResponseDTO>
+        {
+            new()
+            {
+                Id = 1,
+                Title = "Salsa Beginners",
+                OwnerId = 101,
+                IsVisible = true,
+                AgeRange = "18-35",
+                Description = "A fun introduction to salsa basics for absolute beginners.",
+                MaxMembers = 20,
+                Tags = new() { "Salsa", "Dance", "Beginner" },
+                Members = new(),
+            },
+        };
+        return base.OnInitializedAsync();
+    }
+
+
+}
