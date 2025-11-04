@@ -1,8 +1,12 @@
-﻿using HipsDontLie.Models;
+﻿using Amazon.Runtime.Internal.Endpoints.StandardLibrary;
+using HipsDontLie.Client.Services;
+using HipsDontLie.Models;
 using HipsDontLie.Repository;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Net.Mail;
@@ -31,11 +35,12 @@ namespace HipsDontLie.Services
         /// </summary>
         /// <param name="userRepository">The repository for user-related database operations.</param>
         /// <param name="configuration">The configuration settings for authentication.</param>
-        public AuthService(IConfiguration configuration, UserManager<User> userManager, RoleManager<IdentityRole<int>> roleManager)
+        public AuthService(IConfiguration configuration, UserManager<User> userManager, RoleManager<IdentityRole<int>> roleManager, SignInManager<User> signInManager)
         {
             _configuration = configuration;
             _userManager = userManager;
             _roleManager = roleManager;
+            _signInManager = signInManager;
 
             var env = configuration["ASPNETCORE_ENVIRONMENT"] ?? "Production";
             _testEmails = env.Equals("Development", StringComparison.OrdinalIgnoreCase)
@@ -233,6 +238,62 @@ namespace HipsDontLie.Services
 
             return tokenHandler.WriteToken(token);
         }
-    }
 
+        //External login business logic
+        public record ExternalLoginResult(bool Success, string? Jwt = null, string? Error = null);
+
+        public async Task<ExternalLoginResult> HandleExternalCallbackAsync()
+        {
+            var info = await _signInManager.GetExternalLoginInfoAsync();
+            if (info == null)
+                return new(false, null, "Error: login failed");
+
+            var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+            if (string.IsNullOrWhiteSpace(email))
+                return new(false, null, "Error: missing email");
+
+
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                user = new User
+                {
+                    UserName = email,
+                    Email = email,
+                    EmailConfirmed = true
+                };
+
+                var create = await _userManager.CreateAsync(user);
+                if (!create.Succeeded)
+                    return new(false, null, "Error: create failed");
+            }
+
+            // Link Google login to an already existing user
+            var existingLogins = await _userManager.GetLoginsAsync(user);
+            if (!existingLogins.Any(l => l.LoginProvider == info.LoginProvider))
+            {
+                var linkRes = await _userManager.AddLoginAsync(user, info);
+                if (!linkRes.Succeeded)
+                    return new(false, null, "Error: link failed");
+            }
+
+            const string defaultRole = "Participant";
+            if (!await _userManager.IsInRoleAsync(user, defaultRole))
+            {
+                var roleRes = await _userManager.AddToRoleAsync(user, defaultRole);
+                if (!roleRes.Succeeded)
+                    return new(false, null, "Error: assign role failed");
+            }
+
+            var jwt = await GenerateJwtToken(user);
+            return new(true, jwt);
+        }
+
+
+        public IActionResult ConfigureExternalLogin(string provider, string redirectUri)
+        {
+            var props = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUri);
+            return new ChallengeResult(provider, props);
+        }
+    }
 }

@@ -1,20 +1,23 @@
-﻿using HipsDontLie.Database;
+﻿using HipsDontLie.Client;
+using HipsDontLie.Database;
 using HipsDontLie.Models;
 using HipsDontLie.Repository;
 using HipsDontLie.Server.Database;
+using HipsDontLie.Server.Repository;
+using HipsDontLie.Server.Settings;
 using HipsDontLie.Services;
 using HipsDontLie.WebSockets;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Text;
-using HipsDontLie.Server.Settings;
-using Microsoft.Extensions.Options;
 using MongoDB.Driver;
-using HipsDontLie.Server.Repository;
+using System.Security.Claims;
+using System.Text;
 
 namespace HipsDontLie {
     public class Program {
@@ -36,7 +39,10 @@ namespace HipsDontLie {
             
             UseSwaggerUI(app);
             ConfigureWebSockets(app);
+            SeedIdentity(app);
             app.UseCors("AllowFrontend");
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.MapControllers();
             app.MapHealthChecks("/healthz");
 
@@ -44,6 +50,14 @@ namespace HipsDontLie {
         }
 
         // --- Helpers ---
+
+        private static async void SeedIdentity(WebApplication app)
+        {
+            using (var scope = app.Services.CreateScope())
+            {
+                await IdentitySeeder.SeedAsync(scope.ServiceProvider);
+            }
+        }
 
         private static void ConfigureDataAccess(WebApplicationBuilder builder) {
             // DbContext
@@ -66,6 +80,7 @@ namespace HipsDontLie {
                 var settings = sp.GetRequiredService<IOptions<MongoChatSettings>>().Value;
                 return new MongoClient(settings.ConnectionString);
             });
+            builder.Services.AddMemoryCache();
         }
 
         private static void ConfigureSecurity(WebApplicationBuilder builder) {
@@ -107,17 +122,38 @@ namespace HipsDontLie {
                     ValidateAudience = true,
                     ValidAudience = jwtSettings["Audience"],
                     ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero
+                    ClockSkew = TimeSpan.Zero,
+
+                    NameClaimType = ClaimTypes.Name,
+                    RoleClaimType = ClaimTypes.Role
                 };
             })
-            .AddCookie("External")
             .AddGoogle(options =>
             {
                 options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
                 options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
                 options.CallbackPath = "/signin-google";
-                options.SignInScheme = "External";            
+                options.SignInScheme = IdentityConstants.ExternalScheme;
+
+                options.SaveTokens = true;
+
+                options.Scope.Clear();
+                options.Scope.Add("openid");
+                options.Scope.Add("profile");
+                options.Scope.Add("email");
+
+                options.ClaimActions.MapJsonKey("email_verified", "email_verified");
+                options.ClaimActions.MapJsonKey("urn:google:picture", "picture");
+                options.ClaimActions.MapJsonKey("urn:google:locale", "locale");
+                options.ClaimActions.MapJsonKey("urn:google:profile", "profile");
             });
+
+            builder.Services.ConfigureExternalCookie(options =>
+            {
+                options.Cookie.SameSite = SameSiteMode.None;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+            });
+
 
             builder.Services.AddAuthorization();
         }
