@@ -1,0 +1,70 @@
+﻿@using HipsDontLie.DTO
+
+<MudDataGrid T="GetGroupResponseDTO" Height="70vh" Items="GroupList" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="_quickFilter"
+             Hideable="true" RowClick="@RowClicked" RowContextMenuClick="RowRightClicked" SelectedItemsChanged="@SelectedItemsChanged">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Courses</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <Columns>
+        <SelectColumn T="GetGroupResponseDTO" />
+        <PropertyColumn Property="x => x.Title" SortBy="@_sortBy" Title="Course" />
+        <PropertyColumn Property="x => x.AgeRange" Title="Age Range" />
+        <PropertyColumn Property="x => x.MaxMembers"
+                        Title="Participants"
+                        SortBy="@(g => CurrentCount(g))"
+                        Filterable="false">
+            <CellTemplate Context="ctx">
+                @CurrentCount(ctx.Item)/@ctx.Item.MaxMembers
+            </CellTemplate>
+        </PropertyColumn>
+        <PropertyColumn Property="x => x.Description" Sortable="false" Title="Description" />
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="GetGroupResponseDTO" />
+    </PagerContent>
+</MudDataGrid>
+
+@code {
+    private string _searchString = string.Empty;
+    private bool _sortNameByLength;
+    private List<string> _events = new();
+
+    [Parameter] public List<GetGroupResponseDTO> GroupList { get; set; }
+
+    protected override Task OnParametersSetAsync()
+    {
+        return base.OnParametersSetAsync();
+    }
+    private int CurrentCount(GetGroupResponseDTO g) => (g?.Members?.Count ?? 0) + (g?.NonUserMembers?.Count ?? 0);
+
+    private Func<GetGroupResponseDTO, object> _sortBy => x =>
+    {
+        var title = x?.Title ?? string.Empty;
+        return _sortNameByLength ? title.Length : title;
+    };
+
+    private Func<GetGroupResponseDTO, bool> _quickFilter => x =>
+    {
+        if (string.IsNullOrWhiteSpace(_searchString))
+            return true;
+
+        if (x.Description.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (x.AgeRange.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if ($"{x.Members.Count()} {x.MaxMembers}".Contains(_searchString))
+            return true;
+
+        return false;
+    };
+
+    // events
+    void RowClicked(DataGridRowClickEventArgs<GetGroupResponseDTO> args) { }
+    void RowRightClicked(DataGridRowClickEventArgs<GetGroupResponseDTO> args) { }
+    void SelectedItemsChanged(HashSet<GetGroupResponseDTO> items) { }
+}
