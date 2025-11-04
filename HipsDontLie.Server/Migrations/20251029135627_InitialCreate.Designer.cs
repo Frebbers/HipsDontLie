@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HipsDontLie.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251008032830_InitialIdentitySetup")]
-    partial class InitialIdentitySetup
+    [Migration("20251029135627_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

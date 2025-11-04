@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HipsDontLie.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251009124841_AddIdentityRoles")]
-    partial class AddIdentityRoles
+    [Migration("20251029145253_AddedAppointments")]
+    partial class AddedAppointments
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -388,6 +388,38 @@ namespace HipsDontLie.Server.Migrations
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.OwnsMany("Radzen.Blazor.AppointmentData", "Appointments", b1 =>
+                        {
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
+
+                            MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b1.Property<int>("Id"));
+
+                            b1.Property<DateTime>("End")
+                                .HasColumnType("datetime(6)");
+
+                            b1.Property<int>("GroupId")
+                                .HasColumnType("int");
+
+                            b1.Property<DateTime>("Start")
+                                .HasColumnType("datetime(6)");
+
+                            b1.Property<string>("Text")
+                                .HasColumnType("longtext");
+
+                            b1.HasKey("Id");
+
+                            b1.HasIndex("GroupId");
+
+                            b1.ToTable("AppointmentData");
+
+                            b1.WithOwner()
+                                .HasForeignKey("GroupId");
+                        });
+
+                    b.Navigation("Appointments");
 
                     b.Navigation("Owner");
                 });

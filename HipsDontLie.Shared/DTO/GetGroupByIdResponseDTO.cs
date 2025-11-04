@@ -1,5 +1,4 @@
 ﻿using HipsDontLie.Shared.DTO;
-using System.ComponentModel.DataAnnotations;
 
 namespace HipsDontLie.DTO
 {
@@ -55,5 +54,10 @@ namespace HipsDontLie.DTO
         public List<string> Tags { get; set; } = new();
         public List<string>? NonUserMembers { get; set; } = new();
         public ChatDTO Chat { get; set; }
+
+        /// <summary>
+        /// Gets or sets the list of appointments associated with the group.
+        /// </summary>
+        public List<AppointmentDTO>? Appointments { get; set; }
     }
 }

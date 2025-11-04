@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.JSInterop;
 using MudBlazor.Services;
+using Radzen;
 using System.Net.Http.Headers;
 using static System.Net.WebRequestMethods;
 
@@ -13,12 +14,14 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddMudServices();
+builder.Services.AddRadzenComponents();
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7191/") });
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<CustomAuthStateProvider>();
 builder.Services.AddScoped<AuthenticationStateProvider>(sp =>
     sp.GetRequiredService<CustomAuthStateProvider>());
+
 
 var host = builder.Build();
 var js = host.Services.GetRequiredService<IJSRuntime>();

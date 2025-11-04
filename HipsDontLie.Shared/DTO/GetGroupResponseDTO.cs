@@ -52,5 +52,10 @@ namespace HipsDontLie.DTO {
         public List<MemberDTO> Members { get; set; } = new();
 
         public ChatDTO Chat { get; set; }
+
+        /// <summary>
+        /// Gets or sets the list of appointments associated with the group.
+        /// </summary>
+        public List<AppointmentDTO>? Appointments { get; set; }
     }
 }
