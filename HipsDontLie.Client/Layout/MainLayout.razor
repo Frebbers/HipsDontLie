@@ -6,6 +6,16 @@
         <MudText Typo="Typo.h5" Class="ml-3">Hips Dont Lie</MudText>
         <MudSpacer />
         <MudIconButton Icon="" Color="Color.Inherit" Edge="Edge.End" />
+        <MudMenu>
+            <ActivatorContent>
+                <MudAvatar>
+                    <MudImage Src="icon-512.png" />
+                </MudAvatar>
+            </ActivatorContent>
+            <ChildContent>
+                <MudMenuItem Label="Profile" Href="/profile" />
+            </ChildContent>
+        </MudMenu>
         <LoginDisplay />
     </MudAppBar>
     <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
