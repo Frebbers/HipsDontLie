@@ -1,7 +1,8 @@
 ﻿using HipsDontLie.DTO;
-using HipsDontLie.Shared.DTO;
 using HipsDontLie.Models;
 using HipsDontLie.Repository;
+using HipsDontLie.Server.Models;
+using HipsDontLie.Shared.DTO;
 using HipsDontLie.Shared.Enum;
 using HipsDontLie.WebSockets;
 
@@ -40,6 +41,13 @@ namespace HipsDontLie.Services {
                 MaxMembers = groupDto.MaxMembers,
                 Tags = groupDto.Tags,
                 NonUserMembers = groupDto.NonUserMembers,
+                Appointments = (groupDto.Appointments ?? new List<AppointmentDTO>())
+                            .Select(a => new Appointment {
+                                Start = a.Start,
+                                End = a.End,
+                                Text = a.Text
+                            })
+                            .ToList()
             };
 
             var savedGroup = await _groupRepository.CreateGroupAsync(group);
@@ -79,6 +87,11 @@ namespace HipsDontLie.Services {
                 NonUserMembers = group.NonUserMembers,
                 Id = group.Id,
                 MaxMembers = group.MaxMembers,
+                Appointments = group.Appointments.Select(a => new AppointmentDTO {
+                    Start = a.Start,
+                    End = a.End,
+                    Text = a.Text
+                }).ToList(),
                 Members = group.Members
                     .Select(p => new MemberDTO {
                         UserId = p.UserId,
@@ -155,6 +168,11 @@ namespace HipsDontLie.Services {
                     MaxMembers = group.MaxMembers,
                     Tags = group.Tags,
                     NonUserMembers = group.NonUserMembers,
+                    Appointments = group.Appointments.Select(a => new AppointmentDTO {
+                        Start = a.Start,
+                        End = a.End,
+                        Text = a.Text
+                    }).ToList(),
                     Members = group.Members
                         .Select(p => new MemberDTO {
                             UserId = p.UserId,
@@ -279,6 +297,13 @@ namespace HipsDontLie.Services {
             group.MaxMembers = dto.MaxMembers;
             group.Tags = dto.Tags;
             group.NonUserMembers = dto.NonUserMembers;
+            group.Appointments = (dto.Appointments ?? new List<AppointmentDTO>())
+                        .Select(a => new Appointment {
+                            Start = a.Start,
+                            End = a.End,
+                            Text = a.Text
+                        })
+                        .ToList();
 
             return await _groupRepository.UpdateGroupAsync(groupId, group);
         }

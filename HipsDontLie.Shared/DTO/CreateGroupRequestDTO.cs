@@ -35,5 +35,10 @@
         /// </summary>
         public List<string> Tags { get; set; } = new();
         public List<string>? NonUserMembers { get; set; } = new();
+
+        /// <summary>
+        /// Gets or sets the list of appointments associated with the group.
+        /// </summary>
+        public List<AppointmentDTO>? Appointments { get; set; }
     }
 }

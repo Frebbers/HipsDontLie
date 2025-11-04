@@ -1,4 +1,5 @@
 ﻿using HipsDontLie.Models;
+using HipsDontLie.Server.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -7,8 +8,7 @@ namespace HipsDontLie.Database {
     /// <summary>
     /// Represents the database context for the application, handling entity configurations and database interactions.
     /// </summary>
-    public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, int>
-    {
+    public class ApplicationDbContext : IdentityDbContext<User, IdentityRole<int>, int> {
         /// <summary>
         /// Initializes a new instance of the <see cref="ApplicationDbContext"/> class with the specified database options.
         /// </summary>
@@ -38,8 +38,7 @@ namespace HipsDontLie.Database {
         /// Configures entity relationships and constraints using the Fluent API.
         /// </summary>
         /// <param name="modelBuilder">The model builder used to define entity relationships.</param>
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
+        protected override void OnModelCreating(ModelBuilder modelBuilder) {
             base.OnModelCreating(modelBuilder);
 
             //If user deletes their user, their profile will also be deleted
@@ -68,7 +67,7 @@ namespace HipsDontLie.Database {
                 .HasOne(uc => uc.User)
                 .WithMany(u => u.Chats)
                 .HasForeignKey(uc => uc.UserId);
-            
+
             modelBuilder.Entity<UserChat>()
                 .HasKey(uc => new { uc.UserId, uc.ChatId });
 
@@ -103,6 +102,13 @@ namespace HipsDontLie.Database {
                 //This one could change, at the moment it just sets the sender to null but perserves the messages.
                 //Maybe the user should have the power to have their messages deleted if they delete their user (Cascade)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            //One-to-many relationship between Appointment and Group
+            modelBuilder.Entity<Appointment>()
+                .HasOne(a => a.Group)
+                .WithMany(g => g.Appointments)
+                .HasForeignKey(a => a.GroupId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

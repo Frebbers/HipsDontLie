@@ -33,5 +33,10 @@
 
         /// <summary>A list of non-user member names (optional).</summary>
         public List<string>? NonUserMembers { get; set; }
+
+        /// <summary>
+        /// Gets or sets the list of appointments associated with the group.
+        /// </summary>
+        public List<AppointmentDTO>? Appointments { get; set; }
     }
 }
