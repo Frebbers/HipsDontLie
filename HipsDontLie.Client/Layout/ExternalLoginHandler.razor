@@ -1,0 +1,46 @@
+﻿@page "/signin-external"
+@inject NavigationManager Nav
+@inject HttpClient Http
+@inject IJSRuntime JS
+@inject CustomAuthStateProvider Auth
+
+<p>Signing you in…</p>
+
+@code {
+
+    private sealed class TokenDto { public string? Token { get; set; } }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var uri = new Uri(Nav.Uri);
+        const string prefix = "#code=";
+        var fragment = uri.Fragment;
+
+        if (!string.IsNullOrEmpty(fragment) && fragment.StartsWith(prefix))
+        {
+            var code = Uri.UnescapeDataString(fragment.Substring(prefix.Length));
+
+            // Remove the fragment from the address bar & history in case some idiot wants to steal it
+            await JS.InvokeVoidAsync("eval", "history.replaceState(null,'', location.pathname + location.search)");
+
+            // Exchange the auth code for your token
+            var resp = await Http.PostAsJsonAsync("/api/auth/exchange", new { code });
+            if (resp.IsSuccessStatusCode)
+            {
+                var dto = await resp.Content.ReadFromJsonAsync<TokenDto>();
+                if (!string.IsNullOrWhiteSpace(dto?.Token))
+                {
+                    await Auth.MarkUserAsAuthenticated(dto.Token);
+                    Nav.NavigateTo("/", forceLoad: true);
+                    return;
+                }
+            }
+
+            Nav.NavigateTo("/login?error=exchange_failed", forceLoad: true);
+        }
+        else
+        {
+            Nav.NavigateTo("/login?error=missing_code", forceLoad: true);
+        }
+    }
+}

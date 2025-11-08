@@ -1,4 +1,6 @@
 ﻿using HipsDontLie.Models;
+using Microsoft.AspNetCore.Mvc;
+using static HipsDontLie.Services.AuthService;
 
 namespace HipsDontLie.Services
 {
@@ -41,5 +43,8 @@ namespace HipsDontLie.Services
         /// <param name="userId">The unique identifier of the user to be deleted.</param>
         /// <returns>A task representing the asynchronous operation, returning true if the user is successfully deleted.</returns>
         Task<bool> DeleteUserAsync(int userId, string? email = null);
+
+        Task<ExternalLoginResult> HandleExternalCallbackAsync();
+        public IActionResult ConfigureExternalLogin(string provider, string redirectUri);
     }
 }

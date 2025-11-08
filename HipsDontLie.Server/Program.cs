@@ -1,28 +1,90 @@
-﻿using HipsDontLie.Database;
+﻿using HipsDontLie.Client;
+using HipsDontLie.Database;
 using HipsDontLie.Models;
 using HipsDontLie.Repository;
 using HipsDontLie.Server.Database;
+using HipsDontLie.Server.Repository;
+using HipsDontLie.Server.Settings;
 using HipsDontLie.Services;
 using HipsDontLie.WebSockets;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using MongoDB.Driver;
+using System.Security.Claims;
 using System.Text;
 
 namespace HipsDontLie {
     public class Program {
         private static async Task Main(string[] args) {
             var builder = WebApplication.CreateBuilder(args);
+            if(builder.Configuration == null) {
+                throw new Exception("Configuration does not exist. Check your appsettings.json file.");
+            }
+            // Data access setup
+            ConfigureDataAccess(builder);
+            ConfigureSecurity(builder);
+            ConfigureApplicationServices(builder);
+            ConfigureHealthChecks(builder);
+            ConfigureSwagger(builder);
+            ConfigureCors(builder);
+            builder.Services.AddControllers();
 
-            // Database setup
+            var app = builder.Build();
+            
+            UseSwaggerUI(app);
+            ConfigureWebSockets(app);
+            SeedIdentity(app);
+            app.UseCors("AllowFrontend");
+            app.UseAuthentication();
+            app.UseAuthorization();
+            app.MapControllers();
+            app.MapHealthChecks("/healthz");
+
+            app.Run();
+        }
+
+        // --- Helpers ---
+
+        private static async void SeedIdentity(WebApplication app)
+        {
+            using (var scope = app.Services.CreateScope())
+            {
+                await IdentitySeeder.SeedAsync(scope.ServiceProvider);
+            }
+        }
+
+        private static void ConfigureDataAccess(WebApplicationBuilder builder) {
+            // DbContext
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseMySql(
                     builder.Configuration.GetConnectionString("DefaultConnection"),
                     ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
                 ));
+
+            if (builder.Configuration.GetSection("MongoChat") == null) {
+                throw new Exception("MongoChat section is missing in configuration.");
+            }
+            // Bind Mongo chat settings
+            builder.Services.Configure<MongoChatSettings>(
+                builder.Configuration.GetSection("MongoChat"));
+
+            // Register IMongoClient as singleton
+            builder.Services.AddSingleton<IMongoClient>(sp =>
+            {
+                var settings = sp.GetRequiredService<IOptions<MongoChatSettings>>().Value;
+                return new MongoClient(settings.ConnectionString);
+            });
+            builder.Services.AddMemoryCache();
+        }
+
+        private static void ConfigureSecurity(WebApplicationBuilder builder) {
+            // Identity
             builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
             {
                 options.User.RequireUniqueEmail = true;
@@ -37,9 +99,10 @@ namespace HipsDontLie {
             .AddRoles<IdentityRole<int>>()
             .AddDefaultTokenProviders();
 
-
-            // JWT setup
-            // JWT setup
+            // JWT
+            if (builder.Configuration.GetSection("JwtSettings") == null) {
+                throw new Exception("JwtSettings section is missing in configuration.");
+            }
             var jwtSettings = builder.Configuration.GetSection("JwtSettings");
             var key = Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]!);
 
@@ -59,30 +122,66 @@ namespace HipsDontLie {
                     ValidateAudience = true,
                     ValidAudience = jwtSettings["Audience"],
                     ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero
+                    ClockSkew = TimeSpan.Zero,
+
+                    NameClaimType = ClaimTypes.Name,
+                    RoleClaimType = ClaimTypes.Role
                 };
+            })
+            .AddGoogle(options =>
+            {
+                options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+                options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+                options.CallbackPath = "/signin-google";
+                options.SignInScheme = IdentityConstants.ExternalScheme;
+
+                options.SaveTokens = true;
+
+                options.Scope.Clear();
+                options.Scope.Add("openid");
+                options.Scope.Add("profile");
+                options.Scope.Add("email");
+
+                options.ClaimActions.MapJsonKey("email_verified", "email_verified");
+                options.ClaimActions.MapJsonKey("urn:google:picture", "picture");
+                options.ClaimActions.MapJsonKey("urn:google:locale", "locale");
+                options.ClaimActions.MapJsonKey("urn:google:profile", "profile");
+            });
+
+            builder.Services.ConfigureExternalCookie(options =>
+            {
+                options.Cookie.SameSite = SameSiteMode.None;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             });
 
 
             builder.Services.AddAuthorization();
+        }
 
-            // Service and repository setup
+        private static void ConfigureApplicationServices(WebApplicationBuilder builder) {
+            // Services
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IGroupService, GroupService>();
             builder.Services.AddScoped<IChatService, ChatService>();
 
+            // Repositories
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IGroupRepository, GroupRepository>();
-            builder.Services.AddScoped<IChatRepository, ChatRepository>();
+            //builder.Services.AddScoped<IChatRepository, ChatRepository>(); // sql based chat repository using ef core
+            builder.Services.AddScoped<IChatRepository, MongoChatRepository>(); // mongo based chat repository
+
+            // WebSocket helpers
             builder.Services.AddSingleton<WebSocketConnectionManager>();
             builder.Services.AddSingleton<WebSocketEventHandler>();
+        }
 
-            // Health Check setup
+        private static void ConfigureHealthChecks(WebApplicationBuilder builder) {
             builder.Services.AddHealthChecks()
                 .AddCheck<HealthCheck>("Database_Health_Check");
+        }
 
-            // Swagger setup
+        private static void ConfigureSwagger(WebApplicationBuilder builder) {
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options => {
                 options.SwaggerDoc("v1", new OpenApiInfo {
@@ -115,8 +214,9 @@ namespace HipsDontLie {
                     }
                 });
             });
+        }
 
-            // Add CORS policy
+        private static void ConfigureCors(WebApplicationBuilder builder) {
             builder.Services.AddCors(options => {
                 options.AddPolicy("AllowFrontend", policy => {
                     var env = builder.Environment.EnvironmentName;
@@ -139,13 +239,12 @@ namespace HipsDontLie {
                               .AllowAnyHeader()
                               .AllowAnyMethod();
                     }
+                    Console.WriteLine($"starting with env: {env}");
                 });
             });
+        }
 
-            builder.Services.AddControllers();
-
-            var app = builder.Build();
-
+        private static void UseSwaggerUI(WebApplication app) {
             if (app.Environment.IsDevelopment() || app.Environment.IsStaging() || app.Environment.IsProduction()) {
                 app.UseSwagger();
                 app.UseSwaggerUI(options => {
@@ -153,20 +252,9 @@ namespace HipsDontLie {
                     options.RoutePrefix = "swagger";
                 });
             }
+        }
 
-            using (var scope = app.Services.CreateScope())
-            {
-               await IdentitySeeder.SeedAsync(scope.ServiceProvider);
-            }
-
-            // Enable CORS before authentication
-            app.UseCors("AllowFrontend");
-
-            app.UseRouting();
-
-            app.UseAuthentication();
-            app.UseAuthorization();
-
+        private static void ConfigureWebSockets(WebApplication app) {
             app.UseWebSockets();
             app.Use(async (context, next) => {
                 if (context.Request.Path == "/ws/events")
@@ -187,17 +275,6 @@ namespace HipsDontLie {
                     await next();
                 }
             });
-
-            // Map Controllers
-            app.MapControllers();
-
-            // Map fallback to Blazor index.html
-            //app.MapFallbackToFile("index.html");
-
-            // Map Health Check Endpoint
-            app.MapHealthChecks("/healthz");
-
-            app.Run();
         }
     }
 }

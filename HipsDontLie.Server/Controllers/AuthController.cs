@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
-using HipsDontLie.Models;
+﻿using HipsDontLie.Models;
 using HipsDontLie.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using Microsoft.Extensions.Caching.Memory;
+using System.Security.Cryptography;
 
 namespace HipsDontLie.Controllers {
     
@@ -11,15 +14,18 @@ namespace HipsDontLie.Controllers {
     public class AuthController : ControllerBase {
         private readonly IAuthService _authService;
         private readonly IConfiguration _configuration;
+        private readonly IMemoryCache _cache;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AuthController"/> class which handles user authentication,
         /// including registration, login, and user account management.
         /// </summary>
         /// <param name="authService">The authentication service used to handle user authentication and management.</param>
-        public AuthController(IAuthService authService, IConfiguration configuration) {
+        public AuthController(IAuthService authService, IConfiguration configuration, IMemoryCache cache)
+        {
             _authService = authService;
             _configuration = configuration;
+            _cache = cache;
         }
 
         /// <summary>
@@ -151,5 +157,54 @@ namespace HipsDontLie.Controllers {
             // If the request reaches here, the token is valid
             return Ok(new { message = "Token is valid." });
         }
+
+        [HttpGet("external/{provider}")]
+        public IActionResult ExternalLogin(string provider, string returnUrl = "/signin-external")
+        {
+            var redirectUri = Url.Action(nameof(ExternalCallback), "Auth", new { returnUrl }, Request.Scheme)!;
+            return _authService.ConfigureExternalLogin(provider, redirectUri);
+        }
+
+        [HttpGet("external-callback")]
+        public async Task<IActionResult> ExternalCallback([FromQuery] string returnUrl = "/signin-external")
+        {
+            var result = await _authService.HandleExternalCallbackAsync();
+            var spaBase = _configuration["FRONTEND_BASE_URL"] ?? "https://localhost:7057";
+
+            if (!result.Success)
+                return Redirect($"{spaBase}{returnUrl}?error={result.Error}");
+
+            // Authorization code
+            var codeBytes = RandomNumberGenerator.GetBytes(32);
+            var code = Convert.ToBase64String(codeBytes)
+                .Replace("+", "-").Replace("/", "_").TrimEnd('=');
+
+            //Store Authorization Code for 1 min
+            _cache.Set($"otc:{code}", result.Jwt, new MemoryCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1)
+            });
+
+            //Redirect client with #code
+            return Redirect($"{spaBase}{returnUrl}#code={code}");
+        }
+
+        //Exchange a token for the authorization code: PKCE
+        public sealed record ExchangeRequest(string Code);
+        [HttpPost("exchange")]
+        public IActionResult Exchange([FromBody] ExchangeRequest req)
+        {
+            if (string.IsNullOrWhiteSpace(req?.Code))
+                return BadRequest(new { error = "missing_code" });
+
+            if (_cache.TryGetValue<string>($"otc:{req.Code}", out var jwt))
+            {
+                _cache.Remove($"otc:{req.Code}");
+                return Ok(new { token = jwt });
+            }
+
+            return Unauthorized(new { error = "invalid_or_expired_code" });
+        }
+
     }
 }
