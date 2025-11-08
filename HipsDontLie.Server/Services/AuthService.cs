@@ -34,9 +34,9 @@ namespace HipsDontLie.Services
         /// Initializes a new instance of the <see cref="AuthService"/> class. Should only be called by .NET's lifecycle management unless testing.
         /// </summary>
         /// <param name="configuration">The configuration settings for authentication.</param>
-        /// <param name="userManager">a <see cref="UserManager"/> object handling storage of users. Extends .NET identity classes.</param>
-        /// <param name="roleManager">a <see cref="RoleManager"/> object handling roles available to users. Extends .NET identity classes.</param>
-        /// <param name="signInManager">a <see cref="SignInManager"/> object handling sign ins. Extends .NET identity classes.</param>
+        /// <param name="userManager">a <see cref="UserManager"/> object handling storage of users. Part of .NET identity framework.</param>
+        /// <param name="roleManager">a <see cref="RoleManager"/> object handling roles available to users. Part of .NET identity framework.</param>
+        /// <param name="signInManager">a <see cref="SignInManager"/> object handling sign ins. Part of .NET identity framework.</param>
         public AuthService(IConfiguration configuration, UserManager<User> userManager, RoleManager<IdentityRole<int>> roleManager, SignInManager<User> signInManager)
         {
             _configuration = configuration;

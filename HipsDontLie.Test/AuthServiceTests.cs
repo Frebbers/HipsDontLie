@@ -47,7 +47,7 @@ namespace HipsDontLie.Test
             _mockUserRepository = new Mock<IUserRepository>();
             _mockSignInManager = MockSignInManager();
 
-            // Create auth service with real configuration but mock repository
+            // Create auth service with real configuration but mock managers
             _authService = new AuthService(_configuration, _mockUserManager.Object, _mockRoleManager.Object, _mockSignInManager.Object);
         }
 
@@ -383,11 +383,18 @@ namespace HipsDontLie.Test
             );
         }
         
+        //TODO fix this mock. Pretty sure it's wrong.
         private static Mock<SignInManager<User>> MockSignInManager()
         {
-            var store = new Mock<IUserStore<User>>();
-           return new Mock<SignInManager<User>>(store.Object);
-        }
+                var userManager = MockUserManager().Object;
+                // If targeting an older ASP.NET Core that lacks IUserConfirmation<TUser>,
+                // remove the last argument.
+                return new Mock<SignInManager<User>>(
+                    userManager,
+                    null, null, null, null, null, null
+                );
+            }
+        
 
         private static Mock<RoleManager<IdentityRole<int>>> MockRoleManager()
         {
