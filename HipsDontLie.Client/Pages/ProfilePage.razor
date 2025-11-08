@@ -1,5 +1,76 @@
 ﻿@page "/profile"
+@using HipsDontLie.Client.Services
+@using HipsDontLie.Shared.DTO
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
 
-<h3>Profile</h3>
+@if (isLoading)
+{
+    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+} else
+{
+    <MudContainer Style="height: 95vh;">
+        <MudGrid Spacing="2">
+            <MudItem xs="12" md="6">
+                <MudCard Elevation="25" Class="rounded-lg pb-4">
+                    <MudCardHeader>
+                        <CardHeaderContent>
+                            <MudText Typo="Typo.h5" Align="Align.Center">Profile Info</MudText>
+                        </CardHeaderContent>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <div class="d-flex justify-center">
+                            <MudAvatar Size="MudBlazor.Size.Large" Color="Color.Primary">@Profile.Username.ToUpper()[0]</MudAvatar>
+                        </div>
+                        <MudList ReadOnly="true" T="string" Class="mx-auto mt-4" Style="width:300px;">
+                            <MudListItem Icon="@Icons.Material.Filled.Favorite">
+                                @Profile.Username
+                            </MudListItem>
+                            <MudListItem Icon="@Icons.Material.Filled.Favorite">
+                                @Profile.Region
+                            </MudListItem>
+                            <MudListItem Icon="@Icons.Material.Filled.Favorite">
+                                @Profile.BirthDate.ToString("dd-MM-yyyy")
+                            </MudListItem>
+                        </MudList>
+                    </MudCardContent>
+                    <MudText Style="font-weight: 600;" Class="d-flex justify-center">Description:</MudText>
+                    <MudCardActions Class="d-flex justify-center">
+                        @Profile.Description
+                    </MudCardActions>
+                </MudCard>
+            </MudItem>
+            <MudItem xs="12" md="6">
+                    <MudPaper Class="pa-4 d-flex align-center justify-center" Style="flex:1 1 0;">
+                        Placeholder
+                    </MudPaper>
+                    <MudPaper Class="pa-4 d-flex align-center justify-center" Style="flex:1 1 0;">
+                        Placeholder
+                    </MudPaper>
+            </MudItem>
+        </MudGrid>
+    </MudContainer>
+}
 
-@code { }
+@code {
+
+    public GetProfileResponseDTO Profile { get; set; } = new();
+
+    [Inject]
+    public ResourceService ResourceService { get; set; }
+
+    private bool isLoading;
+
+    protected override async Task OnInitializedAsync()
+    {
+        isLoading = true;
+        try
+        {
+            Profile = await ResourceService.GetProfileAsync();
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+}
