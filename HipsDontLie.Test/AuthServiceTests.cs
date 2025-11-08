@@ -24,6 +24,7 @@ namespace HipsDontLie.Test
         private AuthService _authService;
         private Mock<UserManager<User>> _mockUserManager;
         private Mock<RoleManager<IdentityRole<int>>> _mockRoleManager;
+        private Mock<SignInManager<User>> _mockSignInManager;
 
         [SetUp]
         public void Setup()
@@ -44,10 +45,13 @@ namespace HipsDontLie.Test
             _mockUserManager = MockUserManager();
             _mockRoleManager = MockRoleManager();
             _mockUserRepository = new Mock<IUserRepository>();
+            _mockSignInManager = MockSignInManager();
 
             // Create auth service with real configuration but mock repository
-            _authService = new AuthService(_configuration, _mockUserManager.Object, _mockRoleManager.Object);
+            _authService = new AuthService(_configuration, _mockUserManager.Object, _mockRoleManager.Object, _mockSignInManager.Object);
         }
+
+
 
         #region RegisterUserAsync Tests
 
@@ -377,6 +381,12 @@ namespace HipsDontLie.Test
                 store.Object,
                 null, null, null, null, null, null, null, null
             );
+        }
+        
+        private static Mock<SignInManager<User>> MockSignInManager()
+        {
+            var store = new Mock<IUserStore<User>>();
+           return new Mock<SignInManager<User>>(store.Object);
         }
 
         private static Mock<RoleManager<IdentityRole<int>>> MockRoleManager()
