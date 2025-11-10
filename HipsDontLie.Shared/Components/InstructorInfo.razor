@@ -1,0 +1,22 @@
+﻿@using HipsDontLie.Shared.DTO
+@using Variant = MudBlazor.Variant
+using HipsDontLie.DTO
+using MudBlazor
+
+<MudCard>
+    <MudCardContent>
+        <MudCardMedia Image=@Instructor.ProfilePicture, Height="200"/>
+        <MudText Typo="Typo.h6">@Instructor.Username</MudText>
+        <MudText Typo="Typo.body2">@Instructor.Description</MudText>
+    </MudCardContent>
+    <MudCardActions>
+        @* TODO Add link to profile *@
+        <MudButton Variant="Variant.Text" Color="Color.Primary">See profile</MudButton>
+    </MudCardActions>
+
+</MudCard>
+
+@code
+{
+    [Parameter] public GetProfileResponseDTO Instructor { get; set; }
+}
