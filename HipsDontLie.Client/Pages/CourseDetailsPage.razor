@@ -24,8 +24,8 @@
 @code {
     [Parameter] public int id { get; set; }
     // get course details by id
-    public GroupDTO Course { get; set; }
-    public ProfileDTO Instructor { get; set; }
+    public GroupDTO Course { get; set; } = new();
+    public ProfileDTO Instructor { get; set; } = new();
     [Inject]
     public ResourceService ResourceService { get; set; }
 
