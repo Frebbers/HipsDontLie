@@ -8,8 +8,8 @@ namespace HipsDontLie.Client.Services
     {
         private readonly HttpClient _http;
 
-        public ResourceService(HttpClient http) => _http = http;
-        
+        public ResourceService(IHttpClientFactory factory) => _http = factory.CreateClient("Api");
+
         public async Task<GetProfileResponseDTO> GetProfileAsync(CancellationToken ct = default)
         {
             using var res = await _http.GetAsync("api/Users/get-profile", ct);
