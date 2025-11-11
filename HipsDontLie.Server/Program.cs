@@ -22,10 +22,12 @@ using System.Text;
 namespace HipsDontLie {
     public class Program {
         private static async Task Main(string[] args) {
+            
             var builder = WebApplication.CreateBuilder(args);
             if(builder.Configuration == null) {
                 throw new Exception("Configuration does not exist. Check your appsettings.json file.");
             }
+            
             // Data access setup
             ConfigureDataAccess(builder);
             ConfigureSecurity(builder);
@@ -245,7 +247,7 @@ namespace HipsDontLie {
         }
 
         private static void UseSwaggerUI(WebApplication app) {
-            if (app.Environment.IsDevelopment() || app.Environment.IsStaging() || app.Environment.IsProduction()) {
+            if (app.Environment.IsDevelopment() || app.Environment.IsStaging() && !app.Environment.IsProduction()) {
                 app.UseSwagger();
                 app.UseSwaggerUI(options => {
                     options.SwaggerEndpoint("/swagger/v1/swagger.json", "HipsDontLie API v1");
