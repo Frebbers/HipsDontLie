@@ -1,6 +1,5 @@
 ﻿@page "/profile"
 @using HipsDontLie.Client.Services
-@using HipsDontLie.DTO
 @using HipsDontLie.Shared.DTO
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize]
@@ -72,7 +71,7 @@
 @code {
 
     public GetProfileResponseDTO Profile { get; set; } = new();
-    public List<GetGroupResponseDTO> GroupList { get; set; }
+    public List<GroupDTO> GroupList { get; set; }
 
     [Inject]
     public ResourceService ResourceService { get; set; }

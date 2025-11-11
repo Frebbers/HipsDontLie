@@ -1,12 +1,8 @@
-﻿using HipsDontLie.Shared.DTO;
-
-namespace HipsDontLie.DTO
-{
+﻿namespace HipsDontLie.Shared.DTO {
     /// <summary>
-    /// Represents the response data for retrieving a group by its unique identifier.
+    /// Represents the response data for retrieving a group.
     /// </summary>
-    public class GetGroupByIdResponseDTO
-    {
+    public class GroupDTO {
         /// <summary>
         /// Gets or sets the unique identifier of the group.
         /// </summary>
@@ -18,7 +14,7 @@ namespace HipsDontLie.DTO
         public string Title { get; set; }
 
         /// <summary>
-        /// Gets or sets the unique identifier of the group owner.
+        /// Gets or sets the user ID of the group owner.
         /// </summary>
         public int OwnerId { get; set; }
 
@@ -42,17 +38,17 @@ namespace HipsDontLie.DTO
         /// </summary>
         public int MaxMembers { get; set; }
 
-
-        /// <summary>
-        /// Gets or sets the list of members in the group.
-        /// </summary>
-        public List<MemberDTO> Members { get; set; } = new();
-
         /// <summary>
         /// Gets or sets a list of tags associated with the group for filtering and categorization.
         /// </summary>
-        public List<string> Tags { get; set; } = new();
-        public List<string>? NonUserMembers { get; set; } = new();
+        public List<string> Tags { get; set; }
+        public List<string>? NonUserMembers { get; set; }
+
+        /// <summary>
+        /// Gets or sets the list of participants in the group.
+        /// </summary>
+        public List<MemberDTO> Members { get; set; } = new();
+
         public ChatDTO Chat { get; set; }
 
         /// <summary>

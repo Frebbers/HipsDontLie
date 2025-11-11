@@ -1,5 +1,4 @@
-﻿using HipsDontLie.DTO;
-using HipsDontLie.Models;
+﻿using HipsDontLie.Models;
 using HipsDontLie.Repository;
 using HipsDontLie.Server.Models;
 using HipsDontLie.Shared.DTO;
@@ -74,10 +73,10 @@ namespace HipsDontLie.Services {
         /// <summary>
         /// Retrieves a group by its unique identifier and maps it to a response DTO.
         /// </summary>
-        public async Task<GetGroupByIdResponseDTO> GetGroupByIdAsync(int groupId) {
+        public async Task<GroupDTO> GetGroupByIdAsync(int groupId) {
             var group = await _groupRepository.GetGroupByIdAsync(groupId);
 
-            return new GetGroupByIdResponseDTO() {
+            return new GroupDTO() {
                 Title = group.Title,
                 AgeRange = group.AgeRange,
                 Description = group.Description,
@@ -109,7 +108,7 @@ namespace HipsDontLie.Services {
         /// <summary>
         /// Retrieves all available groups or groups associated with a specific user.
         /// </summary>
-        public async Task<List<GetGroupResponseDTO>> GetGroupsAsync(int? userId = null) {
+        public async Task<List<GroupDTO>> GetGroupsAsync(int? userId = null) {
             var groups = userId == null
                 ? await _groupRepository.GetGroupsAsync()
                 : await _groupRepository.GetGroupsByUserIdAsync((int)userId);
@@ -117,10 +116,10 @@ namespace HipsDontLie.Services {
             if (groups == null)
                 return null;
 
-            var results = new List<GetGroupResponseDTO>();
+            var results = new List<GroupDTO>();
 
             foreach (var group in groups) {
-                results.Add(new GetGroupResponseDTO {
+                results.Add(new GroupDTO {
                     Id = group.Id,
                     Title = group.Title,
                     OwnerId = group.OwnerId,
@@ -149,16 +148,16 @@ namespace HipsDontLie.Services {
         /// <summary>
         /// Retrieves all groups the user is participating in.
         /// </summary>
-        public async Task<List<GetGroupResponseDTO>> GetGroupsByUserIdAsync(int userId) {
+        public async Task<List<GroupDTO>> GetGroupsByUserIdAsync(int userId) {
             var groups = await _groupRepository.GetGroupsByUserIdAsync(userId);
 
             if (groups == null)
                 return null;
 
-            var results = new List<GetGroupResponseDTO>();
+            var results = new List<GroupDTO>();
 
             foreach (var group in groups) {
-                results.Add(new GetGroupResponseDTO {
+                results.Add(new GroupDTO {
                     Id = group.Id,
                     Title = group.Title,
                     OwnerId = group.OwnerId,
