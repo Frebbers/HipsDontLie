@@ -1,5 +1,6 @@
 ﻿@page "/profile"
 @using HipsDontLie.Client.Services
+@using HipsDontLie.DTO
 @using HipsDontLie.Shared.DTO
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize]
@@ -9,7 +10,7 @@
     <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
 } else
 {
-    <MudContainer Style="height: 95vh;">
+    <MudContainer Style="height: 85vh; margin-top: 2rem;">
         <MudGrid Spacing="2">
             <MudItem xs="12" md="6">
                 <MudCard Elevation="25" Class="rounded-lg pb-4">
@@ -41,11 +42,27 @@
                 </MudCard>
             </MudItem>
             <MudItem xs="12" md="6">
-                    <MudPaper Class="pa-4 d-flex align-center justify-center" Style="flex:1 1 0;">
-                        Placeholder
-                    </MudPaper>
-                    <MudPaper Class="pa-4 d-flex align-center justify-center" Style="flex:1 1 0;">
-                        Placeholder
+                <MudPaper Class="pa-4 d-flex align-center justify-center" Style="flex-direction: column;">
+                <MudText Typo="Typo.body1" Style="font-weight: 600; margin-bottom: 6px;">My Courses List</MudText>
+                    <MudStack Style="width: 100%;">
+                        @foreach (var item in GroupList)
+                    {
+                            <MudCard style="text-align: center;">
+                                <MudCardContent>
+                                    <MudText Style="padding-bottom: 0.5em;">@item.Title</MudText>
+                                    <MudDivider />
+                                    <MudText Style="margin-top: 6px;" Typo="Typo.body2">@item.Description</MudText>
+                                </MudCardContent>
+                                <MudDivider />
+                                <MudCardActions Style="gap: 10px; justify-content: center;">
+                                    @foreach (var tag in item.Tags)
+                                    {
+                                        <MudText Typo="Typo.caption">@tag</MudText>
+                                    }
+                                </MudCardActions>
+                            </MudCard>
+                    }
+                    </MudStack>
                     </MudPaper>
             </MudItem>
         </MudGrid>
@@ -55,6 +72,7 @@
 @code {
 
     public GetProfileResponseDTO Profile { get; set; } = new();
+    public List<GetGroupResponseDTO> GroupList { get; set; }
 
     [Inject]
     public ResourceService ResourceService { get; set; }
@@ -67,6 +85,8 @@
         try
         {
             Profile = await ResourceService.GetProfileAsync();
+            GroupList = await ResourceService.GetUserGroupsAsync();
+            Console.WriteLine(GroupList);
         }
         finally
         {

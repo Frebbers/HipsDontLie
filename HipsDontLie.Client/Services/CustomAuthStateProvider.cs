@@ -7,29 +7,19 @@ using Microsoft.JSInterop;
 public class CustomAuthStateProvider : AuthenticationStateProvider
 {
     private readonly IJSRuntime _jsRuntime;
-    private readonly HttpClient _httpClient;
 
-    public CustomAuthStateProvider(IJSRuntime jsRuntime, HttpClient httpClient)
-    {
-        _jsRuntime = jsRuntime;
-        _httpClient = httpClient;
-    }
+    public CustomAuthStateProvider(IJSRuntime jsRuntime) => _jsRuntime = jsRuntime;
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
         var token = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "jwt");
-
-        if (string.IsNullOrWhiteSpace(token))
-            return Anonymous();
+        if (string.IsNullOrWhiteSpace(token)) return Anonymous();
 
         if (!TryBuildPrincipal(token, out var user))
         {
             await LogoutAsync();
             return Anonymous();
         }
-
-        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
         return new AuthenticationState(user);
     }
 
@@ -42,16 +32,12 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
             await LogoutAsync();
             return;
         }
-
-        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
         NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
     }
 
     public async Task LogoutAsync()
     {
         await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", "jwt");
-        _httpClient.DefaultRequestHeaders.Authorization = null;
         NotifyAuthenticationStateChanged(Task.FromResult(Anonymous()));
     }
 
@@ -97,4 +83,7 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
         user = new ClaimsPrincipal(identity);
         return true;
     }
+
+    public Task<string?> GetAccessTokenAsync()
+         => _jsRuntime.InvokeAsync<string?>("localStorage.getItem", "jwt").AsTask();
 }

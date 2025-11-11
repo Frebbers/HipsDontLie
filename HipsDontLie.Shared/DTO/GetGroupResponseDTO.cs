@@ -1,6 +1,4 @@
-﻿using HipsDontLie.Shared.DTO;
-
-namespace HipsDontLie.DTO {
+﻿namespace HipsDontLie.Shared.DTO {
     /// <summary>
     /// Represents the response data for retrieving a group.
     /// </summary>

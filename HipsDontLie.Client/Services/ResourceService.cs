@@ -1,46 +1,29 @@
 ﻿using HipsDontLie.DTO;
 using HipsDontLie.Shared.DTO;
-using Microsoft.JSInterop;
 using System.Net.Http.Json;
-using System.Text;
-using System.Text.Json;
 
 namespace HipsDontLie.Client.Services
 {
     public class ResourceService
     {
         private readonly HttpClient _http;
-        private readonly IJSRuntime _jsRuntime;
-        private readonly CustomAuthStateProvider _authProvider;
 
-        public ResourceService(IJSRuntime jsRuntime,  HttpClient http, CustomAuthStateProvider authProvider)
+        public ResourceService(HttpClient http) => _http = http;
+        
+        public async Task<GetProfileResponseDTO> GetProfileAsync(CancellationToken ct = default)
         {
-            _jsRuntime = jsRuntime;
-            _authProvider = (CustomAuthStateProvider)authProvider;
-            _http = http;
+            using var res = await _http.GetAsync("api/Users/get-profile", ct);
+            if (!res.IsSuccessStatusCode) return new();
+
+            return await res.Content.ReadFromJsonAsync<GetProfileResponseDTO>(ct) ?? new();
         }
 
-        public async Task<GetProfileResponseDTO> GetProfileAsync()
+        public async Task<List<GetGroupResponseDTO>> GetUserGroupsAsync(CancellationToken ct = default)
         {
-            var authState = await _authProvider.GetAuthenticationStateAsync();
-            if (authState.User?.Identity?.IsAuthenticated != true)
-                return new GetProfileResponseDTO();
+            using var res = await _http.GetAsync("api/Groups/user", ct);
+            if (!res.IsSuccessStatusCode) return new();
 
-            var token = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "jwt");
-            using var request = new HttpRequestMessage(HttpMethod.Get, "api/Users/get-profile");
-            if (!string.IsNullOrWhiteSpace(token))
-                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-
-            using var res = await _http.SendAsync(request);
-            if (!res.IsSuccessStatusCode)
-                return new GetProfileResponseDTO();
-
-            var profile = await res.Content.ReadFromJsonAsync<GetProfileResponseDTO>(new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true 
-            });
-
-            return profile ?? new GetProfileResponseDTO();
+            return await res.Content.ReadFromJsonAsync<List<GetGroupResponseDTO>>(ct) ?? new();
         }
 
     }

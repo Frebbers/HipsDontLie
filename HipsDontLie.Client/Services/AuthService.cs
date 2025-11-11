@@ -11,24 +11,21 @@ namespace HipsDontLie.Client.Services
         private readonly HttpClient _http;
         private readonly CustomAuthStateProvider _authProvider;
 
-        public AuthService(HttpClient http, CustomAuthStateProvider authProvider)
+        public AuthService(IHttpClientFactory factory, CustomAuthStateProvider authProvider)
         {
-            _authProvider = (CustomAuthStateProvider)authProvider;
-            _http = http;
+            _authProvider = authProvider;
+            _http = factory.CreateClient("Auth");
         }
 
         public async Task<bool> LoginAsync(string email, string password)
         {
-            var json = JsonSerializer.Serialize(new { email, password });
-            var res = await _http.PostAsync("api/auth/login", new StringContent(json, Encoding.UTF8, "application/json"));
-
+            var payload = new { email, password };
+            var res = await _http.PostAsJsonAsync("api/auth/login", payload);
             if (!res.IsSuccessStatusCode) return false;
 
-            var body = await res.Content.ReadAsStringAsync();
-            using var doc = JsonDocument.Parse(body);
-            var token = doc.RootElement.GetProperty("token").GetString();
-
-            await _authProvider.MarkUserAsAuthenticated(token);
+            var doc = await res.Content.ReadFromJsonAsync<JsonElement>();
+            var token = doc.GetProperty("token").GetString();
+            await _authProvider.MarkUserAsAuthenticated(token!);
             return true;
         }
 
