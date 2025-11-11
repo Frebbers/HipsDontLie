@@ -21,9 +21,9 @@ builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider>(sp => sp.GetRequiredService<CustomAuthStateProvider>());
 
 builder.Services.AddHttpClient("Auth", c =>
-    c.BaseAddress = new Uri("http://localhost:7191/"));
+    c.BaseAddress = new Uri("https://localhost:7191/"));
 
-builder.Services.AddHttpClient("Api", c => c.BaseAddress = new Uri("http://localhost:7191/"))
+builder.Services.AddHttpClient("Api", c => c.BaseAddress = new Uri("https://localhost:7191/"))
     .AddHttpMessageHandler<APIDelegatingHandler>();
 
 
