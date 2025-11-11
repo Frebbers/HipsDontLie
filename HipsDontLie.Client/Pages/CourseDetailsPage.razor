@@ -1,7 +1,36 @@
 ﻿@page "/courses/{id:int}"
+@using HipsDontLie.DTO
+@using HipsDontLie.Shared.DTO
 
-<h3>Course Details</h3>
+<h3>@Course.Title</h3>
+<MudGrid>
+    <MudItem xs="12" md="8">
+        <MudPaper Class="pa-4">
+            <MudText Typo="Typo.h6">Course Description</MudText>
+            <MudText Typo="Typo.body1">@Course.Description</MudText>
+            <MudDivider Class="my-4" />
+            <MudText Typo="Typo.h6">Age Range</MudText>
+            <MudText Typo="Typo.body1">@Course.AgeRange</MudText>
+            <MudDivider Class="my-4" />
+            <MudText Typo="Typo.h6">Participants</MudText>
+            <MudText Typo="Typo.body1">@Course.Members.Count()/@Course.MaxMembers</MudText>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" md="4">
+         <InstructorInfo Instructor="Instructor" /> 
+    </MudItem>
+</MudGrid>
 
 @code {
     [Parameter] public int id { get; set; }
+    // get course details by id
+    public GetGroupByIdResponseDTO Course { get; set; }
+    public GetProfileResponseDTO Instructor { get; set; }
+
+    // override async Task OnInitializedAsync()
+    // {
+    //    Course = CallGetGroupByIdResponseDTO(id);
+    //    Instructor = CallGetProfileResponseDTO(Course.OwnerId);
+    // }
+
 }
