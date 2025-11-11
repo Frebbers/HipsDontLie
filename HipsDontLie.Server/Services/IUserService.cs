@@ -13,7 +13,7 @@ namespace HipsDontLie.Services
         /// </summary>
         /// <param name="userId">The unique identifier of the user.</param>
         /// <returns>A task representing the asynchronous operation, returning the user's profile details.</returns>
-        Task<GetProfileResponseDTO> GetProfileAsync(int userId);
+        Task<ProfileDTO> GetProfileAsync(int userId);
 
         /// <summary>
         /// Adds or updates the profile of a specified user.
@@ -28,7 +28,7 @@ namespace HipsDontLie.Services
         /// </summary>
         /// <param name="userId">The unique identifier of the user.</param>
         /// <returns>A task representing the asynchronous operation, returning the user's profile details.</returns>
-        Task<GetProfileResponseDTO> GetProfileByIdAsync(int userId);
+        Task<ProfileDTO> GetProfileByIdAsync(int userId);
         /// <summary>
         /// Retrieves a user's ID based on their username.
         /// </summary>

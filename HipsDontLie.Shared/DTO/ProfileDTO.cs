@@ -2,7 +2,7 @@
     /// <summary>
     /// Represents the response data for retrieving a user profile.
     /// </summary>
-    public class GetProfileResponseDTO {
+    public class ProfileDTO {
         /// <summary>
         /// Gets or sets the unique user ID.
         /// </summary>

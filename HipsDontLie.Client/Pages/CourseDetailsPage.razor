@@ -25,14 +25,14 @@
     [Parameter] public int id { get; set; }
     // get course details by id
     public GroupDTO Course { get; set; }
-    public GetProfileResponseDTO Instructor { get; set; }
+    public ProfileDTO Instructor { get; set; }
     [Inject]
     public ResourceService ResourceService { get; set; }
 
-    // override async Task OnParameterSetAsync
-    // {
-    //    Course = CallGetGroupByIdResponseDTO(id);
-    //    Instructor = CallGetProfileResponseDTO(Course.OwnerId);
-    // }
+    protected override async Task OnParametersSetAsync()
+    {
+       Course = await ResourceService.GetGroupByID(id);
+       Instructor = await ResourceService.GetProfile(Course.OwnerId);
+    }
 
 }

@@ -1,5 +1,4 @@
-﻿using HipsDontLie.DTO;
-using HipsDontLie.Shared.DTO;
+﻿using HipsDontLie.Shared.DTO;
 using System.Net.Http.Json;
 
 namespace HipsDontLie.Client.Services
@@ -10,20 +9,30 @@ namespace HipsDontLie.Client.Services
 
         public ResourceService(IHttpClientFactory factory) => _http = factory.CreateClient("Api");
 
-        public async Task<GetProfileResponseDTO> GetProfileAsync(CancellationToken ct = default)
+        public async Task<ProfileDTO> GetProfile(int? userId = null, CancellationToken ct = default)
         {
-            using var res = await _http.GetAsync("api/Users/get-profile", ct);
+            var requestUri = "api/Users/get-profile";
+            if (userId.HasValue) { requestUri = $"api/Users/profile/{userId}"; }
+            using var res = await _http.GetAsync(requestUri, ct);
             if (!res.IsSuccessStatusCode) return new();
 
-            return await res.Content.ReadFromJsonAsync<GetProfileResponseDTO>(ct) ?? new();
+            return await res.Content.ReadFromJsonAsync<ProfileDTO>(ct) ?? new();
         }
 
-        public async Task<List<GetGroupResponseDTO>> GetUserGroupsAsync(CancellationToken ct = default)
+        public async Task<List<GroupDTO>> GetUserGroups(CancellationToken ct = default)
         {
             using var res = await _http.GetAsync("api/Groups/user", ct);
             if (!res.IsSuccessStatusCode) return new();
 
-            return await res.Content.ReadFromJsonAsync<List<GetGroupResponseDTO>>(ct) ?? new();
+            return await res.Content.ReadFromJsonAsync<List<GroupDTO>>(ct) ?? new();
+        }
+        
+        public async Task<GroupDTO> GetGroupByID(int groupId, CancellationToken ct = default)
+        {
+            using var res = await _http.GetAsync($"api/Groups/{groupId}", ct);
+            if (!res.IsSuccessStatusCode) return new();
+
+            return await res.Content.ReadFromJsonAsync<GroupDTO>(ct) ?? new();
         }
 
     }

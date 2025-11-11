@@ -70,7 +70,7 @@
 
 @code {
 
-    public GetProfileResponseDTO Profile { get; set; } = new();
+    public ProfileDTO Profile { get; set; } = new();
     public List<GroupDTO> GroupList { get; set; }
 
     [Inject]
@@ -83,8 +83,8 @@
         isLoading = true;
         try
         {
-            Profile = await ResourceService.GetProfileAsync();
-            GroupList = await ResourceService.GetUserGroupsAsync();
+            Profile = await ResourceService.GetProfile();
+            GroupList = await ResourceService.GetUserGroups();
             Console.WriteLine(GroupList);
         }
         finally
