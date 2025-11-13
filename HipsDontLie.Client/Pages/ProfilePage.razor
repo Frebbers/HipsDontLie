@@ -9,8 +9,7 @@
     <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
 } else
 {
-    <MudContainer Style="height: 85vh; margin-top: 2rem;">
-        <MudGrid Spacing="2">
+        <MudGrid Style="margin-top: 1em;" Spacing="4">
             <MudItem xs="12" md="6">
                 <MudCard Elevation="25" Class="rounded-lg pb-4">
                     <MudCardHeader>
@@ -41,31 +40,31 @@
                 </MudCard>
             </MudItem>
             <MudItem xs="12" md="6">
-                <MudPaper Class="pa-4 d-flex align-center justify-center" Style="flex-direction: column;">
                 <MudText Typo="Typo.body1" Style="font-weight: 600; margin-bottom: 6px;">My Courses List</MudText>
-                    <MudStack Style="width: 100%;">
+                    <MudStack Style="width: fit-content; align-items: center;">
                         @foreach (var item in GroupList)
                     {
-                            <MudCard style="text-align: center;">
+                           <MudCard Style="width: 425px; border-radius: 6px;"  Elevation="2">
                                 <MudCardContent>
-                                    <MudText Style="padding-bottom: 0.5em;">@item.Title</MudText>
-                                    <MudDivider />
-                                    <MudText Style="margin-top: 6px;" Typo="Typo.body2">@item.Description</MudText>
+                                    <MudText Style="text-align: center; margin-bottom: 4px;">@item.Title</MudText>
+                                    <MudDivider Style="border-color: black;"  DividerType="DividerType.FullWidth"/>
+                                    <MudStack Row="true" Style="margin-top: 4px;">
+                                        <MudText Typo="Typo.body2"><strong>Age Range:</strong> @item.AgeRange</MudText>
+                                    <MudSpacer></MudSpacer>
+                                    <MudText Typo="Typo.body2"><strong>Owner Id:</strong> @item.OwnerId</MudText>
+                                    </MudStack>
                                 </MudCardContent>
-                                <MudDivider />
-                                <MudCardActions Style="gap: 10px; justify-content: center;">
+                                <MudCardActions Style="gap: 2px;">
                                     @foreach (var tag in item.Tags)
                                     {
-                                        <MudText Typo="Typo.caption">@tag</MudText>
+                                        <MudChip T="string" Size="Size.Small" Variant="MudBlazor.Variant.Outlined" Color="Color.Info">@tag</MudChip>
                                     }
                                 </MudCardActions>
                             </MudCard>
                     }
                     </MudStack>
-                    </MudPaper>
             </MudItem>
         </MudGrid>
-    </MudContainer>
 }
 
 @code {
