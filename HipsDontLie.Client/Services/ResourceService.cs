@@ -6,10 +6,10 @@ namespace HipsDontLie.Client.Services
     public class ResourceService
     {
         private readonly HttpClient _http;
+        public record ApiResponseMessage(string Message);
 
         public ResourceService(IHttpClientFactory factory) => _http = factory.CreateClient("Api");
 
-        public record ApiResponseMessage(string Message);
 
         #region Profile
         public async Task<ProfileDTO> GetProfile(int? userId = null, CancellationToken ct = default)
