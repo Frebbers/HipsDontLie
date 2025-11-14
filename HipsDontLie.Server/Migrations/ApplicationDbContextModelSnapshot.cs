@@ -428,7 +428,7 @@ namespace HipsDontLie.Server.Migrations
                     b.HasOne("HipsDontLie.Models.User", "Sender")
                         .WithMany("SentMessages")
                         .HasForeignKey("SenderId")
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Chat");
