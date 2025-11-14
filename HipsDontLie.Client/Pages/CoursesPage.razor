@@ -1,15 +1,15 @@
 ﻿@page "/courses"
-@using HipsDontLie.DTO
+@using HipsDontLie.Shared.DTO
 
 <CourseList GroupList="GroupList" />
 
 @code {
-    public List<GetGroupResponseDTO> GroupList { get; set; } = new();
+    public List<GroupDTO> GroupList { get; set; } = new();
 
     protected override Task OnInitializedAsync()
     {
         //TO-DO: Implement fetch groupe instead of fake data
-        GroupList = new List<GetGroupResponseDTO>
+        GroupList = new List<GroupDTO>
         {
             new()
             {

@@ -40,10 +40,10 @@ services:
     image: mysql:8
     container_name: hipsdontlie-db
     environment:
-      MYSQL_ROOT_PASSWORD: rootpass
-      MYSQL_DATABASE: hips
-      MYSQL_USER: appuser
-      MYSQL_PASSWORD: apppass
+      MYSQL_ROOT_PASSWORD: Rekt123!!!
+      MYSQL_DATABASE: hipsdontlie
+      MYSQL_USER: test
+      MYSQL_PASSWORD: rekt123
     ports:
       - "3306:3306"
     healthcheck:
