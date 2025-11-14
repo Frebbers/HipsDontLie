@@ -1,4 +1,5 @@
 using HipsDontLie.Client;
+using HipsDontLie.Client.Handlers;
 using HipsDontLie.Client.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
@@ -16,15 +17,18 @@ builder.Services.AddRadzenComponents();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<ResourceService>();
 builder.Services.AddScoped<CustomAuthStateProvider>();
-builder.Services.AddTransient<APIDelegatingHandler>();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider>(sp => sp.GetRequiredService<CustomAuthStateProvider>());
+
+builder.Services.AddTransient<ApiErrorHandler>();
+builder.Services.AddTransient<ApiRequestHandler>();
 
 builder.Services.AddHttpClient("Auth", c =>
     c.BaseAddress = new Uri("https://localhost:7191/"));
 
 builder.Services.AddHttpClient("Api", c => c.BaseAddress = new Uri("https://localhost:7191/"))
-    .AddHttpMessageHandler<APIDelegatingHandler>();
+    .AddHttpMessageHandler<ApiErrorHandler>()
+    .AddHttpMessageHandler<ApiRequestHandler>();
 
 
 

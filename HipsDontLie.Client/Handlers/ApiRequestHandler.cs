@@ -1,11 +1,11 @@
-﻿namespace HipsDontLie.Client.Services
+﻿namespace HipsDontLie.Client.Handlers
 {
-    public sealed class APIDelegatingHandler : DelegatingHandler
+    public sealed class ApiRequestHandler : DelegatingHandler
     {
         private readonly CustomAuthStateProvider _auth;
         private static readonly string ApiHost = new Uri("https://localhost:7191/").Host;
 
-        public APIDelegatingHandler(CustomAuthStateProvider auth) => _auth = auth;
+        public ApiRequestHandler(CustomAuthStateProvider auth) => _auth = auth;
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken ct)
         {

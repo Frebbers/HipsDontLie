@@ -14,82 +14,74 @@ namespace HipsDontLie.Client.Services
         #region Profile
         public async Task<ProfileDTO> GetProfile(int? userId = null, CancellationToken ct = default)
         {
-            var requestUri = "api/Users/get-profile";
-            if (userId.HasValue) { requestUri = $"api/Users/profile/{userId}"; }
-            using var res = await _http.GetAsync(requestUri, ct);
-            if (!res.IsSuccessStatusCode) return new();
+            var requestUri = userId.HasValue
+                ? $"api/Users/profile/{userId.Value}"
+                : "api/Users/get-profile";
 
-            return await res.Content.ReadFromJsonAsync<ProfileDTO>(ct) ?? new();
+            return await _http.GetFromJsonAsync<ProfileDTO>(requestUri, ct)
+                   ?? new ProfileDTO();
         }
 
-        public async Task<ApiResponseMessage?> UpdateProfile(UpdateProfileRequestDTO profile, CancellationToken ct = default)
+        public async Task<ApiResponseMessage> UpdateProfile(UpdateProfileRequestDTO profile, CancellationToken ct = default)
         {
             using var res = await _http.PostAsJsonAsync("api/Users/update-profile", profile, ct);
-            if (!res.IsSuccessStatusCode) return null;
 
-            return await res.Content.ReadFromJsonAsync<ApiResponseMessage?>(ct);
+            return await res.Content.ReadFromJsonAsync<ApiResponseMessage>(ct)
+                   ?? new ApiResponseMessage("Unknown response from UpdateProfile");
         }
         #endregion
 
         #region Group
-        public async Task<ApiResponseMessage?> CreateGroup(CreateGroupRequestDTO group, CancellationToken ct = default)
+        public async Task<ApiResponseMessage> CreateGroup(CreateGroupRequestDTO group, CancellationToken ct = default)
         {
             using var res = await _http.PostAsJsonAsync("api/Groups/create", group, ct);
-            if (!res.IsSuccessStatusCode) return null;
 
-            return await res.Content.ReadFromJsonAsync<ApiResponseMessage>(ct);
+            return await res.Content.ReadFromJsonAsync<ApiResponseMessage>(ct)
+                   ?? new ApiResponseMessage("Unknown response from CreateGroup");
         }
 
-        public async Task<ApiResponseMessage?> JoinGroup(int groupId, CancellationToken ct = default)
+        public async Task<ApiResponseMessage> JoinGroup(int groupId, CancellationToken ct = default)
         {
             using var res = await _http.PostAsync($"api/Groups/{groupId}/join", null, ct);
-            if (!res.IsSuccessStatusCode) return null;
 
-            return await res.Content.ReadFromJsonAsync<ApiResponseMessage>(ct);
-        }
-        public async Task<ApiResponseMessage?> AcceptUserIntoGroup(int groupId, int userId, CancellationToken ct = default)
-        {
-            using var res = await _http.GetAsync($"api/Groups/{groupId}/{userId}/accept", ct);
-            if (!res.IsSuccessStatusCode) return null;
-
-            return await res.Content.ReadFromJsonAsync<ApiResponseMessage>(ct);
+            return await res.Content.ReadFromJsonAsync<ApiResponseMessage>(ct)
+                   ?? new ApiResponseMessage("Unknown response from JoinGroup");
         }
 
-        public async Task<ApiResponseMessage?> RejectUserFromGroup(int groupId, int userId, CancellationToken ct = default)
+        public async Task<ApiResponseMessage> AcceptUserIntoGroup(int groupId, int userId, CancellationToken ct = default)
         {
-            using var res = await _http.GetAsync($"api/Groups/{groupId}/{userId}/reject", ct);
-            if (!res.IsSuccessStatusCode) return null;
+            return await _http.GetFromJsonAsync<ApiResponseMessage>($"api/Groups/{groupId}/{userId}/accept", ct)
+                   ?? new ApiResponseMessage("Unknown response from AcceptUserIntoGroup");
+        }
 
-            return await res.Content.ReadFromJsonAsync<ApiResponseMessage>(ct);
+        public async Task<ApiResponseMessage> RejectUserFromGroup(int groupId, int userId, CancellationToken ct = default)
+        {
+            return await _http.GetFromJsonAsync<ApiResponseMessage>($"api/Groups/{groupId}/{userId}/reject", ct)
+                   ?? new ApiResponseMessage("Unknown response from RejectUserFromGroup");
         }
 
         public async Task<List<GroupDTO>> GetUserGroups(CancellationToken ct = default)
         {
-            using var res = await _http.GetAsync("api/Groups/user", ct);
-            if (!res.IsSuccessStatusCode) return new();
-
-            return await res.Content.ReadFromJsonAsync<List<GroupDTO>>(ct) ?? new();
+            return await _http.GetFromJsonAsync<List<GroupDTO>>("api/Groups/user", ct)
+                   ?? new List<GroupDTO>();
         }
 
         public async Task<List<GroupDTO>> GetAllGroups(CancellationToken ct = default)
         {
-            using var res = await _http.GetAsync("api/Groups", ct);
-            if (!res.IsSuccessStatusCode) return new();
-
-            return await res.Content.ReadFromJsonAsync<List<GroupDTO>>(ct) ?? new();
+            return await _http.GetFromJsonAsync<List<GroupDTO>>("api/Groups", ct)
+                   ?? new List<GroupDTO>();
         }
 
         public async Task<GroupDTO> GetGroupByID(int groupId, CancellationToken ct = default)
         {
-            using var res = await _http.GetAsync($"api/Groups/{groupId}", ct);
-            if (!res.IsSuccessStatusCode) return new();
-
-            return await res.Content.ReadFromJsonAsync<GroupDTO>(ct) ?? new();
+            return await _http.GetFromJsonAsync<GroupDTO>($"api/Groups/{groupId}", ct)
+                   ?? new GroupDTO();
         }
+
         #endregion
 
         #region Chat
-        //TO-DO
+        // TO-DO
         #endregion
     }
 }
