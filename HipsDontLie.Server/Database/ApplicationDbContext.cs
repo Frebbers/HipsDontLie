@@ -101,7 +101,7 @@ namespace HipsDontLie.Database {
                 .HasForeignKey(m => m.SenderId)
                 //This one could change, at the moment it just sets the sender to null but perserves the messages.
                 //Maybe the user should have the power to have their messages deleted if they delete their user (Cascade)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.Cascade);
 
             //One-to-many relationship between Appointment and Group
             modelBuilder.Entity<Appointment>()

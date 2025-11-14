@@ -11,6 +11,7 @@ x-common-env: &app-env
   MongoChat__MessagesCollectionName: "${MongoChat__MessagesCollectionName:-messages}"
 
 services:
+  # Frontend + Backend
   hipsdontlie:
     build:
       context: .
@@ -26,10 +27,15 @@ services:
     volumes:
       - ./logs:/app/logs
     depends_on:
-      - db
-      - mongodb
+      db:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
     restart: unless-stopped
 
+  # MySQL Database
   db:
     image: mysql:8
     container_name: hipsdontlie-db
@@ -40,10 +46,16 @@ services:
       MYSQL_PASSWORD: apppass
     ports:
       - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 10s
+      retries: 2
     volumes:
       - db_data:/var/lib/mysql
     restart: unless-stopped
 
+  # Mongo Database
   mongodb:
     image: mongo:7.0
     container_name: hipsdontlie-mongodb
@@ -52,10 +64,32 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: example
     ports:
       - "27017:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')", "-u", "root", "-p", "example", "--authenticationDatabase", "admin"]
+      interval: 5s
+      timeout: 10s
+      retries: 2
     volumes:
       - mongo_data:/data/db
     restart: unless-stopped
 
+  # Migration service to run db migrations
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        ENVIRONMENT: Development
+      target: build
+    depends_on:
+      db:
+        condition: service_healthy
+    environment: # defaults for dev/testing; Production should supply via secrets/env file
+      <<: *app-env
+    working_dir: /src
+    command: > 
+      sh -c "dotnet ef database update --project HipsDontLie.Server/HipsDontLie.Server.csproj"
+    
   test:
     image: mcr.microsoft.com/dotnet/sdk:9.0
     container_name: hipsdontlie-tests
@@ -85,3 +119,8 @@ services:
 volumes:
   db_data:
   mongo_data:
+
+networks:
+  app-network:
+    driver: bridge
+
