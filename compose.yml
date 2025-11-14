@@ -5,7 +5,7 @@ x-common-env: &app-env
   JwtSettings__SecretKey: "${JwtSettings__SecretKey:-C6821CD46246E81E9B481CD9D4D9A123C6821CD46246E81E9B481CD9D4D9A123}"
   JwtSettings__Issuer: "${JwtSettings__Issuer:-HipsDontLie}"
   JwtSettings__Audience: "${JwtSettings__Audience:-HipsDontLieApp}"
-  ConnectionStrings__DefaultConnection: "${ConnectionStrings__DefaultConnection:-server=db;port=3306;database=hips;user=appuser;password=apppass}"
+  ConnectionStrings__DefaultConnection: "${ConnectionStrings__DefaultConnection:-server=db;port=3306;database=hipsdontlie;user=test;password=rekt123}"
   MongoChat__ConnectionString: "${MongoChat__ConnectionString:-mongodb://root:example@mongodb:27017/?authSource=admin}"
   MongoChat__DatabaseName: "${MongoChat__DatabaseName:-hips_chat}"
   MongoChat__MessagesCollectionName: "${MongoChat__MessagesCollectionName:-messages}"
@@ -37,10 +37,10 @@ services:
 
   # MySQL Database
   db:
-    image: mysql:8
+    image: lscr.io/linuxserver/mariadb:11.4.8
     container_name: hipsdontlie-db
     environment:
-      MYSQL_ROOT_PASSWORD: Rekt123!!!
+      MYSQL_ROOT_PASSWORD: rekt123
       MYSQL_DATABASE: hipsdontlie
       MYSQL_USER: test
       MYSQL_PASSWORD: rekt123
