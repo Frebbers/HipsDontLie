@@ -1,41 +1,60 @@
 ﻿@page "/mycourses"
+@using HipsDontLie.Client.Handlers
+@using HipsDontLie.Client.Services
 @using HipsDontLie.Shared.DTO
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize]
 
-<MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
-    <MudTabPanel Text="Course List">
-        <CourseList GroupList="GroupList"/>
-    </MudTabPanel>
-    <MudTabPanel Text="Calender">
-        <Calender />
-    </MudTabPanel>
-</MudTabs>
-
+@if (!string.IsNullOrWhiteSpace(_errorMessage)) {
+    <MudAlert Severity="Severity.Error" Elevation="0" Class="mt-4">
+        @_errorMessage
+    </MudAlert>
+}
+else {
+    <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-6">
+        <MudTabPanel Text="Course List">
+            <CourseList GroupList="GroupList" />
+        </MudTabPanel>
+        <MudTabPanel Text="Calender">
+            <AuthorizeView Roles="Instructor">
+                <Authorized>
+                    <Calender Appointments="Appointments"
+                              CanEdit="true" />
+                </Authorized>
+                <NotAuthorized>
+                    <Calender Appointments="Appointments"
+                              CanEdit="false" />
+                </NotAuthorized>
+            </AuthorizeView>
+        </MudTabPanel>
+    </MudTabs>
+}
 
 @code {
 
+    [Inject]
+    public ResourceService ResourceService { get; set; }
+
     public List<GroupDTO> GroupList { get; set; } = new();
-    protected override Task OnInitializedAsync()
+    public List<AppointmentDTO> Appointments { get; set; } = new();
+
+    private string _errorMessage = "";
+
+    protected override async Task OnInitializedAsync()
     {
-        //TO-DO: Implement fetch groupe instead of fake data
-        GroupList = new List<GroupDTO>
-        {
-            new()
-            {
-                Id = 1,
-                Title = "Salsa Beginners",
-                OwnerId = 101,
-                IsVisible = true,
-                AgeRange = "18-35",
-                Description = "A fun introduction to salsa basics for absolute beginners.",
-                MaxMembers = 20,
-                Tags = new() { "Salsa", "Dance", "Beginner" },
-                Members = new(),
-            },
-        };
-        return base.OnInitializedAsync();
+        try {
+            GroupList = await ResourceService.GetAllGroups();
+            Appointments = FetchAppointments();
+        }
+        catch (ApiException ex) {
+            _errorMessage = $"{ex.Message} - {ex.StatusCode}: {(int)ex.StatusCode}";
+        }
     }
 
-
+    private List<AppointmentDTO> FetchAppointments() {
+        return GroupList
+            .Where(g => g.Appointments != null)
+            .SelectMany(g => g.Appointments!)
+            .ToList();
+    }
 }

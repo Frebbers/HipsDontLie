@@ -10,7 +10,6 @@ namespace HipsDontLie.Client.Services
 
         public ResourceService(IHttpClientFactory factory) => _http = factory.CreateClient("Api");
 
-
         #region Profile
         public async Task<ProfileDTO> GetProfile(int? userId = null, CancellationToken ct = default)
         {

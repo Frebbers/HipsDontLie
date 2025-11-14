@@ -1,0 +1,42 @@
+@using HipsDontLie.Shared.DTO
+@inject Radzen.DialogService DialogService
+
+<RadzenStack Gap="1rem" Style="padding: 1rem; min-width: 250px;">
+
+    <RadzenStack Orientation="Radzen.Orientation.Horizontal"
+                 AlignItems="Radzen.AlignItems.Center">
+        <RadzenLabel Text="Title" Style="width: 6rem;" />
+        <RadzenTextBox Value="@Appointment.Text"
+                       ReadOnly="true"
+                       Style="width: 12rem;" />
+    </RadzenStack>
+
+    <RadzenStack Orientation="Radzen.Orientation.Horizontal"
+                 AlignItems="Radzen.AlignItems.Center">
+        <RadzenLabel Text="Start" Style="width: 6rem;" />
+        <RadzenTextBox Value="@Appointment.Start.ToString()"
+                       ReadOnly="true"
+                       Style="width: 12rem;" />
+    </RadzenStack>
+
+    <RadzenStack Orientation="Radzen.Orientation.Horizontal"
+                 AlignItems="Radzen.AlignItems.Center">
+        <RadzenLabel Text="End" Style="width: 6rem;" />
+        <RadzenTextBox Value="@Appointment.End.ToString()"
+                       ReadOnly="true"
+                       Style="width: 12rem;" />
+    </RadzenStack>
+
+    <RadzenStack Orientation="Radzen.Orientation.Horizontal"
+                 JustifyContent="JustifyContent.End">
+        <RadzenButton Text="Close" Click="@Close" />
+    </RadzenStack>
+
+</RadzenStack>
+
+@code {
+    [Parameter]
+    public AppointmentDTO Appointment { get; set; }
+
+    void Close() => DialogService.Close();
+}

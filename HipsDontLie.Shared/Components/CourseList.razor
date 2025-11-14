@@ -38,7 +38,7 @@
     {
         return base.OnParametersSetAsync();
     }
-    private int CurrentCount(GroupDTO g) => (g?.Members?.Count ?? 0) + (g?.NonUserMembers?.Count ?? 0);
+    private int CurrentCount(GroupDTO g) => (g?.Members?.Count ?? 0);
 
     private Func<GroupDTO, object> _sortBy => x =>
     {

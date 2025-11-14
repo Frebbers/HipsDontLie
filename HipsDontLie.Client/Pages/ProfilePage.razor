@@ -116,7 +116,7 @@ else
         isLoading = true;
         try
         {
-            Profile = await ResourceService.GetProfile(5);
+            Profile = await ResourceService.GetProfile();
             GroupList = await ResourceService.GetUserGroups();
         }
         catch (ApiException ex)

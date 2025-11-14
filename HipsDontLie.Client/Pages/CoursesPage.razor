@@ -1,66 +1,38 @@
 ﻿@page "/courses"
+@using HipsDontLie.Client.Handlers
+@using HipsDontLie.Client.Services
 @using HipsDontLie.Shared.DTO
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
 
-<CourseList GroupList="GroupList" />
+@if (!string.IsNullOrWhiteSpace(_errorMessage))
+{
+    <MudAlert Severity="Severity.Error" Elevation="0" Class="mt-4">
+        @_errorMessage
+    </MudAlert>
+}
+else{
+    <CourseList GroupList="GroupList" />
+}
 
 @code {
+
+    [Inject]
+    public ResourceService ResourceService { get; set; }
+
     public List<GroupDTO> GroupList { get; set; } = new();
 
-    protected override Task OnInitializedAsync()
-    {
-        //TO-DO: Implement fetch groupe instead of fake data
-        GroupList = new List<GroupDTO>
-        {
-            new()
-            {
-                Id = 1,
-                Title = "Salsa Beginners",
-                OwnerId = 101,
-                IsVisible = true,
-                AgeRange = "18-35",
-                Description = "A fun introduction to salsa basics for absolute beginners.",
-                MaxMembers = 20,
-                Tags = new() { "Salsa", "Dance", "Beginner" },
-                Members = new(),
-            },
-            new()
-            {
-                Id = 2,
-                Title = "Advanced Hip-Hop Crew",
-                OwnerId = 102,
-                IsVisible = true,
-                AgeRange = "16-30",
-                Description = "High-energy choreography and freestyle battles for seasoned dancers.",
-                MaxMembers = 15,
-                Tags = new() { "Hip-Hop", "Crew", "Performance" },
-                Members = new(),
-            },
-            new()
-            {
-                Id = 3,
-                Title = "Latin Fusion Flow",
-                OwnerId = 103,
-                IsVisible = false,
-                AgeRange = "21-40",
-                Description = "Private group exploring the fusion of bachata and reggaeton styles.",
-                MaxMembers = 10,
-                Tags = new() { "Latin", "Fusion", "Private" },
-                Members = new(),
-            },
-            new()
-            {
-                Id = 4,
-                Title = "Contemporary Expression",
-                OwnerId = 104,
-                IsVisible = true,
-                AgeRange = "18-45",
-                Description = "Modern dance group focusing on emotional storytelling and movement.",
-                MaxMembers = 12,
-                Tags = new() { "Contemporary", "Artistic", "Movement" },
-                Members = new(),
-            }
-        };
-        return base.OnInitializedAsync();
-    }
+    private string _errorMessage = "";
 
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            GroupList = await ResourceService.GetAllGroups();
+        }
+        catch (ApiException ex)
+        {
+            _errorMessage = $"{ex.Message} - {ex.StatusCode}: {(int)ex.StatusCode}";
+        }
+    }
 }

@@ -39,7 +39,6 @@ namespace HipsDontLie.Services {
                 OwnerId = userId,
                 MaxMembers = groupDto.MaxMembers,
                 Tags = groupDto.Tags,
-                NonUserMembers = groupDto.NonUserMembers,
                 Appointments = (groupDto.Appointments ?? new List<AppointmentDTO>())
                             .Select(a => new Appointment {
                                 Start = a.Start,
@@ -83,7 +82,6 @@ namespace HipsDontLie.Services {
                 IsVisible = group.IsVisible,
                 OwnerId = group.OwnerId,
                 Tags = group.Tags,
-                NonUserMembers = group.NonUserMembers,
                 Id = group.Id,
                 MaxMembers = group.MaxMembers,
                 Appointments = group.Appointments.Select(a => new AppointmentDTO {
@@ -128,7 +126,11 @@ namespace HipsDontLie.Services {
                     Description = group.Description,
                     MaxMembers = group.MaxMembers,
                     Tags = group.Tags,
-                    NonUserMembers = group.NonUserMembers,
+                    Appointments = group.Appointments.Select(a => new AppointmentDTO {
+                        Start = a.Start,
+                        End = a.End,
+                        Text = a.Text
+                    }).ToList(),
                     Members = group.Members
                         .Select(p => new MemberDTO {
                             UserId = p.UserId,
@@ -166,7 +168,6 @@ namespace HipsDontLie.Services {
                     Description = group.Description,
                     MaxMembers = group.MaxMembers,
                     Tags = group.Tags,
-                    NonUserMembers = group.NonUserMembers,
                     Appointments = group.Appointments.Select(a => new AppointmentDTO {
                         Start = a.Start,
                         End = a.End,
@@ -295,7 +296,6 @@ namespace HipsDontLie.Services {
             group.IsVisible = dto.IsVisible;
             group.MaxMembers = dto.MaxMembers;
             group.Tags = dto.Tags;
-            group.NonUserMembers = dto.NonUserMembers;
             group.Appointments = (dto.Appointments ?? new List<AppointmentDTO>())
                         .Select(a => new Appointment {
                             Start = a.Start,

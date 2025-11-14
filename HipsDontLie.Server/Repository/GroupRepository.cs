@@ -36,6 +36,7 @@ namespace HipsDontLie.Repository {
             return await _context.Groups
                 .Include(g => g.Members)
                     .ThenInclude(p => p.User)
+                .Include(a => a.Appointments)
                 .Include(g => g.Chat)
                 .FirstOrDefaultAsync(g => g.Id == groupId);
         }
@@ -121,6 +122,7 @@ namespace HipsDontLie.Repository {
                 .Include(g => g.Members)
                     .ThenInclude(p => p.User)
                     .ThenInclude(u => u.Profile)
+                .Include(a => a.Appointments)
                 .Include(g => g.Chat)
                 .ToListAsync();
         }
@@ -133,6 +135,7 @@ namespace HipsDontLie.Repository {
                 .Include(g => g.Members)
                     .ThenInclude(p => p.User)
                     .ThenInclude(u => u.Profile)
+                .Include(a => a.Appointments)
                 .Include(g => g.Chat)
                 .ToListAsync();
         }
