@@ -4,6 +4,7 @@ using HipsDontLie.Server.Models;
 using HipsDontLie.Shared.DTO;
 using HipsDontLie.Shared.Enum;
 using HipsDontLie.WebSockets;
+using Microsoft.IdentityModel.Tokens;
 
 namespace HipsDontLie.Services {
     /// <summary>
@@ -72,8 +73,14 @@ namespace HipsDontLie.Services {
         /// <summary>
         /// Retrieves a group by its unique identifier and maps it to a response DTO.
         /// </summary>
-        public async Task<GroupDTO> GetGroupByIdAsync(int groupId) {
+        public async Task<GroupDTO> GetGroupByIdAsync(int userId, int groupId) {
             var group = await _groupRepository.GetGroupByIdAsync(groupId);
+            if (group == null) return null;
+
+            bool isMember = !await _groupRepository.ValidateUserGroupAsync(userId, groupId);
+
+            //TODO: If the user is not a member of this group, do not show member information.
+            //Return an empty list instead, so we can still use .Count() to show number of members.
 
             return new GroupDTO() {
                 Title = group.Title,

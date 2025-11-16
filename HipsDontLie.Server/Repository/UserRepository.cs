@@ -118,7 +118,6 @@ namespace HipsDontLie.Repository
             .AsNoTracking()
             .FirstOrDefaultAsync(u => u.Id == userId);
         }
-
     }
 }
 

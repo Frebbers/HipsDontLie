@@ -60,7 +60,7 @@ namespace HipsDontLie.Test {
             };
             _mockGroupRepo.Setup(r => r.GetGroupByIdAsync(5)).ReturnsAsync(group);
 
-            var dto = await _service.GetGroupByIdAsync(5);
+            var dto = await _service.GetGroupByIdAsync(0, 5);
 
             Assert.AreEqual("Group A", dto.Title);
             Assert.AreEqual(99, dto.Chat.ChatId);

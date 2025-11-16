@@ -85,7 +85,6 @@ namespace HipsDontLie.Controllers {
             return Ok(visibleGroups);
         }
 
-
         /// <summary>
         /// Retrieves a group by its unique identifier.
         /// </summary>
@@ -96,7 +95,9 @@ namespace HipsDontLie.Controllers {
         /// </returns>
         [HttpGet("{groupId}")]
         public async Task<IActionResult> GetGroupByIdAsync(int groupId) {
-            var group = await _groupService.GetGroupByIdAsync(groupId);
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+            var group = await _groupService.GetGroupByIdAsync(userId, groupId);
 
             if (group == null)
                 return NotFound(new { message = "Group not found" });
