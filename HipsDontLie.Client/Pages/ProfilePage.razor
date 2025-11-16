@@ -5,118 +5,190 @@
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize]
 
-@if (isLoading)
-{
+@if (isLoading) {
     <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
 }
-else if (!string.IsNullOrWhiteSpace(_errorMessage))
-{
-    @if (_errorStatusCode == 404)
-    {
+else if (!string.IsNullOrWhiteSpace(_errorMessage)) {
+    @if (_errorStatusCode == 404) {
         <CreateProfileForm OnSubmit="HandleCreateProfile" />
-    } else
-    {
+    }
+    else {
         <MudAlert Severity="Severity.Error" Elevation="0" Class="mt-4">
             @_errorMessage
         </MudAlert>
     }
 }
-else
-{
-    <MudCard Elevation="25" Class="rounded-lg pb-4">
-        <MudCardHeader>
-            <CardHeaderContent>
-                <MudText Typo="Typo.h5" Align="Align.Center">Profile Info</MudText>
-            </CardHeaderContent>
-        </MudCardHeader>
-        <MudCardContent>
-            <div class="d-flex justify-center">
-                <MudAvatar Size="MudBlazor.Size.Large" Color="Color.Primary">
-                    @{
-                        var username = Profile.Username ?? string.Empty;
-                        var initial = !string.IsNullOrWhiteSpace(username)
-                        ? char.ToUpper(username[0])
-                        : '?';
-                    }
-                @initial
-            </MudAvatar>
-        </div>
-        <MudList ReadOnly="true" T="string" Class="mx-auto mt-4" Style="width:300px;">
-            <MudListItem Icon="@Icons.Material.Filled.Favorite">
-                @(!string.IsNullOrWhiteSpace(Profile.Username) ? Profile.Username : "No username")
-            </MudListItem>
-            <MudListItem Icon="@Icons.Material.Filled.Favorite">
-                @(string.IsNullOrWhiteSpace(Profile.Region) ? "No region" : Profile.Region)
-            </MudListItem>
-            <MudListItem Icon="@Icons.Material.Filled.Favorite">
-                @(Profile.BirthDate == default
-                                        ? "No birthdate"
-                                        : Profile.BirthDate.ToString("dd-MM-yyyy"))
-            </MudListItem>
-        </MudList>
-    </MudCardContent>
+else {
+    <div class="d-flex justify-center mt-4">
+        <MudCard Elevation="25"
+                 Class="rounded-lg pb-4"
+                 Style="width:100%; max-width:500px;">
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h5" Align="Align.Center">Profile Info</MudText>
+                </CardHeaderContent>
+                <CardHeaderActions>
+                    <MudIconButton Icon="@(isEditing? Icons.Material.Filled.Close : Icons.Material.Filled.Edit)"
+                                   Color="Color.Primary"
+                                   Size="Size.Medium"
+                                   OnClick="ToggleEdit" />
+                </CardHeaderActions>
+            </MudCardHeader>
 
-        <MudText Style="font-weight: 600;" Class="d-flex justify-center">Description:</MudText>
-        <MudCardActions Class="d-flex justify-center">
-            @(string.IsNullOrWhiteSpace(Profile.Description) ? "No description" : Profile.Description)
-        </MudCardActions>
-    </MudCard>
+            <MudCardContent>
+                <div class="d-flex justify-center">
+                    <MudAvatar Size="MudBlazor.Size.Large" Color="Color.Primary">
+                        @{
+                            var username = Profile.Username ?? string.Empty;
+                            var initial = !string.IsNullOrWhiteSpace(username)
+                            ? char.ToUpper(username[0])
+                            : '?';
+                        }
+                        @initial
+                    </MudAvatar>
+                </div>
+
+                @if (!isEditing) {
+                    <MudList ReadOnly="true" T="string" Class="mx-auto mt-4" Style="width:300px;">
+                        <MudListItem Icon="@Icons.Material.Filled.Person">
+                            @(!string.IsNullOrWhiteSpace(Profile.DisplayName) ? Profile.DisplayName : "No name")
+                        </MudListItem>
+                        <MudListItem Icon="@Icons.Material.Filled.Public">
+                            @(string.IsNullOrWhiteSpace(Profile.Region) ? "No region" : Profile.Region)
+                        </MudListItem>
+                        <MudListItem Icon="@Icons.Material.Filled.CalendarMonth">
+                            @(Profile.BirthDate == default
+                                                ? "No birthdate"
+                                                : Profile.BirthDate.ToString("dd-MM-yyyy"))
+                </MudListItem>
+            </MudList>
+                }
+            else {
+                        <MudStack Class="mx-auto mt-4" Style="width:300px;" Spacing="2">
+                            <MudTextField @bind-Value="Profile.DisplayName"
+                                          Label="Name"
+                                          Variant="MudBlazor.Variant.Outlined" />
+                            <MudTextField @bind-Value="Profile.Region"
+                                          Label="Region"
+                                          Variant="MudBlazor.Variant.Outlined" />
+
+                            <MudDatePicker @bind-Date="_birthDate"
+                                           Label="Birthdate" />
+                        </MudStack>
+        }
+
+            </MudCardContent>
+
+            <MudText Style="font-weight: 600;" Class="d-flex justify-center mt-2">About Me</MudText>
+
+            @if (!isEditing) {
+                <MudCardActions Class="d-flex justify-center">
+                    @(string.IsNullOrWhiteSpace(Profile.Description) ? "No description" : Profile.Description)
+                </MudCardActions>
+            }
+            else {
+                <MudCardActions Class="d-flex">
+                    <MudTextField @bind-Value="Profile.Description"
+                                  Label="About Me"
+                                  Variant="MudBlazor.Variant.Outlined"
+                                  Lines="3"
+                                  Style="width:300px; justify-content: center; align-items: center;" />
+                </MudCardActions>
+                <MudCardActions Class="d-flex justify-center">
+                    <MudButton Color="Color.Primary"
+                               Variant="MudBlazor.Variant.Filled"
+                               OnClick="SaveProfile">
+                        Save
+                    </MudButton>
+                    <MudButton Color="Color.Default"
+                               Variant="MudBlazor.Variant.Outlined"
+                               OnClick="CancelEdit">
+                        Cancel
+                    </MudButton>
+                </MudCardActions>
+            }
+        </MudCard>
+    </div>
 }
 
 @code {
-
     public ProfileDTO Profile { get; set; } = new();
     public UpdateProfileRequestDTO UpdateProfile { get; set; }
 
     private string _errorMessage = "";
     private int _errorStatusCode;
+    private bool isLoading;
+    private bool isEditing;
+    private DateTime? _birthDate;
 
     [Inject]
     public ResourceService ResourceService { get; set; }
 
-    private bool isLoading;
-
-    protected override async Task OnInitializedAsync()
-    {
+    protected override async Task OnInitializedAsync() {
         isLoading = true;
-        try
-        {
+        try {
             Profile = await ResourceService.GetProfile();
+            _birthDate = Profile.BirthDate;
         }
-        catch (ApiException ex)
-        {
+        catch (ApiException ex) {
             _errorStatusCode = (int)ex.StatusCode;
             _errorMessage = $"{ex.Message} - {ex.StatusCode}: {(int)ex.StatusCode}";
         }
-        finally
-        {
+        finally {
             isLoading = false;
         }
     }
 
-    private async Task HandleCreateProfile((DateTime? BirthDate, string Region, string Description) formData)
-    {
-        UpdateProfile = new UpdateProfileRequestDTO()
-        {
+    private void ToggleEdit() {
+        isEditing = !isEditing;
+    }
+
+    private async Task SaveProfile() {
+        UpdateProfile = new UpdateProfileRequestDTO {
+            DisplayName = Profile.DisplayName,
+            BirthDate = _birthDate ?? Profile.BirthDate,
+            Description = Profile.Description,
+            Region = Profile.Region,
+            ProfilePicture = ""
+        };
+
+        try {
+            var result = await ResourceService.UpdateProfile(UpdateProfile);
+            Profile = await ResourceService.GetProfile();
+
+            _errorStatusCode = 0;
+            _errorMessage = string.Empty;
+            isEditing = false;
+        }
+        catch (ApiException ex) {
+            _errorStatusCode = (int)ex.StatusCode;
+            _errorMessage = $"{ex.Message} - {ex.StatusCode}: {(int)ex.StatusCode}";
+        }
+    }
+
+    private void CancelEdit() {
+        isEditing = false;
+    }
+
+    private async Task HandleCreateProfile((String? UserName, DateTime? BirthDate, string Region, string Description) formData) {
+        UpdateProfile = new UpdateProfileRequestDTO() {
+            Username = formData.UserName,
             BirthDate = formData.BirthDate ?? DateTime.Now,
             Description = formData.Description,
             Region = formData.Region,
             ProfilePicture = ""
         };
 
-        try
-        {
+        try {
             var result = await ResourceService.UpdateProfile(UpdateProfile);
             Profile = await ResourceService.GetProfile();
 
             _errorStatusCode = 0;
             _errorMessage = string.Empty;
         }
-        catch (ApiException ex)
-        {
+        catch (ApiException ex) {
             _errorStatusCode = (int)ex.StatusCode;
             _errorMessage = $"{ex.Message} - {ex.StatusCode}: {(int)ex.StatusCode}";
         }
     }
-
 }

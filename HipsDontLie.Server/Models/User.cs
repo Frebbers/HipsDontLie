@@ -13,6 +13,11 @@ namespace HipsDontLie.Models {
         public Profile Profile { get; set; }
 
         /// <summary>
+        /// The display name of the user.
+        /// </summary>
+        public string? DisplayName { get; set; }
+
+        /// <summary>
         /// Gets or sets the list of groups the user has joined.
         /// </summary>
         public List<UserGroup> JoinedGroups { get; set; } = new();

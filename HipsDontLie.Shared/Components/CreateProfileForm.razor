@@ -26,11 +26,12 @@
 
 
 @code {
-    [Parameter] public EventCallback<(DateTime? BirthDate , string Region, string Description)> OnSubmit { get; set; }
+    [Parameter] public EventCallback<(String? UserName, DateTime? BirthDate , string Region, string Description)> OnSubmit { get; set; }
 
     public MudForm Form { get; private set; }
     public bool IsValid { get; set; }
 
+    public string UserName { get; set; } = string.Empty;
     public DateTime? BirthDate { get; set; } = DateTime.Now;
     public string ProfilePicture { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
@@ -41,7 +42,7 @@
         await Form.Validate();
         if (IsValid)
         {
-            await OnSubmit.InvokeAsync((BirthDate, Region, Description));
+            await OnSubmit.InvokeAsync((UserName, BirthDate, Region, Description));
         }
     }
 

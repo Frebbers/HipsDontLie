@@ -30,9 +30,11 @@ namespace HipsDontLie.Services
         /// <returns>A task representing the asynchronous operation, returning true if the operation is successful.</returns>
         public async Task<UpdateProfileStatus> AddOrUpdateProfileAsync(int userId, UpdateProfileRequestDTO profileDto)
         {
+
             var profile = new Profile
             {
                 Id = userId,
+
                 BirthDate = profileDto.BirthDate,
                 ProfilePicture = profileDto.ProfilePicture,
                 Description = profileDto.Description,
@@ -59,7 +61,8 @@ namespace HipsDontLie.Services
             return new ProfileDTO
             {
                 UserId = profile.User.Id,
-                Username = profile.User.UserName,
+                Username = profile.User.UserName ?? string.Empty,
+                DisplayName = profile.User.DisplayName,
                 BirthDate = profile.BirthDate,
                 Description = profile.Description,
                 Region = profile.Region,
