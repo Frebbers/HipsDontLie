@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MongoDB.Driver.Core.Authentication;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HipsDontLie.Models {
@@ -37,9 +38,7 @@ namespace HipsDontLie.Models {
         /// <summary>
         /// Gets or sets the user associated with this profile.
         /// </summary>
-        public User User { get; set; }
-        
-
+        public User User { get; set; }   
     }
     public enum UpdateProfileStatus
     {

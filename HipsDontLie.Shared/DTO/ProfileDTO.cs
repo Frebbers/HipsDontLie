@@ -14,6 +14,11 @@
         public string Username { get; set; }
 
         /// <summary>
+        /// Gets or sets the display name of the user.
+        /// </summary>
+        public string? DisplayName { get; set; }
+
+        /// <summary>
         /// Gets or sets the birth date of the user.
         /// </summary>
         public DateTime BirthDate { get; set; }

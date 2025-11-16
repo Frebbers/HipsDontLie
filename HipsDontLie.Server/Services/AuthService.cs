@@ -53,7 +53,7 @@ namespace HipsDontLie.Services
         /// <summary>
         /// Registers a new user using ASP.NET Core Identity.
         /// </summary>
-        public async Task<AuthStatus> RegisterUserAsync(string email, string username, string password, string? requestedRole = null)
+        public async Task<AuthStatus> RegisterUserAsync(string email, string username, string displayname, string password, string? requestedRole = null)
         {
             // Check for existing user
             var existingUser = await _userManager.FindByEmailAsync(email);
@@ -70,8 +70,9 @@ namespace HipsDontLie.Services
             // Create new Identity user
             var user = new User
             {
-                UserName = username,
                 Email = email,
+                UserName = username,      
+                DisplayName = displayname,
                 EmailConfirmed = isTestEmail // auto-confirm for test users
             };
 
@@ -219,7 +220,7 @@ namespace HipsDontLie.Services
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.Email!),
-                new Claim(ClaimTypes.Name, user.UserName)
+                new Claim(ClaimTypes.Name, user.DisplayName ?? user.Email ?? string.Empty)
             };
 
             var roles = await _userManager.GetRolesAsync(user);
@@ -254,6 +255,9 @@ namespace HipsDontLie.Services
             if (string.IsNullOrWhiteSpace(email))
                 return new(false, null, "Error: missing email");
 
+            var name = info.Principal.FindFirstValue(ClaimTypes.Name);
+            if (string.IsNullOrWhiteSpace(name))
+                return new(false, null, "Error: missing name");
 
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
@@ -261,6 +265,7 @@ namespace HipsDontLie.Services
                 user = new User
                 {
                     UserName = email,
+                    DisplayName = name,
                     Email = email,
                     EmailConfirmed = true
                 };
@@ -296,6 +301,22 @@ namespace HipsDontLie.Services
         {
             var props = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUri);
             return new ChallengeResult(provider, props);
+        }
+
+        private static string ToSafeUserName(string rawName, string fallback) {
+            Console.WriteLine($"Raw external username: {rawName}");
+            if (string.IsNullOrWhiteSpace(rawName))
+                return fallback;
+
+            var allowed = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+            var sb = new StringBuilder(rawName.Length);
+            foreach (var ch in rawName) {
+                if (allowed.Contains(ch))
+                    sb.Append(ch);
+            }
+
+            var result = sb.ToString();
+            return string.IsNullOrWhiteSpace(result) ? fallback : result;
         }
     }
 }

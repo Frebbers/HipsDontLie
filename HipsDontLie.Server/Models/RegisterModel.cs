@@ -18,6 +18,12 @@ namespace HipsDontLie.Models {
         public string Username { get; set; }
 
         /// <summary>
+        /// Gets or sets the display name of the user.
+        /// </summary>
+        [Required]
+        public string DisplayName { get; set; }
+
+        /// <summary>
         /// Gets or sets the password for the user account.
         /// </summary>
         [Required]

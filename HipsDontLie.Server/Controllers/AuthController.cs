@@ -46,7 +46,7 @@ namespace HipsDontLie.Controllers {
                 return BadRequest("Username, email, and password are required.");
 
 
-            var status = await _authService.RegisterUserAsync(model.Email, model.Username, model.Password);
+            var status = await _authService.RegisterUserAsync(model.Email, model.Username, model.DisplayName, model.Password);
 
             return status switch
             {

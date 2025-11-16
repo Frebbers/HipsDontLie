@@ -35,9 +35,9 @@ namespace HipsDontLie.Client.Services
             public string? Message { get; init; }
         }
 
-        public async Task<RegisterResult> RegisterAsync(string email, string username, string password)
+        public async Task<RegisterResult> RegisterAsync(string email, string userName, string displayName, string password)
         {
-            var payload = new { Email = email, Username = username, Password = password };
+            var payload = new { Email = email, Username = userName, Displayname = displayName, Password = password };
 
             using var res = await _http.PostAsJsonAsync("api/auth/register", payload);
 

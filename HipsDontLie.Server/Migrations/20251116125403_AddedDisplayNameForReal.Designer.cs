@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HipsDontLie.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251114124749_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20251116125403_AddedDisplayNameForReal")]
+    partial class AddedDisplayNameForReal
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -128,6 +128,9 @@ namespace HipsDontLie.Server.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("DisplayName")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("ProfilePicture")
                         .HasColumnType("longtext");
 
@@ -152,6 +155,9 @@ namespace HipsDontLie.Server.Migrations
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("DisplayName")
                         .HasColumnType("longtext");
 
                     b.Property<string>("Email")
