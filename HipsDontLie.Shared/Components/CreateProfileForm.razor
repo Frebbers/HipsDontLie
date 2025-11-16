@@ -1,0 +1,48 @@
+﻿@using Microsoft.JSInterop
+<MudPaper Class="pa-6 mx-auto mt-10" MaxWidth="400px">
+    <MudForm @ref="Form" @bind-IsValid="@IsValid">
+        <MudText Typo="Typo.h5" Class="mb-4">Update your Profile</MudText>
+
+       
+        <MudDatePicker Label="Birth Date" Editable="true" @bind-Date="BirthDate" Placeholder="Select Date" />
+
+        <MudTextField @bind-Value="Region"
+                      Label="Region" />
+
+        <MudTextField @bind-Value="Description"
+                      Label="Description"
+                      AutoGrow="true" />
+
+        <MudButton Variant="MudBlazor.Variant.Filled"
+                   Color="Color.Primary"
+                   Disabled="!IsValid"
+                   Class="mt-4 w-100"
+                   OnClick="@OnSubmitClicked">
+            Create Profile
+        </MudButton>
+    </MudForm>
+</MudPaper>
+
+
+
+@code {
+    [Parameter] public EventCallback<(DateTime? BirthDate , string Region, string Description)> OnSubmit { get; set; }
+
+    public MudForm Form { get; private set; }
+    public bool IsValid { get; set; }
+
+    public DateTime? BirthDate { get; set; } = DateTime.Now;
+    public string ProfilePicture { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public string Region { get; set; } = string.Empty;
+
+    private async Task OnSubmitClicked()
+    {
+        await Form.Validate();
+        if (IsValid)
+        {
+            await OnSubmit.InvokeAsync((BirthDate, Region, Description));
+        }
+    }
+
+}

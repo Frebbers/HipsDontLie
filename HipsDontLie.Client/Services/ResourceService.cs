@@ -23,7 +23,7 @@ namespace HipsDontLie.Client.Services
 
         public async Task<ApiResponseMessage> UpdateProfile(UpdateProfileRequestDTO profile, CancellationToken ct = default)
         {
-            using var res = await _http.PostAsJsonAsync("api/Users/update-profile", profile, ct);
+            using var res = await _http.PutAsJsonAsync("api/Users/update-profile", profile, ct);
 
             return await res.Content.ReadFromJsonAsync<ApiResponseMessage>(ct)
                    ?? new ApiResponseMessage("Unknown response from UpdateProfile");
