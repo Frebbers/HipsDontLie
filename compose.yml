@@ -76,6 +76,10 @@ services:
 
   # Migration service to run db migrations
   migrate:
+    volumes: #get code from host to run migrations - won't work if built from remote
+      - type: bind
+        source: .
+        target: /src
     build:
       context: .
       dockerfile: Dockerfile

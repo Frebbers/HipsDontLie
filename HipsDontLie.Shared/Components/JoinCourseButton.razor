@@ -1,0 +1,24 @@
+﻿namespace HipsDontLie.Shared.Components;
+
+
+<MudButton 
+    Variant = "MudBlazor.Variant.Filled"
+    OnClick = "onButtonPressed"
+    @if (isWaiting) { EndIcon = "MudProgressCircular" } @* Shows a loading spinner when isWaiting is true *@
+    >
+    Join course
+    
+</MudButton>
+
+@code
+{
+    [Parameter] public int CourseId { get; set; }
+    [Parameter] public EventCallback OnJoinRequested { get; set; }
+    private bool isWaiting = false;
+    private async void onButtonPressed()
+    {
+        isWaiting = true;
+        await OnJoinRequested.InvokeAsync(CourseId);
+        isWaiting = false;
+    }
+}
