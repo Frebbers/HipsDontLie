@@ -53,7 +53,7 @@ namespace HipsDontLie.Services
         /// <summary>
         /// Registers a new user using ASP.NET Core Identity.
         /// </summary>
-        public async Task<AuthStatus> RegisterUserAsync(string email, string username, string password, string? requestedRole = null)
+        public async Task<AuthStatus> RegisterUserAsync(string email, string username, string displayname, string password, string? requestedRole = null)
         {
             // Check for existing user
             var existingUser = await _userManager.FindByEmailAsync(email);
@@ -70,9 +70,9 @@ namespace HipsDontLie.Services
             // Create new Identity user
             var user = new User
             {
-                UserName = email,
-                DisplayName = username,
                 Email = email,
+                UserName = username,      
+                DisplayName = displayname,
                 EmailConfirmed = isTestEmail // auto-confirm for test users
             };
 

@@ -1,4 +1,5 @@
 ﻿using HipsDontLie.Shared.DTO;
+using Microsoft.AspNetCore.Components;
 using System.Net.Http.Json;
 
 namespace HipsDontLie.Client.Services
@@ -6,9 +7,13 @@ namespace HipsDontLie.Client.Services
     public class ResourceService
     {
         private readonly HttpClient _http;
+        private CustomAuthStateProvider _authStateProvider;
         public record ApiResponseMessage(string Message);
 
-        public ResourceService(IHttpClientFactory factory) => _http = factory.CreateClient("Api");
+        public ResourceService(IHttpClientFactory factory, CustomAuthStateProvider authStateProvider) {
+            _http = factory.CreateClient("Api");
+            _authStateProvider = authStateProvider;
+        }
 
         #region Profile
         public async Task<ProfileDTO> GetProfile(int? userId = null, CancellationToken ct = default)
@@ -28,6 +33,24 @@ namespace HipsDontLie.Client.Services
             return await res.Content.ReadFromJsonAsync<ApiResponseMessage>(ct)
                    ?? new ApiResponseMessage("Unknown response from UpdateProfile");
         }
+
+        public async Task<ApiResponseMessage> DeleteUser(CancellationToken ct = default) {
+            using var res = await _http.DeleteAsync("api/auth/remove-user", ct);
+            await _authStateProvider.LogoutAsync();
+
+            var raw = await res.Content.ReadAsStringAsync(ct);
+
+            if (!string.IsNullOrWhiteSpace(raw) && raw.Length >= 2 &&
+                raw[0] == '"' && raw[^1] == '"') {
+                raw = raw[1..^1];
+            }
+            
+            return new ApiResponseMessage(string.IsNullOrWhiteSpace(raw)
+                ? "User deleted successfully."
+                : raw);
+        }
+
+
         #endregion
 
         #region Group

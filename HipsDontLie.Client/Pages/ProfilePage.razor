@@ -67,13 +67,16 @@ else {
                         <MudStack Class="mx-auto mt-4" Style="width:300px;" Spacing="2">
                             <MudTextField @bind-Value="Profile.DisplayName"
                                           Label="Name"
-                                          Variant="MudBlazor.Variant.Outlined" />
+                                          Variant="MudBlazor.Variant.Outlined"
+                                          Disabled="true"/>
+                                          
                             <MudTextField @bind-Value="Profile.Region"
                                           Label="Region"
                                           Variant="MudBlazor.Variant.Outlined" />
 
                             <MudDatePicker @bind-Date="_birthDate"
-                                           Label="Birthdate" />
+                                           Label="Birthdate"
+                                           Disabled="true"/>
                         </MudStack>
         }
 
@@ -107,11 +110,24 @@ else {
                     </MudButton>
                 </MudCardActions>
             }
+
+            <MudButton Color="Color.Error"
+                       Variant="MudBlazor.Variant.Outlined"
+                       Class="mx-auto mt-4"
+                       OnClick="DeleteUser">
+                Delete Account
+            </MudButton>
         </MudCard>
     </div>
 }
 
 @code {
+
+    [Inject]
+    public ResourceService ResourceService { get; set; }
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
+
     public ProfileDTO Profile { get; set; } = new();
     public UpdateProfileRequestDTO UpdateProfile { get; set; }
 
@@ -120,9 +136,6 @@ else {
     private bool isLoading;
     private bool isEditing;
     private DateTime? _birthDate;
-
-    [Inject]
-    public ResourceService ResourceService { get; set; }
 
     protected override async Task OnInitializedAsync() {
         isLoading = true;
@@ -185,6 +198,22 @@ else {
 
             _errorStatusCode = 0;
             _errorMessage = string.Empty;
+        }
+        catch (ApiException ex) {
+            _errorStatusCode = (int)ex.StatusCode;
+            _errorMessage = $"{ex.Message} - {ex.StatusCode}: {(int)ex.StatusCode}";
+        }
+    }
+
+    private async Task DeleteUser() {
+        try {
+            var result = await ResourceService.DeleteUser();
+            
+            _errorStatusCode = 0;
+            _errorMessage = string.Empty;
+
+            
+            NavigationManager.NavigateTo("/");
         }
         catch (ApiException ex) {
             _errorStatusCode = (int)ex.StatusCode;
