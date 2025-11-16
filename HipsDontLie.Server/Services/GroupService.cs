@@ -4,7 +4,6 @@ using HipsDontLie.Server.Models;
 using HipsDontLie.Shared.DTO;
 using HipsDontLie.Shared.Enum;
 using HipsDontLie.WebSockets;
-using Microsoft.IdentityModel.Tokens;
 
 namespace HipsDontLie.Services {
     /// <summary>
@@ -15,7 +14,6 @@ namespace HipsDontLie.Services {
         private readonly IUserRepository _userRepository;
         private readonly IChatRepository _chatRepository;
         private readonly WebSocketEventHandler _webSocketEventHandler;
-
 
         /// <summary>
         /// Provides group management services, including group creation, retrieval, joining, and leaving.
@@ -79,8 +77,8 @@ namespace HipsDontLie.Services {
 
             bool isMember = !await _groupRepository.ValidateUserGroupAsync(userId, groupId);
 
-            //TODO: If the user is not a member of this group, do not show member information.
-            //Return an empty list instead, so we can still use .Count() to show number of members.
+            // TODO: If the user is not a member of this group, do not show member information.
+            // Return an empty list instead, so we can still use .Count() to show number of members.
 
             return new GroupDTO() {
                 Title = group.Title,
@@ -312,6 +310,10 @@ namespace HipsDontLie.Services {
                         .ToList();
 
             return await _groupRepository.UpdateGroupAsync(groupId, group);
+        }
+
+        public async Task<bool> DeleteGroupAsync(int groupId, int userId) {
+            return await _groupRepository.DeleteGroupAsync(groupId, userId);
         }
     }
 }

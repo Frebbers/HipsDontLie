@@ -71,5 +71,7 @@ namespace HipsDontLie.Services {
         /// <param name="dto">The updated group data.</param>
         /// <returns>A task that represents the asynchronous operation, returning true if the update is successful.</returns>
         Task<bool> UpdateGroupAsync(int groupId, int userId, UpdateGroupRequestDTO dto);
+
+        Task<bool> DeleteGroupAsync(int groupId, int userId);
     }
 }

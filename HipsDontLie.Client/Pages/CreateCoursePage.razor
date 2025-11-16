@@ -1,0 +1,58 @@
+﻿@page "/courses/create"
+@using HipsDontLie.Client.Handlers
+@using HipsDontLie.Client.Services
+@using HipsDontLie.Shared.DTO
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles = "Instructor")]
+
+<div class="d-flex justify-center mt-4">
+    <MudCard Elevation="0" Class="w-100" Style="max-width: 700px;">
+        <MudCardContent>
+            @if (!string.IsNullOrWhiteSpace(_errorMessage)) {
+                <MudAlert Severity="Severity.Error" Elevation="0" Class="mb-2">
+                    @_errorMessage
+                </MudAlert>
+            }
+
+            <Course Model="groupModel"
+                    IsNew="true"
+                    CanEdit="true"
+                    OnSave="HandleCreate"
+                    OnCancel="HandleCancel">
+            </Course>
+        </MudCardContent>
+    </MudCard>
+</div>
+
+@code {
+    [Inject] public ResourceService ResourceService { get; set; }
+    [Inject] public NavigationManager NavigationManager { get; set; }
+
+    private CreateGroupRequestDTO groupModel = new();
+    private string _errorMessage = string.Empty;
+    private bool _isSubmitting;
+
+    private async Task HandleCreate(CreateGroupRequestDTO model) {
+        if (_isSubmitting)
+            return;
+
+        _isSubmitting = true;
+        _errorMessage = string.Empty;
+
+        try {
+            var res = await ResourceService.CreateGroup(model);
+
+            NavigationManager.NavigateTo("/courses");
+        }
+        catch (ApiException ex) {
+            _errorMessage = $"{ex.Message} - {ex.StatusCode}: {(int)ex.StatusCode}";
+        }
+        finally {
+            _isSubmitting = false;
+        }
+    }
+
+    private void HandleCancel() {
+        NavigationManager.NavigateTo("/courses");
+    }
+}

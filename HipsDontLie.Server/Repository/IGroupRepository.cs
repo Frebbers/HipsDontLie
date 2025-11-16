@@ -71,5 +71,7 @@ namespace HipsDontLie.Repository {
         /// <param name="updatedGroup">The updated group entity with new values.</param>
         /// <returns>A task that represents the asynchronous operation, returning true if the update is successful.</returns>
         Task<bool> UpdateGroupAsync(int groupId, Group updatedGroup);
+
+        Task<bool> DeleteGroupAsync(int groupId, int userId);
     }
 }

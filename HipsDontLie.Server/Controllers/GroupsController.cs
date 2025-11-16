@@ -233,5 +233,17 @@ namespace HipsDontLie.Controllers {
 
             return Ok(new { message = "Group updated successfully." });
         }
+
+        [HttpDelete("{groupId}")]
+        public async Task<IActionResult> DeleteGroup(int groupId) {
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+            bool success = await _groupService.DeleteGroupAsync(groupId, userId);
+
+            if (!success)
+                return Forbid("You are not the owner or the group does not exist.");
+
+            return Ok(new { message = "Group deleted successfully." });
+        }
     }
 }

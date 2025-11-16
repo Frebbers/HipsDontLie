@@ -62,6 +62,20 @@ namespace HipsDontLie.Client.Services
                    ?? new ApiResponseMessage("Unknown response from CreateGroup");
         }
 
+        public async Task<ApiResponseMessage> UpdateGroup(int groupId, CreateGroupRequestDTO group, CancellationToken ct = default) {
+            using var res = await _http.PutAsJsonAsync($"api/Groups/{groupId}", group, ct);
+
+            return await res.Content.ReadFromJsonAsync<ApiResponseMessage>(ct)
+                   ?? new ApiResponseMessage("Unknown response from UpdateGroup");
+        }
+
+        public async Task<ApiResponseMessage> DeleteGroup(int groupId, CancellationToken ct = default) {
+            using var res = await _http.DeleteAsync($"api/Groups/{groupId}", ct);
+
+            return await res.Content.ReadFromJsonAsync<ApiResponseMessage>(ct)
+                   ?? new ApiResponseMessage("Unknown response from DeleteGroup");
+        }
+
         public async Task<ApiResponseMessage> JoinGroup(int groupId, CancellationToken ct = default)
         {
             using var res = await _http.PostAsync($"api/Groups/{groupId}/join", null, ct);

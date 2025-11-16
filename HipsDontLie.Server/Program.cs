@@ -72,6 +72,7 @@ namespace HipsDontLie {
             if (builder.Configuration.GetSection("MongoChat") == null) {
                 throw new Exception("MongoChat section is missing in configuration.");
             }
+
             // Bind Mongo chat settings
             builder.Services.Configure<MongoChatSettings>(
                 builder.Configuration.GetSection("MongoChat"));
