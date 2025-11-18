@@ -98,10 +98,18 @@
     @if (CanEdit) {
         <MudCardActions Class="d-flex justify-center">
             @if (_isEditing) {
-                <MudButton Color="Color.Primary"
+                <MudButton Disabled="@isSaving" Color="Color.Primary"
                            Variant="MudBlazor.Variant.Filled"
                            OnClick="SaveAsync">
-                    Save
+                    @if (isSaving)
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">Saving...</MudText>
+                    }
+                    else
+                    {
+                        <MudText>Save</MudText>
+                    }
                 </MudButton>
                 <MudButton Color="Color.Default"
                            Variant="MudBlazor.Variant.Outlined"
@@ -141,6 +149,7 @@
 
     private bool _isEditing;
     private bool _isNew;
+    private bool isSaving;
     private string? _newTag;
 
     protected override void OnParametersSet() {
@@ -163,10 +172,15 @@
 
     private async Task SaveAsync() {
         if (OnSave.HasDelegate)
+        {
+            isSaving = true;
             await OnSave.InvokeAsync(Model);
+        }
 
         if (!_isNew)
             _isEditing = false;
+
+        isSaving = false;
     }
 
     private async Task CancelEditInternal() {
