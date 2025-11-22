@@ -22,8 +22,8 @@ services:
       Authentication__Google__ClientId: ${GOOGLE_CLIENT_ID}
       Authentication__Google__ClientSecret: ${GOOGLE_SECRET}
 
+
   swag:
-    swag:
     image: lscr.io/linuxserver/swag
     container_name: hipsdontlie-swag
     cap_add:
