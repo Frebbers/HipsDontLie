@@ -1,7 +1,8 @@
 @using HipsDontLie.Shared.DTO
+@using Microsoft.AspNetCore.Authorization
 @inject Radzen.DialogService DialogService
 
-<RadzenScheduler @ref=@scheduler SlotRender=@OnSlotRender style="height: 768px;" TItem="AppointmentDTO" Data=@appointments StartProperty="Start" EndProperty="End" ShowHeader=@showHeader
+<RadzenScheduler @ref=@scheduler SlotRender=@OnSlotRender style="height: 768px;" TItem="AppointmentDTO" Data=@Appointments StartProperty="Start" EndProperty="End" ShowHeader=@showHeader
                  TextProperty="Text" SelectedIndex="2"
     SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentSelect AppointmentRender=@OnAppointmentRender DaySelect="@OnDaySelect"
     AppointmentMove=@OnAppointmentMove >
@@ -12,16 +13,42 @@
 </RadzenScheduler>
 
 @code {
+    [Parameter]
+    public IList<AppointmentDTO> Appointments { get; set; }
+
+    [Parameter]
+    public EventCallback<List<AppointmentDTO>> OnAppointmentsChanged { get; set; }
+
+    [Parameter]
+    public bool CanEdit { get; set; } = true;
+
     RadzenScheduler<AppointmentDTO> scheduler;
     Dictionary<DateTime, string> events = new Dictionary<DateTime, string>();
 
     bool showHeader = true;
+    bool initialized;
 
-    IList<AppointmentDTO> appointments = new List<AppointmentDTO>();
+    protected override async Task OnAfterRenderAsync(bool firstRender) {
+        if (firstRender) {
+            initialized = true;
+
+            if (scheduler != null) {
+                await scheduler.Reload();
+            }
+        }
+    }
+
+    protected override async Task OnParametersSetAsync() {
+        // This runs whenever the parent updates Appointments
+        if (initialized && scheduler != null && Appointments != null) {
+            Console.WriteLine("Appointments: " + Appointments.Count);
+            await scheduler.Reload();
+        }
+    }
 
     void OnDaySelect(SchedulerDaySelectEventArgs args)
     {
-        
+
     }
 
     void OnSlotRender(SchedulerSlotRenderEventArgs args)
@@ -39,8 +66,15 @@
         }
     }
 
+    // Call this whenever appointments change
+    private async Task NotifyAppointmentsChanged() {
+        await OnAppointmentsChanged.InvokeAsync(Appointments.ToList());
+    }
+
     async Task OnSlotSelect(SchedulerSlotSelectEventArgs args)
     {
+        if (!CanEdit) return;
+
         if (args.View.Text != "Year")
         {
             AppointmentDTO data = await DialogService.OpenAsync<AddAppointmentDialog>("Add Appointment",
@@ -48,28 +82,41 @@
 
             if (data != null)
             {
-                appointments.Add(data);
+                Appointments.Add(data);
                 // Either call the Reload method or reassign the Data property of the Scheduler
                 await scheduler.Reload();
+                await NotifyAppointmentsChanged();
             }
         }
     }
 
     async Task OnAppointmentSelect(SchedulerAppointmentSelectEventArgs<AppointmentDTO> args) {
+        if (!CanEdit) {
+            await DialogService.OpenAsync<ReadAppointmentDialog>(
+                "Appointment",
+                new Dictionary<string, object> {
+            { "Appointment", args.Data }
+                });
+
+            return;
+        }
+
+        // Editable path
         var copy = new AppointmentDTO {
             Start = args.Data.Start,
             End = args.Data.End,
             Text = args.Data.Text
         };
 
-        var data = await DialogService.OpenAsync<EditAppointmentDialog>("Edit Appointment", new Dictionary<string, object> { { "Appointment", copy } });
+        var data = await DialogService.OpenAsync<EditAppointmentDialog>(
+            "Edit Appointment",
+            new Dictionary<string, object> { { "Appointment", copy } });
 
-        if (data != null)
-        {
-            // Update the appointment
+        if (data != null) {
             args.Data.Start = data.Start;
             args.Data.End = data.End;
             args.Data.Text = data.Text;
+            await NotifyAppointmentsChanged();
         }
 
         await scheduler.Reload();
@@ -86,7 +133,8 @@
 
     async Task OnAppointmentMove(SchedulerAppointmentMoveEventArgs args)
     {
-        var draggedAppointment = appointments.FirstOrDefault(x => x == args.Appointment.Data);
+        if (!CanEdit) return;
+        var draggedAppointment = Appointments.FirstOrDefault(x => x == args.Appointment.Data);
 
         if (draggedAppointment != null)
         {

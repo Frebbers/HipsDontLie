@@ -1,5 +1,5 @@
 ﻿@using System.ComponentModel.DataAnnotations
-
+@inject NavigationManager Nav
 
 <MudPaper Class="pa-6 mx-auto mt-10" MaxWidth="400px">
     <MudForm @ref="form" @bind-IsValid="@isValid">
@@ -19,10 +19,18 @@
 
         <MudButton Variant="MudBlazor.Variant.Filled"
                    Color="Color.Primary"
-                   Disabled="!isValid"
+                   Disabled="!isValid || isLoggingIn"
                    OnClick="HandleLogin"
                    Class="mt-4 w-100">
-            Log In
+            @if (isLoggingIn)
+            {
+                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                <MudText Typo="Typo.button" Class="ms-2">Logging In...</MudText>
+            }
+            else
+            {
+                <MudText Typo="Typo.button">Log In</MudText>
+            }
         </MudButton>
 
         @if (!string.IsNullOrEmpty(ErrorMessage))
@@ -35,11 +43,20 @@
         <MudText Typo="Typo.subtitle2" Align="Align.Center">
             Don’t have an account?
             <MudLink Href="/register">Register here</MudLink>
-            <MudButton Href="https://localhost:7191/api/auth/external/Google?returnUrl=/signin-external"
+            <MudButton OnClick="NavigateToGoogle"
                        Color="Color.Primary"
                        Variant="MudBlazor.Variant.Outlined"
-                       StartIcon="@Icons.Material.Filled.Login">
-                Continue with Google
+                       StartIcon="@(isNavigating ? null : Icons.Material.Filled.Login)"
+                       Disabled="@isNavigating">
+                @if (isNavigating)
+                {
+                    <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                    <MudText Typo="Typo.button" Class="ms-2">Navigating to Google...</MudText>
+                }
+                else
+                {
+                    <MudText Typo="Typo.button">Continue with Google</MudText>
+                }
             </MudButton>
         </MudText>
     </MudForm>
@@ -50,16 +67,26 @@
 
     private MudForm form;
     private bool isValid;
+    private bool isLoggingIn;
+    private bool isNavigating;
     private string Email = string.Empty;
     private string Password = string.Empty;
     private string? ErrorMessage;
 
     private async Task HandleLogin()
     {
+        isLoggingIn = true;
         await form.Validate();
         if (isValid)
         {
             await OnSubmit.InvokeAsync((Email, Password));
         }
+        isLoggingIn = false;
+    }
+
+    private async Task NavigateToGoogle()
+    {
+        isNavigating = true;
+        Nav.NavigateTo("https://localhost:7191/api/auth/external/Google?returnUrl=/signin-external");
     }
 }

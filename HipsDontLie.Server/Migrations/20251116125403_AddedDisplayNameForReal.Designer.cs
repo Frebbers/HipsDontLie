@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HipsDontLie.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251029135627_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20251116125403_AddedDisplayNameForReal")]
+    partial class AddedDisplayNameForReal
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -102,7 +102,7 @@ namespace HipsDontLie.Server.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int?>("SenderId")
+                    b.Property<int>("SenderId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("TimeStamp")
@@ -126,6 +126,9 @@ namespace HipsDontLie.Server.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Description")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("DisplayName")
                         .HasColumnType("longtext");
 
                     b.Property<string>("ProfilePicture")
@@ -152,6 +155,9 @@ namespace HipsDontLie.Server.Migrations
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("DisplayName")
                         .HasColumnType("longtext");
 
                     b.Property<string>("Email")
@@ -237,6 +243,34 @@ namespace HipsDontLie.Server.Migrations
                     b.HasIndex("GroupId");
 
                     b.ToTable("UserGroups");
+                });
+
+            modelBuilder.Entity("HipsDontLie.Server.Models.Appointment", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<DateTime>("End")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("GroupId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Start")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("GroupId");
+
+                    b.ToTable("Appointment");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
@@ -403,7 +437,8 @@ namespace HipsDontLie.Server.Migrations
                     b.HasOne("HipsDontLie.Models.User", "Sender")
                         .WithMany("SentMessages")
                         .HasForeignKey("SenderId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Chat");
 
@@ -457,6 +492,17 @@ namespace HipsDontLie.Server.Migrations
                     b.Navigation("Group");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("HipsDontLie.Server.Models.Appointment", b =>
+                {
+                    b.HasOne("HipsDontLie.Models.Group", "Group")
+                        .WithMany("Appointments")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Group");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -519,6 +565,8 @@ namespace HipsDontLie.Server.Migrations
 
             modelBuilder.Entity("HipsDontLie.Models.Group", b =>
                 {
+                    b.Navigation("Appointments");
+
                     b.Navigation("Chat")
                         .IsRequired();
 

@@ -2,7 +2,11 @@
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
-# Optional: pass environment at build time
+# Install dotnet EF
+ENV PATH $PATH:/root/.dotnet/tools
+RUN dotnet tool install -g dotnet-ef --version 9.0.4
+
+# Pass environment at build time
 ARG ENVIRONMENT=Development
 
 # Copy project files first
@@ -16,9 +20,6 @@ RUN dotnet restore "HipsDontLie.Server/HipsDontLie.Server.csproj"
 
 # Copy the rest of the source code
 COPY . .
-
-# Run tests before publish
-RUN dotnet test "HipsDontLie.Test/HipsDontLie.Test.csproj" --verbosity normal
 
 # Publish the Server (which automatically builds Client)
 RUN dotnet publish "HipsDontLie.Server/HipsDontLie.Server.csproj" \

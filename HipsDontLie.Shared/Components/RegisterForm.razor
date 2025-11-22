@@ -6,16 +6,24 @@
     <MudForm @ref="Form" @bind-IsValid="@IsValid">
         <MudText Typo="Typo.h5" Class="mb-4">Create Account</MudText>
 
+        @*
         <MudTextField @bind-Value="Username"
                       Label="Username"
                       Required="true"
                       RequiredError="Username is required." />
+        *@
+
 
         <MudTextField @bind-Value="Email"
                       Label="Email"
                       Required="true"
                       RequiredError="Email is required."
                       Validation="@(new EmailAddressAttribute() { ErrorMessage = "Invalid email address." })" />
+
+        <MudTextField @bind-Value="DisplayName"
+                      Label="Name"
+                      Required="true"
+                      RequiredError="Name is required." />
 
         <MudTextField @bind-Value="Password"
                       Label="Password"
@@ -31,10 +39,18 @@
 
         <MudButton Variant="MudBlazor.Variant.Filled"
                    Color="Color.Primary"
-                   Disabled="!IsValid"
+                   Disabled="!IsValid || IsRegistering"
                    Class="mt-4 w-100"
                    OnClick="@OnSubmitClicked">
-            Register
+            @if (IsRegistering)
+            {
+                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                <MudText Typo="Typo.button" Class="ms-2">Registering...</MudText>
+            }
+            else
+            {
+                <MudText Typo="Typo.button">Register</MudText>
+            }
         </MudButton>
 
         <MudDivider Class="my-4" />
@@ -47,12 +63,14 @@
 </MudPaper>
 
 @code {
-    [Parameter] public EventCallback<(string Email, string Username, string Password)> OnSubmit { get; set; }
+    [Parameter] public EventCallback<(string Email, string Username, string DisplayName, string Password)> OnSubmit { get; set; }
 
     public MudForm Form { get; private set; }
-    public bool IsValid { get; set; }
+    private bool IsValid;
+    private bool IsRegistering;
 
     public string Username { get; set; } = string.Empty;
+    public string DisplayName { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
     public string ConfirmPassword { get; set; } = string.Empty;
@@ -84,10 +102,14 @@
 
     private async Task OnSubmitClicked()
     {
+        IsRegistering = true;
         await Form.Validate();
         if (IsValid)
         {
-            await OnSubmit.InvokeAsync((Email, Username, Password));
+            // Since Username is not used to sign it, set it to Email for now
+            Username = Email;
+            await OnSubmit.InvokeAsync((Email, Username, DisplayName, Password));
         }
+        IsRegistering = false;
     }
 }

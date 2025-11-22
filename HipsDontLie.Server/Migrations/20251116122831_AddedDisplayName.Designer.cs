@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HipsDontLie.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251029145253_AddedAppointments")]
-    partial class AddedAppointments
+    [Migration("20251116122831_AddedDisplayName")]
+    partial class AddedDisplayName
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -102,7 +102,7 @@ namespace HipsDontLie.Server.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int?>("SenderId")
+                    b.Property<int>("SenderId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("TimeStamp")
@@ -152,6 +152,9 @@ namespace HipsDontLie.Server.Migrations
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("DisplayName")
                         .HasColumnType("longtext");
 
                     b.Property<string>("Email")
@@ -237,6 +240,34 @@ namespace HipsDontLie.Server.Migrations
                     b.HasIndex("GroupId");
 
                     b.ToTable("UserGroups");
+                });
+
+            modelBuilder.Entity("HipsDontLie.Server.Models.Appointment", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<DateTime>("End")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("GroupId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Start")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("GroupId");
+
+                    b.ToTable("Appointment");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
@@ -389,38 +420,6 @@ namespace HipsDontLie.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsMany("Radzen.Blazor.AppointmentData", "Appointments", b1 =>
-                        {
-                            b1.Property<int>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnType("int");
-
-                            MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b1.Property<int>("Id"));
-
-                            b1.Property<DateTime>("End")
-                                .HasColumnType("datetime(6)");
-
-                            b1.Property<int>("GroupId")
-                                .HasColumnType("int");
-
-                            b1.Property<DateTime>("Start")
-                                .HasColumnType("datetime(6)");
-
-                            b1.Property<string>("Text")
-                                .HasColumnType("longtext");
-
-                            b1.HasKey("Id");
-
-                            b1.HasIndex("GroupId");
-
-                            b1.ToTable("AppointmentData");
-
-                            b1.WithOwner()
-                                .HasForeignKey("GroupId");
-                        });
-
-                    b.Navigation("Appointments");
-
                     b.Navigation("Owner");
                 });
 
@@ -435,7 +434,8 @@ namespace HipsDontLie.Server.Migrations
                     b.HasOne("HipsDontLie.Models.User", "Sender")
                         .WithMany("SentMessages")
                         .HasForeignKey("SenderId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Chat");
 
@@ -489,6 +489,17 @@ namespace HipsDontLie.Server.Migrations
                     b.Navigation("Group");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("HipsDontLie.Server.Models.Appointment", b =>
+                {
+                    b.HasOne("HipsDontLie.Models.Group", "Group")
+                        .WithMany("Appointments")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Group");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -551,6 +562,8 @@ namespace HipsDontLie.Server.Migrations
 
             modelBuilder.Entity("HipsDontLie.Models.Group", b =>
                 {
+                    b.Navigation("Appointments");
+
                     b.Navigation("Chat")
                         .IsRequired();
 

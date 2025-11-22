@@ -8,7 +8,7 @@
                 <MudNavLink Href="/mycourses" Match="NavLinkMatch.Prefix">My Courses</MudNavLink>
 
                 <AuthorizeView Roles="Instructor">
-                    <Authorized Context="instructor">
+                    <Authorized Context="Instructor">
                         <MudNavLink Href="/courses/create" Match="NavLinkMatch.Prefix">Create Course</MudNavLink>
                     </Authorized>
                 </AuthorizeView>
@@ -20,7 +20,7 @@
 
     <NotAuthorized>
         <MudNavMenu>
-            <MudNavLink Href="/about" Match="NavLinkMatch.Prefix">About</MudNavLink>
+            <MudNavLink Href="/" Match="NavLinkMatch.All">Home</MudNavLink>
         </MudNavMenu>
     </NotAuthorized>
 </AuthorizeView>

@@ -1,5 +1,4 @@
-﻿using HipsDontLie.DTO;
-using HipsDontLie.Models;
+﻿using HipsDontLie.Models;
 using HipsDontLie.Repository;
 using HipsDontLie.Server.Models;
 using HipsDontLie.Shared.DTO;
@@ -15,7 +14,6 @@ namespace HipsDontLie.Services {
         private readonly IUserRepository _userRepository;
         private readonly IChatRepository _chatRepository;
         private readonly WebSocketEventHandler _webSocketEventHandler;
-
 
         /// <summary>
         /// Provides group management services, including group creation, retrieval, joining, and leaving.
@@ -40,7 +38,6 @@ namespace HipsDontLie.Services {
                 OwnerId = userId,
                 MaxMembers = groupDto.MaxMembers,
                 Tags = groupDto.Tags,
-                NonUserMembers = groupDto.NonUserMembers,
                 Appointments = (groupDto.Appointments ?? new List<AppointmentDTO>())
                             .Select(a => new Appointment {
                                 Start = a.Start,
@@ -74,17 +71,22 @@ namespace HipsDontLie.Services {
         /// <summary>
         /// Retrieves a group by its unique identifier and maps it to a response DTO.
         /// </summary>
-        public async Task<GetGroupByIdResponseDTO> GetGroupByIdAsync(int groupId) {
+        public async Task<GroupDTO> GetGroupByIdAsync(int userId, int groupId) {
             var group = await _groupRepository.GetGroupByIdAsync(groupId);
+            if (group == null) return null;
 
-            return new GetGroupByIdResponseDTO() {
+            bool isMember = !await _groupRepository.ValidateUserGroupAsync(userId, groupId);
+
+            // TODO: If the user is not a member of this group, do not show member information.
+            // Return an empty list instead, so we can still use .Count() to show number of members.
+
+            return new GroupDTO() {
                 Title = group.Title,
                 AgeRange = group.AgeRange,
                 Description = group.Description,
                 IsVisible = group.IsVisible,
                 OwnerId = group.OwnerId,
                 Tags = group.Tags,
-                NonUserMembers = group.NonUserMembers,
                 Id = group.Id,
                 MaxMembers = group.MaxMembers,
                 Appointments = group.Appointments.Select(a => new AppointmentDTO {
@@ -109,7 +111,7 @@ namespace HipsDontLie.Services {
         /// <summary>
         /// Retrieves all available groups or groups associated with a specific user.
         /// </summary>
-        public async Task<List<GetGroupResponseDTO>> GetGroupsAsync(int? userId = null) {
+        public async Task<List<GroupDTO>> GetGroupsAsync(int? userId = null) {
             var groups = userId == null
                 ? await _groupRepository.GetGroupsAsync()
                 : await _groupRepository.GetGroupsByUserIdAsync((int)userId);
@@ -117,10 +119,10 @@ namespace HipsDontLie.Services {
             if (groups == null)
                 return null;
 
-            var results = new List<GetGroupResponseDTO>();
+            var results = new List<GroupDTO>();
 
             foreach (var group in groups) {
-                results.Add(new GetGroupResponseDTO {
+                results.Add(new GroupDTO {
                     Id = group.Id,
                     Title = group.Title,
                     OwnerId = group.OwnerId,
@@ -129,7 +131,11 @@ namespace HipsDontLie.Services {
                     Description = group.Description,
                     MaxMembers = group.MaxMembers,
                     Tags = group.Tags,
-                    NonUserMembers = group.NonUserMembers,
+                    Appointments = group.Appointments.Select(a => new AppointmentDTO {
+                        Start = a.Start,
+                        End = a.End,
+                        Text = a.Text
+                    }).ToList(),
                     Members = group.Members
                         .Select(p => new MemberDTO {
                             UserId = p.UserId,
@@ -149,16 +155,16 @@ namespace HipsDontLie.Services {
         /// <summary>
         /// Retrieves all groups the user is participating in.
         /// </summary>
-        public async Task<List<GetGroupResponseDTO>> GetGroupsByUserIdAsync(int userId) {
+        public async Task<List<GroupDTO>> GetGroupsByUserIdAsync(int userId) {
             var groups = await _groupRepository.GetGroupsByUserIdAsync(userId);
 
             if (groups == null)
                 return null;
 
-            var results = new List<GetGroupResponseDTO>();
+            var results = new List<GroupDTO>();
 
             foreach (var group in groups) {
-                results.Add(new GetGroupResponseDTO {
+                results.Add(new GroupDTO {
                     Id = group.Id,
                     Title = group.Title,
                     OwnerId = group.OwnerId,
@@ -167,7 +173,6 @@ namespace HipsDontLie.Services {
                     Description = group.Description,
                     MaxMembers = group.MaxMembers,
                     Tags = group.Tags,
-                    NonUserMembers = group.NonUserMembers,
                     Appointments = group.Appointments.Select(a => new AppointmentDTO {
                         Start = a.Start,
                         End = a.End,
@@ -296,7 +301,6 @@ namespace HipsDontLie.Services {
             group.IsVisible = dto.IsVisible;
             group.MaxMembers = dto.MaxMembers;
             group.Tags = dto.Tags;
-            group.NonUserMembers = dto.NonUserMembers;
             group.Appointments = (dto.Appointments ?? new List<AppointmentDTO>())
                         .Select(a => new Appointment {
                             Start = a.Start,
@@ -306,6 +310,10 @@ namespace HipsDontLie.Services {
                         .ToList();
 
             return await _groupRepository.UpdateGroupAsync(groupId, group);
+        }
+
+        public async Task<bool> DeleteGroupAsync(int groupId, int userId) {
+            return await _groupRepository.DeleteGroupAsync(groupId, userId);
         }
     }
 }

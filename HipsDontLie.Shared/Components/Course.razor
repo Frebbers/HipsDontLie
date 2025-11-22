@@ -1,0 +1,210 @@
+@using HipsDontLie.Shared.DTO
+
+<MudCard Elevation="25"
+         Class="rounded-lg pb-4"
+         Style="width:100%; max-width:700px;">
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText Typo="Typo.h5" Align="Align.Center">
+                @(_isNew ? "Create Course" : "Course Details")
+            </MudText>
+        </CardHeaderContent>
+        <CardHeaderActions>
+            @if (CanEdit && !_isNew) {
+                <MudIconButton Icon="@(_isEditing? Icons.Material.Filled.Close : Icons.Material.Filled.Edit)"
+                               Color="Color.Primary"
+                               Size="Size.Medium"
+                               OnClick="ToggleEdit" />
+            }
+        </CardHeaderActions>
+    </MudCardHeader>
+
+    <MudCardContent>
+        <MudStack Class="mx-auto mt-4" Style="width:100%; max-width:500px;" Spacing="2">
+
+            <MudTextField @bind-Value="Model.Title"
+                          Label="Title"
+                          Variant="MudBlazor.Variant.Outlined"
+                          ReadOnly="@(!_isEditing || !CanEdit)" />
+
+            @if (_isEditing && CanEdit) {
+                <MudSwitch T="bool"
+                           @bind-Checked="Model.IsVisible"
+                           Color="Color.Primary">
+                    Visible to others
+                </MudSwitch>
+            }
+
+            <MudTextField @bind-Value="Model.AgeRange"
+                          Label="Age range"
+                          Variant="MudBlazor.Variant.Outlined"
+                          ReadOnly="@(!_isEditing || !CanEdit)" />
+
+            <MudNumericField T="int"
+                             @bind-Value="Model.MaxMembers"
+                             Label="Max members"
+                             Variant="MudBlazor.Variant.Outlined"
+                             ReadOnly="@(!_isEditing || !CanEdit)" />
+
+            <MudTextField @bind-Value="Model.Description"
+                          Label="Description"
+                          Variant="MudBlazor.Variant.Outlined"
+                          Lines="8"
+                          Style="min-height: 180px;"
+                          ReadOnly="@(!_isEditing || !CanEdit)" />
+
+            <MudDivider Class="my-2" />
+
+            <MudText Typo="Typo.subtitle2">Tags</MudText>
+
+            @if (_isEditing && CanEdit) {
+                <MudStack Spacing="1">
+                    <MudTextField @bind-Value="_newTag"
+                                  Label="Add tag..."
+                                  Variant="MudBlazor.Variant.Outlined" />
+                    <MudButton Variant="MudBlazor.Variant.Outlined"
+                               Color="Color.Primary"
+                               OnClick="AddTag"
+                               Disabled="string.IsNullOrWhiteSpace(_newTag)">
+                        Add
+                    </MudButton>
+                </MudStack>
+            }
+
+            @if (Model.Tags?.Count > 0) {
+                <MudChipSet T="string" Class="mt-2" Variant="MudBlazor.Variant.Filled">
+                    @foreach (var tag in Model.Tags) {
+                        <MudChip T="string" DisableRipple="true">@tag</MudChip>
+                    }
+                </MudChipSet>
+            }
+            else {
+                <MudText Typo="Typo.body2" Class="mt-2" Color="Color.Secondary">
+                    No tags
+                </MudText>
+            }
+
+            <MudDivider Class="my-2" />
+
+            <MudText Typo="Typo.subtitle2">Schedule</MudText>
+
+            <Calender Appointments="Model.Appointments"
+                      CanEdit="CanEdit && _isEditing"
+                      OnAppointmentsChanged="HandleAppointmentsChanged">
+            </Calender>
+        </MudStack>
+    </MudCardContent>
+
+    @if (CanEdit) {
+        <MudCardActions Class="d-flex justify-center">
+            @if (_isEditing) {
+                <MudButton Disabled="@isSaving" Color="Color.Primary"
+                           Variant="MudBlazor.Variant.Filled"
+                           OnClick="SaveAsync">
+                    @if (isSaving)
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">Saving...</MudText>
+                    }
+                    else
+                    {
+                        <MudText>Save</MudText>
+                    }
+                </MudButton>
+                <MudButton Color="Color.Default"
+                           Variant="MudBlazor.Variant.Outlined"
+                           OnClick="CancelEditInternal">
+                    Cancel
+                </MudButton>
+
+                @if (!_isNew && OnDelete.HasDelegate) {
+                    <MudButton Color="Color.Error"
+                               Variant="MudBlazor.Variant.Outlined"
+                               OnClick="DeleteAsync"
+                               Class="ms-2">
+                        Delete
+                    </MudButton>
+                }
+            }
+            else {
+                @if (!_isNew && OnDelete.HasDelegate) {
+                    <MudButton Color="Color.Error"
+                               Variant="MudBlazor.Variant.Outlined"
+                               OnClick="DeleteAsync">
+                        Delete
+                    </MudButton>
+                }
+            }
+        </MudCardActions>
+    }
+</MudCard>
+
+@code {
+    [Parameter] public CreateGroupRequestDTO Model { get; set; } = new();
+    [Parameter] public bool IsNew { get; set; }
+    [Parameter] public bool CanEdit { get; set; } 
+    [Parameter] public EventCallback<CreateGroupRequestDTO> OnSave { get; set; }
+    [Parameter] public EventCallback OnCancel { get; set; }
+    [Parameter] public EventCallback OnDelete { get; set; }
+
+    private bool _isEditing;
+    private bool _isNew;
+    private bool isSaving;
+    private string? _newTag;
+
+    protected override void OnParametersSet() {
+        _isNew = IsNew;
+
+        if (_isNew) {
+            _isEditing = true;
+        }
+        else if (!CanEdit) {
+            _isEditing = false;     
+        }
+    }
+
+    private void ToggleEdit() {
+        if (!CanEdit || _isNew)
+            return;
+
+        _isEditing = !_isEditing;
+    }
+
+    private async Task SaveAsync() {
+        if (OnSave.HasDelegate)
+        {
+            isSaving = true;
+            await OnSave.InvokeAsync(Model);
+        }
+
+        if (!_isNew)
+            _isEditing = false;
+
+        isSaving = false;
+    }
+
+    private async Task CancelEditInternal() {
+        _isEditing = !_isNew;
+
+        if (OnCancel.HasDelegate)
+            await OnCancel.InvokeAsync();
+    }
+
+    private async Task DeleteAsync() {
+        if (OnDelete.HasDelegate)
+            await OnDelete.InvokeAsync();
+    }
+
+    private void AddTag() {
+        if (string.IsNullOrWhiteSpace(_newTag))
+            return;
+
+        Model.Tags ??= new List<string>();
+        Model.Tags.Add(_newTag.Trim());
+        _newTag = string.Empty;
+    }
+
+    private void HandleAppointmentsChanged(List<AppointmentDTO> appointments) {
+        Model.Appointments = appointments;
+    }
+}

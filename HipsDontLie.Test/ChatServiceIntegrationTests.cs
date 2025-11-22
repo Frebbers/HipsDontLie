@@ -176,7 +176,7 @@ namespace HipsDontLie.Test
             var userServiceMock = new Mock<IUserService>();
             userServiceMock
                 .Setup(s => s.GetProfileByIdAsync(It.IsAny<int>()))
-                .ReturnsAsync((int id) => new GetProfileResponseDTO
+                .ReturnsAsync((int id) => new ProfileDTO
                 {
                     UserId = id,
                     Username = userNames.TryGetValue(id, out var name) ? name : $"User{id}",

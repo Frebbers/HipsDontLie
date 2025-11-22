@@ -7,9 +7,9 @@
 <RegisterForm OnSubmit="HandleRegister" />
 
 @code {
-    private async Task HandleRegister((string Email, string Username, string Password) formData)
+    private async Task HandleRegister((string Email, string Username, string DisplayName, string Password) formData)
     {
-        var result = await Auth.RegisterAsync(formData.Email, formData.Username, formData.Password);
+        var result = await Auth.RegisterAsync(formData.Email, formData.Username, formData.DisplayName, formData.Password);
         if (result.Success)
             Nav.NavigateTo("/login");
     }

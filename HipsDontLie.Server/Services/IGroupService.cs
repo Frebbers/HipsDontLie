@@ -1,4 +1,4 @@
-﻿using HipsDontLie.DTO;
+﻿
 using HipsDontLie.Shared.DTO;
 using HipsDontLie.Models;
 
@@ -20,21 +20,21 @@ namespace HipsDontLie.Services {
         /// </summary>
         /// <param name="groupId">The unique identifier of the group.</param>
         /// <returns>A task representing the asynchronous operation, returning the group details if found.</returns>
-        Task<GetGroupByIdResponseDTO> GetGroupByIdAsync(int groupId);
+        Task<GroupDTO> GetGroupByIdAsync(int userId, int groupId);
 
         /// <summary>
         /// Retrieves all available groups or groups associated with a specific user.
         /// </summary>
         /// <param name="userId">The optional user ID to filter groups by user participation. If null, all groups are retrieved.</param>
         /// <returns>A task representing the asynchronous operation, returning a list of available groups.</returns>
-        Task<List<GetGroupResponseDTO>> GetGroupsAsync(int? userId = null);
+        Task<List<GroupDTO>> GetGroupsAsync(int? userId = null);
 
         /// <summary>
         /// Retrieves all groups that a specific user is participating in.
         /// </summary>
         /// <param name="userId">The unique identifier of the user.</param>
         /// <returns>A task representing the asynchronous operation, returning a list of groups the user is part of.</returns>
-        Task<List<GetGroupResponseDTO>> GetGroupsByUserIdAsync(int userId);
+        Task<List<GroupDTO>> GetGroupsByUserIdAsync(int userId);
 
 
         /// <summary>
@@ -71,5 +71,7 @@ namespace HipsDontLie.Services {
         /// <param name="dto">The updated group data.</param>
         /// <returns>A task that represents the asynchronous operation, returning true if the update is successful.</returns>
         Task<bool> UpdateGroupAsync(int groupId, int userId, UpdateGroupRequestDTO dto);
+
+        Task<bool> DeleteGroupAsync(int groupId, int userId);
     }
 }

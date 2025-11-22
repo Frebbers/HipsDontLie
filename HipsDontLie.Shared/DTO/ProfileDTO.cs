@@ -2,7 +2,7 @@
     /// <summary>
     /// Represents the response data for retrieving a user profile.
     /// </summary>
-    public class GetProfileResponseDTO {
+    public class ProfileDTO {
         /// <summary>
         /// Gets or sets the unique user ID.
         /// </summary>
@@ -12,6 +12,11 @@
         /// Gets or sets the username of the user.
         /// </summary>
         public string Username { get; set; }
+
+        /// <summary>
+        /// Gets or sets the display name of the user.
+        /// </summary>
+        public string? DisplayName { get; set; }
 
         /// <summary>
         /// Gets or sets the birth date of the user.
