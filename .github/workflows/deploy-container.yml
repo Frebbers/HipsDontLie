@@ -44,6 +44,8 @@ jobs:
           export MONGO_INITDB_DATABASE="${{ secrets.MONGO_INITDB_DATABASE }}"
           export ConnectionStrings__DefaultConnection="${{ secrets.ConnectionStrings__DefaultConnection }}"
           export MongoChat__ConnectionString="${{ secrets.MongoChat__ConnectionString }}"
+
+          cd $HOME
           
           # Download the compose.prod.yaml file from the repository
           if ! curl -f -o compose.prod.yaml https://raw.githubusercontent.com/Frebbers/HipsDontLie/main/compose.prod.yaml; then
