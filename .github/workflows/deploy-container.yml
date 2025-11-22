@@ -13,7 +13,7 @@ jobs:
     - name: Deploy to server
       uses: appleboy/ssh-action@v1.2.3
       with:
-        host: ${{ vars.HOST }}
+        host: ${{ vars.DOMAIN }}
         username: ${{ secrets.SSH_USER }}
         port: ${{ secrets.SSH_PORT }}
         key: ${{ secrets.SSH_KEY }}
