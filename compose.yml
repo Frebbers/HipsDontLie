@@ -1,49 +1,30 @@
+name: hipsdontlie
 x-common-env: &app-env
-  ASPNETCORE_ENVIRONMENT: "${ASPNETCORE_ENVIRONMENT:-Development}"
-  DOTNET_RUNNING_IN_CONTAINER: "${DOTNET_RUNNING_IN_CONTAINER:-true}"
-  DOTNET_USE_POLLING_FILE_WATCHER: "${DOTNET_USE_POLLING_FILE_WATCHER:-true}"
-  JwtSettings__SecretKey: "${JwtSettings__SecretKey:-C6821CD46246E81E9B481CD9D4D9A123C6821CD46246E81E9B481CD9D4D9A123}"
+  ASPNETCORE_ENVIRONMENT: ${ENVIRONMENT}
+  DOTNET_RUNNING_IN_CONTAINER: "true"
+  JwtSettings__SecretKey: ${JWT_SECRET}
   JwtSettings__Issuer: "${JwtSettings__Issuer:-HipsDontLie}"
   JwtSettings__Audience: "${JwtSettings__Audience:-HipsDontLieApp}"
-  ConnectionStrings__DefaultConnection: "${ConnectionStrings__DefaultConnection:-server=db;port=3306;database=hipsdontlie;user=test;password=rekt123}"
-  MongoChat__ConnectionString: "${MongoChat__ConnectionString:-mongodb://root:example@mongodb:27017/?authSource=admin}"
+  #ConnectionStrings__DefaultConnection: "${ConnectionStrings__DefaultConnection:-server=db;port=3306;database=hipsdontlie;user=test;password=rekt123}"
+  MongoChat__ConnectionString: "${MongoChat__ConnectionString:-mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongodb:27017/?authSource=admin}"
   MongoChat__DatabaseName: "${MongoChat__DatabaseName:-hips_chat}"
   MongoChat__MessagesCollectionName: "${MongoChat__MessagesCollectionName:-messages}"
-
+  EmailSettings__VerificationUrl: ${EMAIL_VERIFICATION_URL}
+  EmailSettings__SmtpServer: ${SMTP_SERVER}
+  EmailSettings__Port: ${SMTP_PORT}
+  EmailSettings__SenderEmail: ${SENDER_EMAIL}
+  EmailSettings__SenderPassword: ${SENDER_PASSWORD}
 services:
-  # Frontend + Backend
-  hipsdontlie:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        ENVIRONMENT: Development
-    container_name: hipsdontlie-app
-    expose:
-      - "80"
-      - "443"
-    environment: # defaults for dev/testing; Production should supply via secrets/env file
-      <<: *app-env
-    volumes:
-      - ./logs:/app/logs
-    depends_on:
-      db:
-        condition: service_healthy
-      mongodb:
-        condition: service_healthy
-      migrate:
-        condition: service_completed_successfully
-    restart: unless-stopped
 
   # MySQL Database
   db:
     image: lscr.io/linuxserver/mariadb:11.4.8
     container_name: hipsdontlie-db
     environment:
-      MYSQL_ROOT_PASSWORD: rekt123
-      MYSQL_DATABASE: hipsdontlie
-      MYSQL_USER: test
-      MYSQL_PASSWORD: rekt123
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
     ports:
       - "3306:3306"
     healthcheck:
@@ -54,25 +35,29 @@ services:
     volumes:
       - db_data:/var/lib/mysql
     restart: unless-stopped
+    networks:
+      - app-network
 
   # Mongo Database
   mongodb:
     image: mongo:7.0
     container_name: hipsdontlie-mongodb
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
-      MONGO_INITDB_DATABASE: hips_chat
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
     ports:
       - "27017:27017"
     healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')", "-u", "root", "-p", "example", "--authenticationDatabase", "admin"]
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')", "-u", "${MONGO_INITDB_ROOT_USERNAME}", "-p", "${MONGO_INITDB_ROOT_PASSWORD}", "--authenticationDatabase", "admin"]
       interval: 5s
       timeout: 10s
       retries: 2
     volumes:
       - mongo_data:/data/db
     restart: unless-stopped
+    networks:
+      - app-network
 
   # Migration service to run db migrations
   migrate:
@@ -83,8 +68,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      args:
-        ENVIRONMENT: Development
       target: build
     depends_on:
       db:
@@ -94,7 +77,11 @@ services:
     working_dir: /src
     command: > 
       sh -c "dotnet ef database update --project HipsDontLie.Server/HipsDontLie.Server.csproj"
-    
+    profiles: ["migrate"]
+    restart: "no"
+    networks:
+      - app-network
+
   test:
     image: mcr.microsoft.com/dotnet/sdk:9.0
     container_name: hipsdontlie-tests
@@ -104,22 +91,28 @@ services:
     environment:
       <<: *app-env
     depends_on:
-      - db
-      - mongodb
+      db:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    networks:
+      - app-network
     entrypoint: ["dotnet", "test", "HipsDontLie.Test/HipsDontLie.Test.csproj"]
     restart: "no"
 
-  nginx:
-    image: nginx:alpine
-    container_name: hipsdontlie-nginx
-    depends_on:
-      - hipsdontlie
-    ports:
-      - "8080:80"
-      - "8443:443"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-    restart: unless-stopped
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: hipsdontlie-nginx
+  #   depends_on:
+  #     - hipsdontlie
+  #   ports:
+  #     - "8080:80"
+  #     - "8443:443"
+  #   volumes:
+  #     - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+  #   restart: unless-stopped
+  #   networks:
+  #     - app-network
 
 volumes:
   db_data:
@@ -129,3 +122,26 @@ networks:
   app-network:
     driver: bridge
 
+  # Frontend + Backend
+  # hipsdontlie:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #     args:
+  #       ENVIRONMENT: Development
+  #   container_name: hipsdontlie-app
+  #   expose:
+  #     - "80"
+  #     - "443"
+  #   environment: # defaults for dev/testing; Production should supply via secrets/env file
+  #     <<: *app-env
+  #   volumes:
+  #     - ./logs:/app/logs
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #     mongodb:
+  #       condition: service_healthy
+  #     migrate:
+  #       condition: service_completed_successfully
+  #   restart: unless-stopped

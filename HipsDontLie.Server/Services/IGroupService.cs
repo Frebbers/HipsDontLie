@@ -20,7 +20,7 @@ namespace HipsDontLie.Services {
         /// </summary>
         /// <param name="groupId">The unique identifier of the group.</param>
         /// <returns>A task representing the asynchronous operation, returning the group details if found.</returns>
-        Task<GroupDTO> GetGroupByIdAsync(int groupId);
+        Task<GroupDTO> GetGroupByIdAsync(int userId, int groupId);
 
         /// <summary>
         /// Retrieves all available groups or groups associated with a specific user.
@@ -71,5 +71,7 @@ namespace HipsDontLie.Services {
         /// <param name="dto">The updated group data.</param>
         /// <returns>A task that represents the asynchronous operation, returning true if the update is successful.</returns>
         Task<bool> UpdateGroupAsync(int groupId, int userId, UpdateGroupRequestDTO dto);
+
+        Task<bool> DeleteGroupAsync(int groupId, int userId);
     }
 }

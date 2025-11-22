@@ -1,39 +1,85 @@
 ﻿@page "/courses/{id:int}"
+@using HipsDontLie.Client.Handlers
 @using HipsDontLie.Client.Services
 @using HipsDontLie.Shared.DTO
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@attribute [Authorize(Roles = "Instructor,Participant")]
 
-<h3>@Course.Title</h3>
-<MudGrid>
-    <MudItem xs="12" md="8">
-        <MudPaper Class="pa-4">
-            <MudText Typo="Typo.h6">Course Description</MudText>
-            <MudText Typo="Typo.body1">@Course.Description</MudText>
-            <MudDivider Class="my-4" />
-            <MudText Typo="Typo.h6">Age Range</MudText>
-            <MudText Typo="Typo.body1">@Course.AgeRange</MudText>
-            <MudDivider Class="my-4" />
-            <MudText Typo="Typo.h6">Participants</MudText>
-            <MudText Typo="Typo.body1">@Course.Members.Count()/@Course.MaxMembers</MudText>
-        </MudPaper>
-    </MudItem>
-    <MudItem xs="12" md="4">
-        <InstructorInfo Instructor="Instructor" /> 
-    </MudItem>
-<JoinCourseButton></JoinCourseButton>
-</MudGrid>
+<div class="d-flex justify-center mt-4">
+    @if (_isLoading) {
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+    }
+    else if (!string.IsNullOrWhiteSpace(_errorMessage)) {
+        <MudAlert Severity="Severity.Error" Elevation="0" Class="mt-4">
+            @_errorMessage
+        </MudAlert>
+    }
+    else if (groupModel is not null) {
+        <Course Model="groupModel"
+                IsNew="false"
+                CanEdit="_isInstructor"
+                OnSave="HandleUpdate"
+                OnDelete="HandleDelete">
+        </Course>
+    }
+</div>
 
 @code {
-    [Parameter] public int id { get; set; }
-    // get course details by id
-    public GroupDTO Course { get; set; } = new();
-    public ProfileDTO Instructor { get; set; } = new();
-    [Inject]
-    public ResourceService ResourceService { get; set; }
+    [Parameter] public int Id { get; set; }
 
-    protected override async Task OnParametersSetAsync()
-    {
-       Course = await ResourceService.GetGroupByID(id);
-       Instructor = await ResourceService.GetProfile(Course.OwnerId);
+    [Inject] public ResourceService ResourceService { get; set; }
+    [Inject] public NavigationManager NavigationManager { get; set; }
+    [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
+
+    private CreateGroupRequestDTO? groupModel;
+    private bool _isLoading;
+    private string _errorMessage = "";
+    private bool _isInstructor;
+
+    protected override async Task OnInitializedAsync() {
+        _isLoading = true;
+
+        try {
+            var authState = await AuthStateTask;
+            _isInstructor = authState.User.IsInRole("Instructor");
+
+            GroupDTO group = await ResourceService.GetGroupByID(Id);
+
+            groupModel = new CreateGroupRequestDTO {
+                Title = group.Title,
+                Description = group.Description,
+                IsVisible = group.IsVisible,
+                AgeRange = group.AgeRange,
+                MaxMembers = group.MaxMembers,
+                Tags = group.Tags,
+                Appointments = group.Appointments
+            };
+        }
+        catch (ApiException ex) {
+            _errorMessage = $"{ex.Message} - {ex.StatusCode}: {(int)ex.StatusCode}";
+        }
+        finally {
+            _isLoading = false;
+        }
     }
 
+    private async Task HandleUpdate(CreateGroupRequestDTO model) {
+        try {
+            await ResourceService.UpdateGroup(Id, model);
+        }
+        catch (ApiException ex) {
+            _errorMessage = $"{ex.Message} - {ex.StatusCode}: {(int)ex.StatusCode}";
+        }
+    }
+
+    private async Task HandleDelete() {
+        try {
+            await ResourceService.DeleteGroup(Id);
+            NavigationManager.NavigateTo("/courses");
+        }
+        catch (ApiException ex) {
+            _errorMessage = $"{ex.Message} - {ex.StatusCode}: {(int)ex.StatusCode}";
+        }
+    }
 }

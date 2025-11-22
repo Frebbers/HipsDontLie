@@ -28,11 +28,13 @@
 </MudDataGrid>
 
 @code {
+    [Inject] public NavigationManager NavigationManager { get; set; }
+    [Parameter] public List<GroupDTO> GroupList { get; set; }
+
     private string _searchString = string.Empty;
     private bool _sortNameByLength;
     private List<string> _events = new();
 
-    [Parameter] public List<GroupDTO> GroupList { get; set; }
 
     protected override Task OnParametersSetAsync()
     {
@@ -64,7 +66,13 @@
     };
 
     // events
-    void RowClicked(DataGridRowClickEventArgs<GroupDTO> args) { }
+    void RowClicked(DataGridRowClickEventArgs<GroupDTO> args) {
+        if (args?.Item is null)
+            return;
+
+        NavigationManager.NavigateTo($"/courses/{args.Item.Id}");
+    }
+
     void RowRightClicked(DataGridRowClickEventArgs<GroupDTO> args) { }
     void SelectedItemsChanged(HashSet<GroupDTO> items) { }
 }

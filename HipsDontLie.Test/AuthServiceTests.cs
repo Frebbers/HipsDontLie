@@ -1,8 +1,12 @@
 using HipsDontLie.Models;
 using HipsDontLie.Repository;
 using HipsDontLie.Services;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Moq;
 using System.IdentityModel.Tokens.Jwt;
@@ -47,6 +51,10 @@ namespace HipsDontLie.Test
             _mockUserRepository = new Mock<IUserRepository>();
             _mockSignInManager = MockSignInManager();
 
+            _mockUserManager
+            .Setup(m => m.GetRolesAsync(It.IsAny<User>()))
+            .ReturnsAsync(new List<string>() { "Participant", "Instructor" });
+
             // Create auth service with real configuration but mock managers
             _authService = new AuthService(_configuration, _mockUserManager.Object, _mockRoleManager.Object, _mockSignInManager.Object);
         }
@@ -60,21 +68,43 @@ namespace HipsDontLie.Test
         {
             // Arrange
             string email = "user@example.com";
-            string username = "newuser";
+            string username = "user";
             string password = "Password123";
+            string displayName = "Tester";
 
-            _mockUserRepository.Setup(r => r.GetUserByEmailAsync(email)).ReturnsAsync((User)null);
-            _mockUserRepository.Setup(r => r.AddUserAsync(It.IsAny<User>())).ReturnsAsync(true);
+            _mockUserManager.Setup(m => m.FindByEmailAsync(email))
+                .ReturnsAsync((User?)null);
+
+            _mockUserManager
+                .Setup(m => m.CreateAsync(
+                    It.Is<User>(u =>
+                        u.Email == email &&
+                        u.UserName == username &&
+                        u.DisplayName == displayName &&
+                        u.EmailConfirmed == true
+                    ),
+                    password))
+                .ReturnsAsync(IdentityResult.Success);
+
+            _mockRoleManager.Setup(r => r.RoleExistsAsync("Participant"))
+                .ReturnsAsync(true);
+
+            _mockUserManager.Setup(m => m.AddToRoleAsync(It.Is<User>(u => u.Email == email),"Participant"))
+                .ReturnsAsync(IdentityResult.Success);
 
             // Act
-            var result = await _authService.RegisterUserAsync(email, username, password);
+            var result = await _authService.RegisterUserAsync(email, username, displayName, password);
 
             // Assert
             Assert.That(result, Is.EqualTo(AuthStatus.TestUserCreated));
-            _mockUserRepository.Verify(r => r.AddUserAsync(It.Is<User>(u => 
-                u.Email == email && 
-                u.UserName == username && 
-                u.PasswordHash != password)), Times.Once);
+            _mockUserManager.Verify(m => m.FindByEmailAsync(email), Times.Once);
+            _mockUserManager.Verify(
+                m => m.CreateAsync(It.IsAny<User>(), password),
+                Times.Once);
+            _mockRoleManager.Verify(r => r.RoleExistsAsync("Participant"), Times.Once);
+            _mockUserManager.Verify(
+                m => m.AddToRoleAsync(It.IsAny<User>(), "Participant"),
+                Times.Once);
         }
 
         [Test]
@@ -84,16 +114,25 @@ namespace HipsDontLie.Test
             string email = "user@example.com";
             string username = "existing";
             string password = "Password123";
+            string displayName = "Tester";
 
-            _mockUserRepository.Setup(r => r.GetUserByEmailAsync(email))
-                .ReturnsAsync(new User { Email = email });
+            var existingUser = new User
+            {
+                Id = 1,
+                Email = email,
+                UserName = username
+            };
+
+            _mockUserManager.Setup(m => m.FindByEmailAsync(email)).ReturnsAsync(existingUser);
 
             // Act
-            var result = await _authService.RegisterUserAsync(email, username, password);
+            var result = await _authService.RegisterUserAsync(email, username, displayName, password);
 
             // Assert
             Assert.That(result, Is.EqualTo(AuthStatus.UserExists));
-            _mockUserRepository.Verify(r => r.AddUserAsync(It.IsAny<User>()), Times.Never);
+            _mockUserManager.Verify(m => m.CreateAsync(It.IsAny<User>(), It.IsAny<string>()), Times.Never);
+            _mockRoleManager.Verify(m => m.RoleExistsAsync(It.IsAny<string>()), Times.Never);
+            _mockUserManager.Verify(m => m.AddToRoleAsync(It.IsAny<User>(), It.IsAny<string>()), Times.Never);
         }
 
         [Test]
@@ -103,11 +142,12 @@ namespace HipsDontLie.Test
             string email = "user@example.com";
             string username = "user";
             string password = "weak"; // Too short, missing requirements
+            string displayName = "Tester";
 
             _mockUserRepository.Setup(r => r.GetUserByEmailAsync(email)).ReturnsAsync((User)null);
 
             // Act
-            var result = await _authService.RegisterUserAsync(email, username, password);
+            var result = await _authService.RegisterUserAsync(email, username, displayName, password);
 
             // Assert
             Assert.That(result, Is.EqualTo(AuthStatus.WeakPassword));
@@ -118,19 +158,44 @@ namespace HipsDontLie.Test
         public async Task RegisterUserAsync_TestEmail_SetsEmailVerifiedTrue()
         {
             // Arrange
-            string email = "user@example.com"; // Test email from _testEmails array
-            string username = "testuser";
+            string email = "user@example.com";
+            string username = "user";
             string password = "Password123";
+            string displayName = "Tester";
 
-            _mockUserRepository.Setup(r => r.GetUserByEmailAsync(email)).ReturnsAsync((User)null);
-            _mockUserRepository.Setup(r => r.AddUserAsync(It.IsAny<User>())).ReturnsAsync(true);
+            _mockUserManager
+                .Setup(m => m.FindByEmailAsync(email))
+                .ReturnsAsync((User?)null);
+
+            _mockUserManager
+                .Setup(m => m.CreateAsync(
+                    It.Is<User>(u =>
+                        u.Email == email &&
+                        u.UserName == username &&
+                        u.DisplayName == displayName &&
+                        u.EmailConfirmed == true
+                    ),
+                    password))
+                .ReturnsAsync(IdentityResult.Success);
+
+            _mockRoleManager.Setup(r => r.RoleExistsAsync("Participant"))
+                .ReturnsAsync(true);
+
+            _mockUserManager
+                .Setup(m => m.AddToRoleAsync(
+                    It.Is<User>(u => u.Email == email),
+                    "Participant"))
+                .ReturnsAsync(IdentityResult.Success);
 
             // Act
-            var result = await _authService.RegisterUserAsync(email, username, password);
+            var result = await _authService.RegisterUserAsync(email, username, displayName, password);
 
             // Assert
             Assert.That(result, Is.EqualTo(AuthStatus.TestUserCreated));
-            _mockUserRepository.Verify(r => r.AddUserAsync(It.Is<User>(u => u.EmailConfirmed == true)), Times.Once);
+            _mockUserManager.Verify(m => m.FindByEmailAsync(email), Times.Once);
+            _mockUserManager.Verify(m => m.CreateAsync(It.IsAny<User>(), password),Times.Once);
+            _mockRoleManager.Verify(r => r.RoleExistsAsync("Participant"), Times.Once);
+            _mockUserManager.Verify(m => m.AddToRoleAsync(It.IsAny<User>(), "Participant"), Times.Once);
         }
 
         #endregion
@@ -142,14 +207,31 @@ namespace HipsDontLie.Test
         {
             // Arrange
             int userId = 1;
-            _mockUserRepository.Setup(r => r.DeleteUserAsync(userId)).ReturnsAsync(true);
+            string email = "user@example.com";
+            string userName = "user";
+
+            var user = new User
+            {
+                Id = userId,
+                Email = email,
+                UserName = userName
+            };
+
+            _mockUserManager
+                .Setup(m => m.FindByIdAsync(userId.ToString()))
+                .ReturnsAsync(user);
+
+            _mockUserManager
+                .Setup(m => m.DeleteAsync(user))
+                .ReturnsAsync(IdentityResult.Success);
 
             // Act
             var result = await _authService.DeleteUserAsync(userId);
 
             // Assert
             Assert.IsTrue(result);
-            _mockUserRepository.Verify(r => r.DeleteUserAsync(userId), Times.Once);
+            _mockUserManager.Verify(m => m.FindByIdAsync(userId.ToString()), Times.Once);
+            _mockUserManager.Verify(m => m.DeleteAsync(user), Times.Once);
         }
 
         [Test]
@@ -157,13 +239,17 @@ namespace HipsDontLie.Test
         {
             // Arrange
             int userId = 999;
-            _mockUserRepository.Setup(r => r.DeleteUserAsync(userId)).ReturnsAsync(false);
+
+            _mockUserManager
+                .Setup(m => m.FindByIdAsync(userId.ToString()))
+                .ReturnsAsync((User?)null);
 
             // Act
             var result = await _authService.DeleteUserAsync(userId);
 
             // Assert
             Assert.IsFalse(result);
+            _mockUserManager.Verify(m => m.DeleteAsync(It.IsAny<User>()), Times.Never);
         }
 
         [Test]
@@ -172,17 +258,29 @@ namespace HipsDontLie.Test
             // Arrange
             string email = "user@example.com";
             int userId = 1;
-            
-            _mockUserRepository.Setup(r => r.GetUserByEmailAsync(email))
-                .ReturnsAsync(new User { Id = userId, Email = email });
-            _mockUserRepository.Setup(r => r.DeleteUserAsync(userId)).ReturnsAsync(true);
+
+            var user = new User
+            {
+                Id = userId,
+                Email = email,
+                UserName = "user"
+            };
+
+            _mockUserManager
+                .Setup(m => m.FindByEmailAsync(email))
+                .ReturnsAsync(user);
+
+            _mockUserManager
+                .Setup(m => m.DeleteAsync(user))
+                .ReturnsAsync(IdentityResult.Success);
 
             // Act
             var result = await _authService.DeleteUserAsync(0, email);
 
             // Assert
             Assert.IsTrue(result);
-            _mockUserRepository.Verify(r => r.DeleteUserAsync(userId), Times.Once);
+            _mockUserManager.Verify(m => m.FindByEmailAsync(email), Times.Once);
+            _mockUserManager.Verify(m => m.DeleteAsync(user), Times.Once);
         }
 
         [Test]
@@ -230,35 +328,32 @@ namespace HipsDontLie.Test
         {
             // Arrange
             int userId = 1;
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes(_configuration.GetSection("JwtSettings:SecretKey").Value);
-            if (key == null)
-            {
-                throw new Exception("SecretKey is not set in the configuration.");
-            }
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
-                    new Claim("email_verification", "true")
-                }),
-                Expires = DateTime.UtcNow.AddHours(1),
-                SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(key), 
-                    SecurityAlgorithms.HmacSha256Signature)
-            };
-            var securityToken = tokenHandler.CreateToken(tokenDescriptor);
-            var validToken = tokenHandler.WriteToken(securityToken);
+            string email = "user@example.com";
+            string username = "user";
+            string token = "dummy-email-confirmation-token";
 
-            _mockUserRepository.Setup(r => r.ConfirmEmailAsync(userId)).ReturnsAsync(true);
+            var user = new User
+            {
+                Id = userId,
+                Email = email,
+                UserName = username
+            };
+
+            _mockUserManager
+                .Setup(m => m.FindByIdAsync(userId.ToString()))
+                .ReturnsAsync(user);
+
+            _mockUserManager
+                .Setup(m => m.ConfirmEmailAsync(user, token))
+                .ReturnsAsync(IdentityResult.Success);
 
             // Act
-            var result = await _authService.ConfirmEmailAsync(userId,validToken);
+            var result = await _authService.ConfirmEmailAsync(userId, token);
 
             // Assert
             Assert.IsTrue(result);
-            _mockUserRepository.Verify(r => r.ConfirmEmailAsync(userId), Times.Once);
+            _mockUserManager.Verify(m => m.FindByIdAsync(userId.ToString()), Times.Once);
+            _mockUserManager.Verify(m => m.ConfirmEmailAsync(user, token), Times.Once);
         }
 
         [Test]
@@ -282,20 +377,26 @@ namespace HipsDontLie.Test
 
         [Test]
         public async Task AuthenticateUserAsync_ValidCredentials_ReturnsToken()
-        { 
+        {
             // Arrange
             string email = "user@example.com";
             string password = "Password123";
-            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
 
-            _mockUserRepository.Setup(r => r.GetUserByEmailAsync(email))
-                .ReturnsAsync(new User 
-                { 
-                    Id = 1, 
-                    Email = email, 
-                    PasswordHash = hashedPassword,
-                    EmailConfirmed = true 
-                });
+            var user = new User
+            {
+                Id = 1,
+                Email = email,
+                UserName = email,
+                EmailConfirmed = true
+            };
+
+            _mockUserManager
+                .Setup(m => m.FindByEmailAsync(email))
+                .ReturnsAsync(user);
+
+            _mockUserManager
+                .Setup(m => m.CheckPasswordAsync(user, password))
+                .ReturnsAsync(true);
 
             // Act
             var token = await _authService.AuthenticateUserAsync(email, password);
@@ -382,19 +483,36 @@ namespace HipsDontLie.Test
                 null, null, null, null, null, null, null, null
             );
         }
-        
-        //TODO fix this mock. Pretty sure it's wrong.
+
         private static Mock<SignInManager<User>> MockSignInManager()
         {
-                var userManager = MockUserManager().Object;
-                // If targeting an older ASP.NET Core that lacks IUserConfirmation<TUser>,
-                // remove the last argument.
-                return new Mock<SignInManager<User>>(
-                    userManager,
-                    null, null, null, null, null, null
-                );
-            }
-        
+            var userManager = MockUserManager().Object;
+
+            var contextAccessor = new Mock<IHttpContextAccessor>();
+            contextAccessor.Setup(x => x.HttpContext).Returns(new DefaultHttpContext());
+
+            var claimsFactory = new Mock<IUserClaimsPrincipalFactory<User>>();
+
+            var options = new Mock<IOptions<IdentityOptions>>();
+            options.Setup(o => o.Value).Returns(new IdentityOptions());
+
+            var logger = new Mock<ILogger<SignInManager<User>>>();
+
+            var schemes = new Mock<IAuthenticationSchemeProvider>();
+
+            var confirmation = new Mock<IUserConfirmation<User>>();
+
+            return new Mock<SignInManager<User>>(
+                userManager,
+                contextAccessor.Object,
+                claimsFactory.Object,
+                options.Object,
+                logger.Object,
+                schemes.Object,
+                confirmation.Object
+            );
+        }
+
 
         private static Mock<RoleManager<IdentityRole<int>>> MockRoleManager()
         {

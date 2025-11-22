@@ -15,7 +15,6 @@ namespace HipsDontLie.Services {
         private readonly IChatRepository _chatRepository;
         private readonly WebSocketEventHandler _webSocketEventHandler;
 
-
         /// <summary>
         /// Provides group management services, including group creation, retrieval, joining, and leaving.
         /// </summary>
@@ -72,8 +71,14 @@ namespace HipsDontLie.Services {
         /// <summary>
         /// Retrieves a group by its unique identifier and maps it to a response DTO.
         /// </summary>
-        public async Task<GroupDTO> GetGroupByIdAsync(int groupId) {
+        public async Task<GroupDTO> GetGroupByIdAsync(int userId, int groupId) {
             var group = await _groupRepository.GetGroupByIdAsync(groupId);
+            if (group == null) return null;
+
+            bool isMember = !await _groupRepository.ValidateUserGroupAsync(userId, groupId);
+
+            // TODO: If the user is not a member of this group, do not show member information.
+            // Return an empty list instead, so we can still use .Count() to show number of members.
 
             return new GroupDTO() {
                 Title = group.Title,
@@ -305,6 +310,10 @@ namespace HipsDontLie.Services {
                         .ToList();
 
             return await _groupRepository.UpdateGroupAsync(groupId, group);
+        }
+
+        public async Task<bool> DeleteGroupAsync(int groupId, int userId) {
+            return await _groupRepository.DeleteGroupAsync(groupId, userId);
         }
     }
 }

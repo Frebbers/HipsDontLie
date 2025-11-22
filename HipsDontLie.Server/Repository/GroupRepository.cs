@@ -65,24 +65,13 @@ namespace HipsDontLie.Repository {
         /// Removes a user from a group.
         /// </summary>
         public async Task<bool> RemoveUserFromGroupAsync(int userId, int groupId) {
-            var userGroup = await _context.UserGroups.FirstOrDefaultAsync(
-                ug => ug.UserId == userId && ug.GroupId == groupId
-            );
+            var userGroup = await _context.UserGroups
+                .FirstOrDefaultAsync(ug => ug.UserId == userId && ug.GroupId == groupId);
 
             if (userGroup == null)
                 return false;
 
-            // Check if the user is the owner of the group
-            var group = await _context.Groups.FirstOrDefaultAsync(
-                g => g.Id == groupId && g.OwnerId == userId
-            );
-
-            if (group != null) {
-                _context.Groups.Remove(group);
-            }
-            else {
-                _context.UserGroups.Remove(userGroup);
-            }
+            _context.UserGroups.Remove(userGroup);
 
             await _context.SaveChangesAsync();
             return true;
@@ -164,5 +153,16 @@ namespace HipsDontLie.Repository {
             return true;
         }
 
+        public async Task<bool> DeleteGroupAsync(int groupId, int userId) {
+            var group = await _context.Groups
+                .FirstOrDefaultAsync(g => g.Id == groupId && g.OwnerId == userId);
+
+            if (group == null)
+                return false;
+
+            _context.Groups.Remove(group);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

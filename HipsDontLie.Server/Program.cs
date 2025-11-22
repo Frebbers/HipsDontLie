@@ -41,7 +41,7 @@ namespace HipsDontLie {
             
             UseSwaggerUI(app);
             ConfigureWebSockets(app);
-            SeedIdentity(app);
+            MigrateDatabase(app);
             app.UseCors("AllowFrontend");
             app.UseAuthentication();
             app.UseAuthorization();
@@ -53,10 +53,11 @@ namespace HipsDontLie {
 
         // --- Helpers ---
 
-        private static async void SeedIdentity(WebApplication app)
+        private static async void MigrateDatabase(WebApplication app)
         {
             using (var scope = app.Services.CreateScope())
             {
+                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                 await IdentitySeeder.SeedAsync(scope.ServiceProvider);
             }
         }
@@ -72,6 +73,7 @@ namespace HipsDontLie {
             if (builder.Configuration.GetSection("MongoChat") == null) {
                 throw new Exception("MongoChat section is missing in configuration.");
             }
+
             // Bind Mongo chat settings
             builder.Services.Configure<MongoChatSettings>(
                 builder.Configuration.GetSection("MongoChat"));
@@ -83,6 +85,8 @@ namespace HipsDontLie {
                 return new MongoClient(settings.ConnectionString);
             });
             builder.Services.AddMemoryCache();
+
+
         }
 
         private static void ConfigureSecurity(WebApplicationBuilder builder) {
