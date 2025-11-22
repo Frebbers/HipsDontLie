@@ -1,0 +1,89 @@
+name: hipsdontlie
+services:
+
+  app:
+    image: frebbers/hipsdontlie
+    container_name: hipsdontlie-app
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Production"
+      DOTNET_RUNNING_IN_CONTAINER: "true"
+      JwtSettings__SecretKey: ${JWT_SECRET}
+      JwtSettings__Issuer: "HipsDontLie"
+      JwtSettings__Audience: "HipsDontLieApp"
+      ConnectionStrings__DefaultConnection: "${ConnectionStrings__DefaultConnection:-server=db;port=3306;database=${MYSQL_DATABASE_NAME};user=test;password=rekt123}"
+      MongoChat__ConnectionString: "${MongoChat__ConnectionString:-mongodb://${MONGO_DATABASE_USERNAME}:${MONGO_DATABASE_PASSWORD}@mongodb:27017/?authSource=admin}"
+      MongoChat__DatabaseName: "hips_chat"
+      MongoChat__MessagesCollectionName: "messages"
+      EmailSettings__VerificationUrl: ${EMAIL_VERIFICATION_URL}
+      EmailSettings__SmtpServer: ${SMTP_SERVER}
+      EmailSettings__Port: ${SMTP_PORT}
+      EmailSettings__SenderEmail: ${SENDER_EMAIL}
+      EmailSettings__SenderPassword: ${SENDER_PASSWORD}
+      Authentication__Google__ClientId: ${GOOGLE_CLIENT_ID}
+      Authentication__Google__ClientSecret: ${GOOGLE_SECRET}
+
+  swag:
+    swag:
+    image: lscr.io/linuxserver/swag
+    container_name: hipsdontlie-swag
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Copenhagen
+      - URL=hipsdontlie.live
+      - SUBDOMAINS=www,
+      - VALIDATION=http
+      - EMAIL=${CERT_NOTIFICATION_EMAIL} #optional
+    volumes:
+      - /var/lib/swag:/config
+    ports:
+      - 443:443 #https
+      - 80:80 #http
+    restart: unless-stopped
+        
+  db:
+    image: lscr.io/linuxserver/mariadb:11.4.8
+    container_name: hipsdontlie-db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    #ports:
+      #- "3306:3306" uncomment to allow access to the database from outside the compose stack
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 10s
+      retries: 2
+    volumes:
+      - var/lib/hipsdontlie_data:/var/lib/mysql
+    restart: unless-stopped
+    networks:
+      - app-network
+
+   # Mongo Database
+  mongodb:
+    image: mongo:7.0
+    container_name: hipsdontlie-mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+    #ports:
+      #- "27017:27017" uncomment to allow access to the database from outside the compose stack
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')", "-u", "${MONGO_INITDB_ROOT_USERNAME}", "-p", "${MONGO_INITDB_ROOT_PASSWORD}", "--authenticationDatabase", "admin"]
+      interval: 5s
+      timeout: 10s
+      retries: 2
+    volumes:
+      - var/lib/hipsdontlie_chat_data:/data/db
+    restart: unless-stopped
+    networks:
+      - app-network
+
+
+      
