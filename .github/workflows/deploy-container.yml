@@ -15,7 +15,7 @@ jobs:
       with:
         host: ${{ vars.HDL_DOMAIN }}
         username: ${{ secrets.SSH_USER }}
-        port: ${{ secrets.SSH_PORT }}
+        port: "22"
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         passphrase: ${{ secrets.SSH_KEY_PASS_PHRASE }}
         command_timeout: 2m
