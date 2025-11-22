@@ -1,0 +1,21 @@
+name: Deploy Project
+on: 
+  pull_request:
+    branches: "main"
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: DTU Hosting
+    steps:
+#    - name: Set up SSL certificate
+    - name: Deploy to server
+      uses: appleboy/ssh-action@v1.2.1
+      with:
+        host: ${{ vars.HOST }}
+        username: ${{ secrets.SSH_USER }}
+        port: ${{ secrets.SSH_PORT }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          #curl the compose.prod.yml file from the repository, take down the app container (if exists)
+          #and pull the new one and start it by populating all the parameters from repo variables/secrets
+        
