@@ -41,7 +41,9 @@ namespace HipsDontLie {
             
             UseSwaggerUI(app);
             ConfigureWebSockets(app);
-            MigrateDatabase(app);
+
+            await SeedIdentityAsync(app);
+
             app.UseCors("AllowFrontend");
             app.UseAuthentication();
             app.UseAuthorization();
@@ -53,13 +55,10 @@ namespace HipsDontLie {
 
         // --- Helpers ---
 
-        private static async void MigrateDatabase(WebApplication app)
+        private static async Task SeedIdentityAsync(WebApplication app)
         {
-            using (var scope = app.Services.CreateScope())
-            {
-                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                await IdentitySeeder.SeedAsync(scope.ServiceProvider);
-            }
+            using var scope = app.Services.CreateScope();
+            await IdentitySeeder.SeedAsync(scope.ServiceProvider);
         }
 
         private static void ConfigureDataAccess(WebApplicationBuilder builder) {
