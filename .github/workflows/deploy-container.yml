@@ -11,12 +11,13 @@ jobs:
     steps:
 #    - name: Set up SSL certificate
     - name: Deploy to server
-      uses: appleboy/ssh-action@v1.8.1
+      uses: ghcr.io/appleboy/drone-ssh@1.8.1
       with:
         host: ${{ vars.HOST }}
         username: ${{ secrets.SSH_USER }}
         port: ${{ secrets.SSH_PORT }}
         key: ${{ secrets.SSH_KEY }}
+        command_timeout: 2m
         script: |
           # Set error handling for atomicity
           set -e
