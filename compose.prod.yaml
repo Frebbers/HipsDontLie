@@ -4,6 +4,14 @@ services:
   app:
     image: frebbers/hipsdontlie
     container_name: hipsdontlie-app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    networks:
+        - app-network
     environment:
       ASPNETCORE_ENVIRONMENT: "Production"
       DOTNET_RUNNING_IN_CONTAINER: "true"
@@ -59,7 +67,7 @@ services:
       timeout: 10s
       retries: 2
     volumes:
-      - var/lib/hipsdontlie_data:/var/lib/mysql
+      - hipsdontlie_db_data:/var/lib/mysql
     restart: unless-stopped
     networks:
       - app-network
@@ -80,10 +88,14 @@ services:
       timeout: 10s
       retries: 2
     volumes:
-      - var/lib/hipsdontlie_chat_data:/data/db
+      - hipsdontlie_mongo_data:/data/db
     restart: unless-stopped
     networks:
       - app-network
 
-
-      
+networks:
+    app-network:
+        driver: bridge
+volumes:
+  hipsdontlie_db_data:
+  hipsdontlie_mongo_data:
