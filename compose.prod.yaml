@@ -10,6 +10,8 @@ services:
         condition: service_healthy
       mongodb:
         condition: service_healthy
+      swag:
+        condition: service_started
     networks:
         - app-network
     environment:
@@ -41,7 +43,7 @@ services:
       - PGID=1000
       - TZ=Europe/Copenhagen
       - URL=hipsdontlie.live
-      - SUBDOMAINS=www,
+      #- SUBDOMAINS=www,
       - VALIDATION=http
       - EMAIL=${CERT_NOTIFICATION_EMAIL} #optional
     volumes:
@@ -50,6 +52,8 @@ services:
       - 443:443 #https
       - 80:80 #http
     restart: unless-stopped
+    networks:
+      - app-network
         
   db:
     image: lscr.io/linuxserver/mariadb:11.4.8
