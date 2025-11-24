@@ -5,7 +5,7 @@ x-common-env: &app-env
   JwtSettings__SecretKey: ${JWT_SECRET}
   JwtSettings__Issuer: "${JwtSettings__Issuer:-HipsDontLie}"
   JwtSettings__Audience: "${JwtSettings__Audience:-HipsDontLieApp}"
-  #ConnectionStrings__DefaultConnection: "${ConnectionStrings__DefaultConnection:-server=db;port=3306;database=hipsdontlie;user=test;password=rekt123}"
+  ConnectionStrings__DefaultConnection: "${ConnectionStrings__DefaultConnection:-server=db;port=3306;database=hipsdontlie;user=test;password=rekt123}"
   MongoChat__ConnectionString: "${MongoChat__ConnectionString:-mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongodb:27017/?authSource=admin}"
   MongoChat__DatabaseName: "${MongoChat__DatabaseName:-hips_chat}"
   MongoChat__MessagesCollectionName: "${MongoChat__MessagesCollectionName:-messages}"

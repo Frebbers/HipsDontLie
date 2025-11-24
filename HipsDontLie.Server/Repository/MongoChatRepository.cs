@@ -64,8 +64,10 @@ namespace HipsDontLie.Server.Repository
 
         public async Task<bool> SendMessageToSessionAsync(Message message)
         {
+            var msgId = Guid.NewGuid();
             var doc = new MessageDocument
             {
+                Id = msgId.ToString(),
                 ChatId = message.ChatId,
                 SenderId = message.SenderId,
                 Content = message.Content,
@@ -94,8 +96,10 @@ namespace HipsDontLie.Server.Repository
 
         public async Task<bool> SendMessageToUserAsync(Message message)
         {
+            var msgId = Guid.NewGuid();
             var doc = new MessageDocument
             {
+                Id = msgId.ToString(),
                 ChatId = message.ChatId,
                 SenderId = message.SenderId,
                 Content = message.Content,
