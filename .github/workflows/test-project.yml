@@ -1,0 +1,45 @@
+name: Test Project
+on:
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+     - 'README.md'
+     - 'certs/**'
+     - 'LICENSE'
+
+jobs:
+  run-tests:
+    name: Test Project
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Compose
+        uses: docker/setup-compose-action@v1
+        with:
+          version: 'latest'
+
+      - name: Run tests
+        id: backend-test
+        continue-on-error: true
+        run: |
+          /usr/bin/docker compose up test --exit-code-from test
+          echo "status=$?" >> $GITHUB_OUTPUT
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: |
+            backend/test-results/
+
+      - name: Fail workflow if any tests failed
+        run: |
+          backend_status=${{ steps.backend-test.outputs.status }}
+          if [ "$backend_status" != "0" ]; then
+            echo "Backend tests exit code: $backend_status"
+            exit 1
+          fi
