@@ -14,7 +14,7 @@
 
 @code {
     [Parameter]
-    public IList<AppointmentDTO> Appointments { get; set; }
+    public IList<AppointmentDTO> Appointments { get; set; } = new List<AppointmentDTO>();
 
     [Parameter]
     public EventCallback<List<AppointmentDTO>> OnAppointmentsChanged { get; set; }
@@ -73,6 +73,9 @@
     async Task OnSlotSelect(SchedulerSlotSelectEventArgs args)
     {
         if (!CanEdit) return;
+
+        if(Appointments == null)
+            Appointments = new List<AppointmentDTO>();
 
         if (args.View.Text != "Year")
         {

@@ -40,7 +40,17 @@
         _errorMessage = string.Empty;
 
         try {
-            var res = await ResourceService.CreateGroup(model);
+            CreateGroupRequestDTO payload = new CreateGroupRequestDTO {
+                Title = model.Title,
+                Description = model.Description,
+                IsVisible = model.IsVisible,
+                AgeRange = model.AgeRange,
+                MaxMembers = model.MaxMembers,
+                Tags = model.Tags ?? new List<string>(),
+                Appointments = model.Appointments
+            };
+
+            var res = await ResourceService.CreateGroup(payload);
 
             NavigationManager.NavigateTo("/courses");
         }

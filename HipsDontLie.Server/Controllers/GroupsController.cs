@@ -33,7 +33,7 @@ namespace HipsDontLie.Controllers {
         /// Returns a 400 Bad Request response if the group creation fails.
         /// </returns>
         [HttpPost("create")]
-        public async Task<IActionResult> CreateGroup([FromBody] GroupDTO groupDto) {
+        public async Task<IActionResult> CreateGroup([FromBody] CreateGroupRequestDTO groupDto) {
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
             bool success = await _groupService.CreateGroupAsync(userId, groupDto);

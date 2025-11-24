@@ -29,7 +29,7 @@ namespace HipsDontLie.Services {
         /// <summary>
         /// Creates a new group and assigns the user as its owner.
         /// </summary>
-        public async Task<bool> CreateGroupAsync(int userId, GroupDTO groupDto) {
+        public async Task<bool> CreateGroupAsync(int userId, CreateGroupRequestDTO groupDto) {
             var group = new Group() {
                 Title = groupDto.Title,
                 AgeRange = groupDto.AgeRange,
@@ -37,7 +37,7 @@ namespace HipsDontLie.Services {
                 IsVisible = groupDto.IsVisible,
                 OwnerId = userId,
                 MaxMembers = groupDto.MaxMembers,
-                Tags = groupDto.Tags,
+                Tags = groupDto.Tags ?? new List<string>(),
                 Appointments = (groupDto.Appointments ?? new List<AppointmentDTO>())
                             .Select(a => new Appointment {
                                 Start = a.Start,

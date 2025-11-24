@@ -54,7 +54,7 @@ namespace HipsDontLie.Client.Services
         #endregion
 
         #region Group
-        public async Task<ApiResponseMessage> CreateGroup(GroupDTO group, CancellationToken ct = default)
+        public async Task<ApiResponseMessage> CreateGroup(CreateGroupRequestDTO group, CancellationToken ct = default)
         {
             using var res = await _http.PostAsJsonAsync("api/Groups/create", group, ct);
 
