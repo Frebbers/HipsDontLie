@@ -31,8 +31,8 @@ services:
       EmailSettings__SenderPassword: ${SENDER_PASSWORD}
       Authentication__Google__ClientId: ${GOOGLE_CLIENT_ID}
       Authentication__Google__ClientSecret: ${GOOGLE_SECRET}
-
-
+      FRONTEND_BASE_URL: "https://${HOST_DOMAIN}"
+      
   swag:
     image: lscr.io/linuxserver/swag
     container_name: hipsdontlie-swag
