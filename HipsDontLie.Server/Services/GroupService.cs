@@ -77,9 +77,6 @@ namespace HipsDontLie.Services {
 
             bool isMember = !await _groupRepository.ValidateUserGroupAsync(userId, groupId);
 
-            // TODO: If the user is not a member of this group, do not show member information.
-            // Return an empty list instead, so we can still use .Count() to show number of members.
-
             return new GroupDTO() {
                 Title = group.Title,
                 AgeRange = group.AgeRange,
@@ -94,13 +91,21 @@ namespace HipsDontLie.Services {
                     End = a.End,
                     Text = a.Text
                 }).ToList(),
-                Members = group.Members
-                    .Select(p => new MemberDTO {
-                        UserId = p.UserId,
-                        Username = p.User.UserName ?? "No Username",
-                        GroupStatus = p.Status
-                    })
-                    .ToList(),
+                Members = isMember
+                    ? group.Members
+                        .Select(p => new MemberDTO {
+                            UserId = p.UserId,
+                            Username = p.User.UserName ?? "No Username",
+                            GroupStatus = p.Status
+                        })
+                        .ToList()
+                    : group.Members
+                        .Select(p => new MemberDTO {
+                            UserId = p.UserId,
+                            Username = string.Empty, // Not a member, hide username of all the other users
+                            GroupStatus = p.Status
+                        })
+                        .ToList(),
                 Chat = group.Chat == null ? null : new ChatDTO {
                     SessionId = group.Chat.GroupId,
                     ChatId = group.Chat.ChatId
@@ -122,6 +127,8 @@ namespace HipsDontLie.Services {
             var results = new List<GroupDTO>();
 
             foreach (var group in groups) {
+                bool isMember = userId != null && !await _groupRepository.ValidateUserGroupAsync(userId.Value, group.Id);
+
                 results.Add(new GroupDTO {
                     Id = group.Id,
                     Title = group.Title,
@@ -136,10 +143,18 @@ namespace HipsDontLie.Services {
                         End = a.End,
                         Text = a.Text
                     }).ToList(),
-                    Members = group.Members
+                    Members = isMember
+                    ? group.Members
                         .Select(p => new MemberDTO {
                             UserId = p.UserId,
                             Username = p.User.UserName ?? "No Username",
+                            GroupStatus = p.Status
+                        })
+                        .ToList()
+                    : group.Members
+                        .Select(p => new MemberDTO {
+                            UserId = p.UserId,
+                            Username = string.Empty, // Not a member, hide username of all the other users
                             GroupStatus = p.Status
                         })
                         .ToList(),
@@ -164,6 +179,8 @@ namespace HipsDontLie.Services {
             var results = new List<GroupDTO>();
 
             foreach (var group in groups) {
+                bool isMember = !await _groupRepository.ValidateUserGroupAsync(userId, group.Id);
+
                 results.Add(new GroupDTO {
                     Id = group.Id,
                     Title = group.Title,
@@ -178,10 +195,18 @@ namespace HipsDontLie.Services {
                         End = a.End,
                         Text = a.Text
                     }).ToList(),
-                    Members = group.Members
+                    Members = isMember
+                    ? group.Members
                         .Select(p => new MemberDTO {
                             UserId = p.UserId,
                             Username = p.User.UserName ?? "No Username",
+                            GroupStatus = p.Status
+                        })
+                        .ToList()
+                    : group.Members
+                        .Select(p => new MemberDTO {
+                            UserId = p.UserId,
+                            Username = string.Empty, // Not a member, hide username of all the other users
                             GroupStatus = p.Status
                         })
                         .ToList(),
