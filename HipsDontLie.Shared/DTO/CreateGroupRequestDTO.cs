@@ -33,11 +33,11 @@
         /// <summary>
         /// A list of tags associated with the group for filtering and categorization.
         /// </summary>
-        public List<string> Tags { get; set; } = new();
+        public List<string>? Tags { get; set; } = new();
 
         /// <summary>
         /// Gets or sets the list of appointments associated with the group.
         /// </summary>
-        public List<AppointmentDTO>? Appointments { get; set; }
+        public List<AppointmentDTO>? Appointments { get; set; } = new();
     }
 }
