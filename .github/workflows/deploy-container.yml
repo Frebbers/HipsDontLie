@@ -25,25 +25,34 @@ jobs:
           
           # Export environment variables for docker compose
           export JWT_SECRET="${{ secrets.JWT_SECRET }}"
-          export MYSQL_DATABASE_NAME="${{ secrets.MYSQL_DATABASE_NAME }}"
-          export MONGO_DATABASE_USERNAME="${{ secrets.MONGO_DATABASE_USERNAME }}"
-          export MONGO_DATABASE_PASSWORD="${{ secrets.MONGO_DATABASE_PASSWORD }}"
+          
+          # Email config
           export EMAIL_VERIFICATION_URL="${{ secrets.EMAIL_VERIFICATION_URL }}"
           export SMTP_SERVER="${{ secrets.SMTP_SERVER }}"
           export SMTP_PORT="${{ secrets.SMTP_PORT }}"
-          export SENDER_EMAIL="${{ secrets.SENDER_EMAIL }}"
+          export SENDER_EMAIL="${{ env.SMTP_SENDER_EMAIL }}"
           export SENDER_PASSWORD="${{ secrets.SENDER_PASSWORD }}"
+          
+          # Google auth config
           export GOOGLE_CLIENT_ID="${{ secrets.GOOGLE_CLIENT_ID }}"
           export GOOGLE_SECRET="${{ secrets.GOOGLE_SECRET }}"
           export CERT_NOTIFICATION_EMAIL="${{ secrets.CERT_NOTIFICATION_EMAIL }}"
-          export DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
-          export DB_NAME="${{ secrets.DB_NAME }}"
-          export DB_USER="${{ secrets.DB_USER }}"
-          export MONGO_INITDB_ROOT_USERNAME="${{ secrets.MONGO_INITDB_ROOT_USERNAME }}"
-          export MONGO_INITDB_ROOT_PASSWORD="${{ secrets.MONGO_INITDB_ROOT_PASSWORD }}"
-          export MONGO_INITDB_DATABASE="${{ secrets.MONGO_INITDB_DATABASE }}"
+          
+          # Database config
+          export MYSQL_DATABASE_NAME="${{ secrets.MYSQL_DATABASE_NAME }}"
+          export DB_PASSWORD="${{ secrets.MYSQL_DATABASE_PASSWORD }}"
+          export DB_NAME="${{ env.MYSQL_DATABASE_USER_NAME }}"
+          export DB_USER="${{ secrets.MYSQL_DATABASE_NAME }}"
           export ConnectionStrings__DefaultConnection="${{ secrets.ConnectionStrings__DefaultConnection }}"
+          export DB_ROOT_PASSWORD="${{ secrets.DB_ROOT_PASSWORD }}"
+          
+          # MongoDB config
+          export MONGO_INITDB_ROOT_USERNAME="${{ secrets.MONGO_ROOT_USERNAME }}"
+          export MONGO_INITDB_ROOT_PASSWORD="${{ secrets.MONGO_ROOT_PASSWORD }}"
+          export MONGO_INITDB_DATABASE="${{ env.MONGO_DATABASE_NAME }}"
           export MongoChat__ConnectionString="${{ secrets.MongoChat__ConnectionString }}"
+          export MONGO_DATABASE_USERNAME="${{ secrets.MONGO_DATABASE_USERNAME }}"
+          export MONGO_DATABASE_PASSWORD="${{ secrets.MONGO_DATABASE_PASSWORD }}"
 
           cd $HOME
           
