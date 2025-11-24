@@ -5,6 +5,7 @@
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize]
 
+<div class="d-flex justify-center mt-4">
 @if (isLoading) {
     <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
 }
@@ -19,7 +20,6 @@ else if (!string.IsNullOrWhiteSpace(_errorMessage)) {
     }
 }
 else {
-    <div class="d-flex justify-center mt-4">
         <MudCard Elevation="25"
                  Class="rounded-lg pb-4"
                  Style="width:100%; max-width:500px;">
@@ -98,10 +98,18 @@ else {
                                   Style="width:300px; justify-content: center; align-items: center;" />
                 </MudCardActions>
                 <MudCardActions Class="d-flex justify-center">
-                    <MudButton Color="Color.Primary"
+                    <MudButton Disabled="@isSaving" Color="Color.Primary"
                                Variant="MudBlazor.Variant.Filled"
                                OnClick="SaveProfile">
-                        Save
+                        @if (isSaving)
+                        {
+                            <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                            <MudText Class="ms-2">Saving...</MudText>
+                        }
+                        else
+                        {
+                            <MudText>Save</MudText>
+                        }
                     </MudButton>
                     <MudButton Color="Color.Default"
                                Variant="MudBlazor.Variant.Outlined"
@@ -118,8 +126,8 @@ else {
                 Delete Account
             </MudButton>
         </MudCard>
-    </div>
 }
+</div>
 
 @code {
 
@@ -134,6 +142,7 @@ else {
     private string _errorMessage = "";
     private int _errorStatusCode;
     private bool isLoading;
+    private bool isSaving;
     private bool isEditing;
     private DateTime? _birthDate;
 
@@ -157,6 +166,8 @@ else {
     }
 
     private async Task SaveProfile() {
+
+        isSaving = true;
         UpdateProfile = new UpdateProfileRequestDTO {
             DisplayName = Profile.DisplayName,
             BirthDate = _birthDate ?? Profile.BirthDate,
@@ -176,6 +187,10 @@ else {
         catch (ApiException ex) {
             _errorStatusCode = (int)ex.StatusCode;
             _errorMessage = $"{ex.Message} - {ex.StatusCode}: {(int)ex.StatusCode}";
+        }
+        finally
+        {
+            isSaving = false;
         }
     }
 

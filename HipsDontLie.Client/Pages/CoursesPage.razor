@@ -5,7 +5,13 @@
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize]
 
-@if (!string.IsNullOrWhiteSpace(_errorMessage))
+@if (isLoading)
+{
+    <div class="d-flex justify-center mt-4">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+    </div>
+}
+else if (!string.IsNullOrWhiteSpace(_errorMessage))
 {
     <MudAlert Severity="Severity.Error" Elevation="0" Class="mt-4">
         @_errorMessage
@@ -22,10 +28,12 @@ else{
 
     public List<GroupDTO> GroupList { get; set; } = new();
 
+    private bool isLoading;
     private string _errorMessage = "";
 
     protected override async Task OnInitializedAsync()
     {
+        isLoading = true;
         try
         {
             GroupList = await ResourceService.GetAllGroups();
@@ -33,6 +41,10 @@ else{
         catch (ApiException ex)
         {
             _errorMessage = $"{ex.Message} - {ex.StatusCode}: {(int)ex.StatusCode}";
+        }
+        finally
+        {
+            isLoading = false;
         }
     }
 }
