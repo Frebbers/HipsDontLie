@@ -76,7 +76,7 @@ jobs:
           docker compose -f compose.prod.yaml rm -f app || true
           
           # Start the app service with error handling and rollback on failure
-          if ! docker compose -f compose.prod.yaml up -d app; then
+          if ! docker compose -f compose.prod.yaml up -d; then
             echo "Error: Failed to start app container, attempting rollback"
             # Remove the failed container
             docker compose -f compose.prod.yaml rm -f app || true
