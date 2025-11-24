@@ -13,7 +13,7 @@ jobs:
     - name: Deploy to server
       uses: appleboy/ssh-action@v1.2.3
       with:
-        host: ${{ vars.HDL_DOMAIN }}
+        host: ${{ vars.HOST_DOMAIN }}
         username: ${{ secrets.SSH_USER }}
         port: ${{ secrets.SSH_PORT }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -32,6 +32,7 @@ jobs:
           }
           # Export environment variables for docker compose
           export JWT_SECRET="${{ secrets.JWT_SECRET }}"
+          export HOST_DOMAIN="${{ vars.HOST_DOMAIN }}"
           
           # Email config
           export EMAIL_VERIFICATION_URL="${{ vars.EMAIL_VERIFICATION_URL }}"
@@ -66,6 +67,7 @@ jobs:
           
           # Warnings for missing values
           warn_if_empty "JWT_SECRET" "$JWT_SECRET"
+          warn_if_empty "HOST_DOMAIN" "$HOST_DOMAIN"
           
           warn_if_empty "EMAIL_VERIFICATION_URL" "$EMAIL_VERIFICATION_URL"
           warn_if_empty "SMTP_SERVER" "$SMTP_SERVER"
