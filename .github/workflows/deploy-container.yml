@@ -38,17 +38,17 @@ jobs:
           export SMTP_SERVER="${{ env.SMTP_SERVER }}"
           export SMTP_PORT="${{ env.SMTP_PORT }}"
           export SENDER_EMAIL="${{ env.SMTP_SENDER_EMAIL }}"
-          export SENDER_PASSWORD="${{ secrets.SENDER_PASSWORD }}"
+          export SENDER_PASSWORD="${{ secrets.SMTP_SENDER_PASSWORD }}"
           
           # Google auth config
           export GOOGLE_CLIENT_ID="${{ secrets.GOOGLE_CLIENT_ID }}"
           export GOOGLE_SECRET="${{ secrets.GOOGLE_SECRET }}"
-          export CERT_NOTIFICATION_EMAIL="${{ secrets.CERT_NOTIFICATION_EMAIL }}"
+          export CERT_NOTIFICATION_EMAIL="${{ secrets.CERT_NOTIFICATION_EMAIL }}" #optional
           
           # Database config
           export MYSQL_DATABASE_NAME="${{ env.MYSQL_DATABASE_NAME }}"
           export DB_PASSWORD="${{ secrets.MYSQL_DATABASE_PASSWORD }}"
-          export DB_NAME="${{ secrets.MYSQL_DATABASE_NAME }}"
+          export DB_NAME="${{ env.MYSQL_DATABASE_NAME }}"
           export DB_USER="${{ env.MYSQL_DATABASE_USER_NAME }}"
           export DB_ROOT_PASSWORD="${{ secrets.DB_ROOT_PASSWORD }}"
           export DB_CONNECTION_STRING="server=db;port=3306;database=${DB_NAME};user=${DB_USER};password=${DB_PASSWORD};"
