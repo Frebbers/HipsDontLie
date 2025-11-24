@@ -29,7 +29,7 @@ namespace HipsDontLie.Services {
         /// <summary>
         /// Creates a new group and assigns the user as its owner.
         /// </summary>
-        public async Task<bool> CreateGroupAsync(int userId, CreateGroupRequestDTO groupDto) {
+        public async Task<bool> CreateGroupAsync(int userId, GroupDTO groupDto) {
             var group = new Group() {
                 Title = groupDto.Title,
                 AgeRange = groupDto.AgeRange,

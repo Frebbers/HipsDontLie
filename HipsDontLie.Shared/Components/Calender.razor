@@ -41,7 +41,6 @@
     protected override async Task OnParametersSetAsync() {
         // This runs whenever the parent updates Appointments
         if (initialized && scheduler != null && Appointments != null) {
-            Console.WriteLine("Appointments: " + Appointments.Count);
             await scheduler.Reload();
         }
     }

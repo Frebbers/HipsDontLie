@@ -1,24 +1,44 @@
-﻿namespace HipsDontLie.Shared.Components;
+﻿@using System.ComponentModel.Design
 
+<MudButton Variant="MudBlazor.Variant.Filled"
+           Disabled="@isWaiting"
+           OnClick="OnButtonPressed">
 
-<MudButton 
-    Variant = "MudBlazor.Variant.Filled"
-    OnClick = "onButtonPressed"
-    @if (isWaiting) { EndIcon = "MudProgressCircular" } @* Shows a loading spinner when isWaiting is true *@
-    >
-    Join course
-    
+    @if (isWaiting)
+    {
+        <MudProgressCircular Class="me-2" Size="Size.Small" Indeterminate="true" />
+        <text>Joining...</text>
+    }
+    else
+    {
+        <text>Join course</text>
+    }
+
 </MudButton>
 
 @code
 {
     [Parameter] public int CourseId { get; set; }
     [Parameter] public EventCallback OnJoinRequested { get; set; }
+
     private bool isWaiting = false;
-    private async void onButtonPressed()
+
+    private async Task OnButtonPressed()
     {
         isWaiting = true;
-        await OnJoinRequested.InvokeAsync(CourseId);
-        isWaiting = false;
+
+        try
+        {
+            await OnJoinRequested.InvokeAsync(CourseId);
+        }
+        catch (Exception ex)
+        {
+            //TODO: Implement proper error handling (e.g., show a message to the user)
+            Console.Error.WriteLine($"JoinCourseButton error: {ex.Message}");
+        }
+        finally
+        {
+            isWaiting = false;
+        }
     }
 }

@@ -137,15 +137,38 @@
             }
         </MudCardActions>
     }
+
+    @if (!CanEdit) {
+        <MudCardActions Class="d-flex justify-center mt-2">
+
+            @if (!_isNew) {
+                if (!IsMember)
+                {
+                    <JoinCourseButton CourseId="Model.Id"
+                                        OnJoinRequested="OnJoin" />
+                }
+                else
+                {
+
+                    <LeaveCourseButton CourseId="Model.Id"
+                                       OnLeaveRequested="OnLeave" />
+                }
+            }
+
+        </MudCardActions>
+    }
 </MudCard>
 
 @code {
-    [Parameter] public CreateGroupRequestDTO Model { get; set; } = new();
+    [Parameter] public GroupDTO Model { get; set; } = new();
     [Parameter] public bool IsNew { get; set; }
     [Parameter] public bool CanEdit { get; set; } 
-    [Parameter] public EventCallback<CreateGroupRequestDTO> OnSave { get; set; }
+    [Parameter] public bool IsMember { get; set; } 
+    [Parameter] public EventCallback<GroupDTO> OnSave { get; set; }
     [Parameter] public EventCallback OnCancel { get; set; }
     [Parameter] public EventCallback OnDelete { get; set; }
+    [Parameter] public EventCallback OnJoin { get; set; }
+    [Parameter] public EventCallback OnLeave { get; set; }
 
     private bool _isEditing;
     private bool _isNew;

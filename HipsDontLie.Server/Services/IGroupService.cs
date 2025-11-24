@@ -13,7 +13,7 @@ namespace HipsDontLie.Services {
         /// <param name="userId">The unique identifier of the user creating the group.</param>
         /// <param name="group">The group details provided in the request.</param>
         /// <returns>A task representing the asynchronous operation, returning true if the group is successfully created.</returns>
-        Task<bool> CreateGroupAsync(int userId, CreateGroupRequestDTO group);
+        Task<bool> CreateGroupAsync(int userId, GroupDTO group);
 
         /// <summary>
         /// Retrieves a group by its unique identifier.

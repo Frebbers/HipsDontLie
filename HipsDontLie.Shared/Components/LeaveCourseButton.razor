@@ -1,0 +1,35 @@
+<MudButton Variant="MudBlazor.Variant.Outlined"
+           Color="Color.Error"
+           Disabled="@isWaiting"
+           OnClick="OnButtonPressed">
+
+    @if (isWaiting) {
+        <MudProgressCircular Class="me-2" Size="Size.Small" Indeterminate="true" />
+        <text>Leaving...</text>
+    }
+    else {
+        <text>Leave course</text>
+    }
+
+</MudButton>
+
+@code {
+    [Parameter] public int CourseId { get; set; }
+    [Parameter] public EventCallback<int> OnLeaveRequested { get; set; }
+
+    private bool isWaiting;
+
+    private async Task OnButtonPressed() {
+        isWaiting = true;
+
+        try {
+            await OnLeaveRequested.InvokeAsync(CourseId);
+        }
+        catch (Exception ex) {
+            Console.Error.WriteLine($"LeaveCourseButton error: {ex.Message}");
+        }
+        finally {
+            isWaiting = false;
+        }
+    }
+}

@@ -4,6 +4,7 @@
 @using HipsDontLie.Shared.DTO
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
+@using System.Security.Claims
 @attribute [Authorize(Roles = "Instructor,Participant")]
 
 <div class="d-flex justify-center mt-4">
@@ -19,8 +20,11 @@
         <Course Model="groupModel"
                 IsNew="false"
                 CanEdit="_isInstructor"
+                IsMember="_isMember"
                 OnSave="HandleUpdate"
-                OnDelete="HandleDelete">
+                OnDelete="HandleDelete"
+                OnJoin="HandleJoin"
+                OnLeave="HandleLeave">
         </Course>
     }
 </div>
@@ -32,25 +36,32 @@
     [Inject] public NavigationManager NavigationManager { get; set; }
     [CascadingParameter] public Task<AuthenticationState> AuthStateTask { get; set; }
 
-    private CreateGroupRequestDTO? groupModel;
+    private GroupDTO? groupModel;
     private bool _isLoading;
     private string _errorMessage = "";
     private bool _isInstructor;
+    private bool _isMember;
+    private int _currentUserId;
 
     protected override async Task OnInitializedAsync() {
         _isLoading = true;
 
         try {
             var authState = await AuthStateTask;
+            var user = authState.User;
             _isInstructor = authState.User.IsInRole("Instructor");
+            _currentUserId = int.Parse(user.FindFirst(ClaimTypes.NameIdentifier)!.Value);
 
             GroupDTO group = await ResourceService.GetGroupByID(Id);
 
-            groupModel = new CreateGroupRequestDTO {
+            _isMember = group.Members.Any(m => m.UserId == _currentUserId);
+
+            groupModel = new GroupDTO {
                 Title = group.Title,
                 Description = group.Description,
                 IsVisible = group.IsVisible,
                 AgeRange = group.AgeRange,
+                Members = group.Members,
                 MaxMembers = group.MaxMembers,
                 Tags = group.Tags,
                 Appointments = group.Appointments
@@ -64,7 +75,7 @@
         }
     }
 
-    private async Task HandleUpdate(CreateGroupRequestDTO model) {
+    private async Task HandleUpdate(GroupDTO model) {
         try {
             await ResourceService.UpdateGroup(Id, model);
         }
@@ -77,6 +88,29 @@
         try {
             await ResourceService.DeleteGroup(Id);
             NavigationManager.NavigateTo("/courses");
+        }
+        catch (ApiException ex) {
+            _errorMessage = $"{ex.Message} - {ex.StatusCode}: {(int)ex.StatusCode}";
+        }
+    }
+
+
+    private async Task HandleJoin() {
+        try {
+            await ResourceService.JoinGroup(Id);
+            _isMember = true;
+            StateHasChanged();
+        }
+        catch (ApiException ex) {
+            _errorMessage = $"{ex.Message} - {ex.StatusCode}: {(int)ex.StatusCode}";
+        }
+    }
+
+    private async Task HandleLeave() {
+        try {
+            await ResourceService.LeaveGroup(Id);
+            _isMember = false;
+            StateHasChanged();
         }
         catch (ApiException ex) {
             _errorMessage = $"{ex.Message} - {ex.StatusCode}: {(int)ex.StatusCode}";

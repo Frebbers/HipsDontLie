@@ -30,7 +30,7 @@ namespace HipsDontLie.Test {
 
         [Test]
         public async Task CreateGroupAsync_Success_ReturnsTrue() {
-            var dto = new CreateGroupRequestDTO { Title = "Test", MaxMembers = 10, Description = "desc" };
+            var dto = new GroupDTO { Title = "Test", MaxMembers = 10, Description = "desc" };
             _mockGroupRepo.Setup(r => r.CreateGroupAsync(It.IsAny<Group>()))
                 .ReturnsAsync(new Group { Id = 1 });
             _mockGroupRepo.Setup(r => r.AddUserToGroupAsync(It.IsAny<UserGroup>())).ReturnsAsync(true);
@@ -45,7 +45,7 @@ namespace HipsDontLie.Test {
         [Test]
         public async Task CreateGroupAsync_Failure_ReturnsFalse() {
             _mockGroupRepo.Setup(r => r.CreateGroupAsync(It.IsAny<Group>())).ReturnsAsync((Group)null);
-            var result = await _service.CreateGroupAsync(1, new CreateGroupRequestDTO());
+            var result = await _service.CreateGroupAsync(1, new GroupDTO());
             Assert.IsFalse(result);
         }
 

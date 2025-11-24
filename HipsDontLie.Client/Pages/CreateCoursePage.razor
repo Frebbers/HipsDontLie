@@ -28,11 +28,11 @@
     [Inject] public ResourceService ResourceService { get; set; }
     [Inject] public NavigationManager NavigationManager { get; set; }
 
-    private CreateGroupRequestDTO groupModel = new();
+    private GroupDTO groupModel = new();
     private string _errorMessage = string.Empty;
     private bool _isSubmitting;
 
-    private async Task HandleCreate(CreateGroupRequestDTO model) {
+    private async Task HandleCreate(GroupDTO model) {
         if (_isSubmitting)
             return;
 
