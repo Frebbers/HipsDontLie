@@ -27,9 +27,9 @@ jobs:
           export JWT_SECRET="${{ secrets.JWT_SECRET }}"
           
           # Email config
-          export EMAIL_VERIFICATION_URL="${{ secrets.EMAIL_VERIFICATION_URL }}"
-          export SMTP_SERVER="${{ secrets.SMTP_SERVER }}"
-          export SMTP_PORT="${{ secrets.SMTP_PORT }}"
+          export EMAIL_VERIFICATION_URL="${{ env.EMAIL_VERIFICATION_URL }}"
+          export SMTP_SERVER="${{ env.SMTP_SERVER }}"
+          export SMTP_PORT="${{ env.SMTP_PORT }}"
           export SENDER_EMAIL="${{ env.SMTP_SENDER_EMAIL }}"
           export SENDER_PASSWORD="${{ secrets.SENDER_PASSWORD }}"
           
