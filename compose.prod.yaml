@@ -20,7 +20,7 @@ services:
       JwtSettings__SecretKey: ${JWT_SECRET}
       JwtSettings__Issuer: "HipsDontLie"
       JwtSettings__Audience: "HipsDontLieApp"
-      ConnectionStrings__DefaultConnection: "${ConnectionStrings__DefaultConnection:-server=db;port=3306;database=${MYSQL_DATABASE_NAME};user=${DB_USER};password=${DB_PASSWORD};}"
+      ConnectionStrings__DefaultConnection: "server=db;port=3306;database=$${MYSQL_DATABASE_NAME};user=$${DB_USER};password=$${DB_PASSWORD};"
       MongoChat__ConnectionString: "${MongoChat__ConnectionString:-mongodb://${MONGO_DATABASE_USERNAME}:${MONGO_DATABASE_PASSWORD}@mongodb:27017/?authSource=admin}"
       MongoChat__DatabaseName: "hips_chat"
       MongoChat__MessagesCollectionName: "messages"
