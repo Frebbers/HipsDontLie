@@ -23,6 +23,13 @@ jobs:
           # Set error handling for atomicity
           set -e
           
+          warn_if_empty() {
+            local name="$1"
+            local value="$2"
+            if [ -z "$value" ]; then
+              echo "WARNING: Environment variable '$name' is not set or empty"
+            fi
+          }
           # Export environment variables for docker compose
           export JWT_SECRET="${{ secrets.JWT_SECRET }}"
           
@@ -39,7 +46,7 @@ jobs:
           export CERT_NOTIFICATION_EMAIL="${{ secrets.CERT_NOTIFICATION_EMAIL }}"
           
           # Database config
-          export MYSQL_DATABASE_NAME="${{ secrets.MYSQL_DATABASE_NAME }}"
+          export MYSQL_DATABASE_NAME="${{ env.MYSQL_DATABASE_NAME }}"
           export DB_PASSWORD="${{ secrets.MYSQL_DATABASE_PASSWORD }}"
           export DB_NAME="${{ secrets.MYSQL_DATABASE_NAME }}"
           export DB_USER="${{ env.MYSQL_DATABASE_USER_NAME }}"
@@ -56,6 +63,33 @@ jobs:
           export MONGO_DATABASE_PASSWORD="${{ secrets.MONGO_DATABASE_PASSWORD }}"
 
           cd $HOME
+          
+          # Warnings for missing values
+          warn_if_empty "JWT_SECRET" "$JWT_SECRET"
+          
+          warn_if_empty "EMAIL_VERIFICATION_URL" "$EMAIL_VERIFICATION_URL"
+          warn_if_empty "SMTP_SERVER" "$SMTP_SERVER"
+          warn_if_empty "SMTP_PORT" "$SMTP_PORT"
+          warn_if_empty "SENDER_EMAIL" "$SENDER_EMAIL"
+          warn_if_empty "SENDER_PASSWORD" "$SENDER_PASSWORD"
+          
+          warn_if_empty "GOOGLE_CLIENT_ID" "$GOOGLE_CLIENT_ID"
+          warn_if_empty "GOOGLE_SECRET" "$GOOGLE_SECRET"
+          warn_if_empty "CERT_NOTIFICATION_EMAIL" "$CERT_NOTIFICATION_EMAIL"
+          
+          warn_if_empty "MYSQL_DATABASE_NAME" "$MYSQL_DATABASE_NAME"
+          warn_if_empty "DB_PASSWORD" "$DB_PASSWORD"
+          warn_if_empty "DB_NAME" "$DB_NAME"
+          warn_if_empty "DB_USER" "$DB_USER"
+          warn_if_empty "DB_ROOT_PASSWORD" "$DB_ROOT_PASSWORD"
+          warn_if_empty "DB_CONNECTION_STRING" "$DB_CONNECTION_STRING"
+
+          warn_if_empty "MONGO_INITDB_ROOT_USERNAME" "$MONGO_INITDB_ROOT_USERNAME"
+          warn_if_empty "MONGO_INITDB_ROOT_PASSWORD" "$MONGO_INITDB_ROOT_PASSWORD"
+          warn_if_empty "MONGO_INITDB_DATABASE" "$MONGO_INITDB_DATABASE"
+          warn_if_empty "MongoChat__ConnectionString" "$MongoChat__ConnectionString"
+          warn_if_empty "MONGO_DATABASE_USERNAME" "$MONGO_DATABASE_USERNAME"
+          warn_if_empty "MONGO_DATABASE_PASSWORD" "$MONGO_DATABASE_PASSWORD"
           
           # Download the compose.prod.yaml file from the repository
           if ! curl -f -o compose.prod.yaml https://raw.githubusercontent.com/Frebbers/HipsDontLie/main/compose.prod.yaml; then
