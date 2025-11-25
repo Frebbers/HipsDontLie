@@ -99,9 +99,6 @@ jobs:
           fi
           
           # Save current app container ID for rollback (if exists)
-#          OLD_CONTAINER_ID=$(docker ps -aq -f name=hipsdontlie-app) || true
-          
-          # Pull new images for the app service with error handling
           docker compose -f compose.prod.yaml pull app
 
           
@@ -112,23 +109,4 @@ jobs:
           echo "Waiting for 15 seconds to let the app start before checking its status"
           sleep 15
           docker logs hipsdontlie-app --tail 200
-#          # Start the app service with error handling and rollback on failure
-#          if ! docker compose -f compose.prod.yaml up -d; then
-#            echo "Error: Failed to start app container, attempting rollback"
-#            # Remove the failed container
-#            docker compose -f compose.prod.yaml rm -f app || true          
-#            # Restart the old container if it existed
-#            if [ -n "$OLD_CONTAINER_ID" ]; then
-#              echo "Restarting previous app container"
-#              docker start "$OLD_CONTAINER_ID" || echo "Warning: Could not restart old container"
-#            fi
-#            exit 1
-#          fi
-#          
-#          # Clean up old container if deployment was successful
-#          if [ -n "$OLD_CONTAINER_ID" ]; then
-#            docker rm "$OLD_CONTAINER_ID" 2>/dev/null || true
-#          fi
-#          
-#          echo "Deployment successful"
         
