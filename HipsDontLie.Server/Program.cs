@@ -10,6 +10,7 @@ using HipsDontLie.WebSockets;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
@@ -47,11 +48,12 @@ namespace HipsDontLie {
             ConfigureWebSockets(app);
             SeedIdentity(app);
             app.UseCors("AllowFrontend");
-            app.UseStaticFiles();
+
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
+            app.MapStaticAssets();
             app.MapFallbackToFile("index.html"); //serve SPA from wwwroot
             app.MapHealthChecks("/healthz");
 
