@@ -1,22 +1,47 @@
 name: Docker Image CI
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'HipsDontLie.Client/**'
-      - 'HipsDontLie.Server/**'
-      - 'HipsDontLie.Shared/**'
-      - 'HipsDontLie.Test/**'
-      - 'Dockerfile'
+  workflow_call:
+    inputs:
+      image_tag:
+        description: 'Docker image tag to use for build/push (defaults to short SHA)'
+        required: false
+        type: string
+      push:
+        description: 'Whether to push the image to the registry'
+        required: false
+        type: boolean
+        default: true
+    secrets:
+      DOCKERHUB_TOKEN:
+        required: false
+    outputs:
+      effective_tag:
+        description: 'The tag that was built/pushed'
+        value: ${{ jobs.docker-build-and-push.outputs.effective_tag }}
 
 jobs:
   docker-build-and-push:
     environment:  HDL_AZURE
     runs-on: ubuntu-latest
+    outputs:
+      effective_tag: ${{ steps.compute-tag.outputs.tag }}
     steps:
-    - name: log into docker hub
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Compute tag
+      id: compute-tag
+      run: |
+        TAG="${{ inputs.image_tag }}"
+        if [ -z "$TAG" ]; then
+          # default to SHA short
+          TAG="${GITHUB_SHA::7}"
+        fi
+        echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+    - name: Log into Docker Hub
+      if: ${{ inputs.push == true }}
       uses: docker/login-action@v3
       with:
         username: ${{ vars.DOCKERHUB_USERNAME }}
@@ -25,12 +50,12 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
         
-    - name: build and push
+    - name: Build (and push if enabled)
       uses: docker/build-push-action@v6.18.0
       with:
-        # List of a customs host-to-IP mapping (e.g., docker:10.180.0.1)
-        push: true
+        push: ${{ inputs.push }}
         platforms: linux/amd64 #,linux/arm64
         target: final
-        tags: ${{ vars.DOCKERHUB_USERNAME }}/hipsdontlie:latest
-      
+        tags: |
+          ${{ vars.DOCKERHUB_USERNAME }}/hipsdontlie:latest
+          ${{ vars.DOCKERHUB_USERNAME }}/hipsdontlie:${{ steps.compute-tag.outputs.tag }}

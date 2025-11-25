@@ -1,0 +1,35 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'HipsDontLie.Client/**'
+      - 'HipsDontLie.Server/**'
+      - 'HipsDontLie.Shared/**'
+      - 'HipsDontLie.Test/**'
+      - 'Dockerfile'
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Run tests
+    uses: ./.github/workflows/test-project.yml
+
+  build:
+    name: Build and push image
+    needs: test
+    uses: ./.github/workflows/docker-image.yml
+    with:
+      push: ${{ github.event_name == 'push' }}
+    secrets: inherit
+
+  deploy:
+    name: Deploy to server
+    if: github.event_name == 'push' # deploy only on push to main, not on PRs
+    needs: build
+    uses: ./.github/workflows/deploy-container.yml
+    with:
+      image_tag: ${{ needs.build.outputs.effective_tag }}
+    secrets: inherit
