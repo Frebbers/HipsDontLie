@@ -40,7 +40,7 @@ namespace HipsDontLie {
             Console.WriteLine($"ContentRoot: {builder.Environment.ContentRootPath}");
             Console.WriteLine($"WebRoot: {builder.Environment.WebRootPath}");
             if (builder.Environment.ContentRootPath == null) { throw new Exception("ContentRootPath is null."); }
-            if (builder.Environment.WebRootPath == null) { throw new Exception("WebRootPath is null."); }
+            if (builder.Environment.WebRootPath == null && builder.Environment.IsProduction()) { throw new Exception("WebRootPath is null."); }
             
             var app = builder.Build();
             
