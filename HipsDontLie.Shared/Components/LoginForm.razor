@@ -87,6 +87,13 @@
     private async Task NavigateToGoogle()
     {
         isNavigating = true;
-        Nav.NavigateTo("https://localhost:7191/api/auth/external/Google?returnUrl=/signin-external");
+        if (Nav.BaseUri.ToString().Contains("localhost"))
+        {
+            Nav.NavigateTo("https://localhost:7191/api/auth/external/Google?returnUrl=/signin-external");
+        } else
+        {
+            Nav.NavigateTo("https://hipsdontlie.live/api/auth/external/Google?returnUrl=/signin-external");
+
+        }
     }
 }

@@ -9,6 +9,11 @@
 <LoginForm OnSubmit="HandleLogin" />
 
 @code {
+
+    protected override async Task OnInitializedAsync()
+    {
+    }
+
     private async Task HandleLogin((string Email, string Password) formData)
     {
         var (Email, Password) = formData;

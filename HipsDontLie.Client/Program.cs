@@ -23,12 +23,21 @@ builder.Services.AddScoped<AuthenticationStateProvider>(sp => sp.GetRequiredServ
 builder.Services.AddTransient<ApiErrorHandler>();
 builder.Services.AddTransient<ApiRequestHandler>();
 
-builder.Services.AddHttpClient("Auth", c =>
-    c.BaseAddress = new Uri("https://localhost:7191/"));
+var apiBaseUrl = builder.HostEnvironment.IsProduction()
+    ? "https://hipsdontlie.live/api/"
+    : "https://localhost:7191/";           
 
-builder.Services.AddHttpClient("Api", c => c.BaseAddress = new Uri("https://localhost:7191/"))
-    .AddHttpMessageHandler<ApiErrorHandler>()
-    .AddHttpMessageHandler<ApiRequestHandler>();
+builder.Services.AddHttpClient("Auth", c =>
+{
+    c.BaseAddress = new Uri(apiBaseUrl);
+});
+
+builder.Services.AddHttpClient("Api", c =>
+{
+    c.BaseAddress = new Uri(apiBaseUrl);
+})
+.AddHttpMessageHandler<ApiErrorHandler>()
+.AddHttpMessageHandler<ApiRequestHandler>();
 
 
 
