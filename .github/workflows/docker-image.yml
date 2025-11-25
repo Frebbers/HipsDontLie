@@ -9,6 +9,7 @@ on:
       - 'HipsDontLie.Server/**'
       - 'HipsDontLie.Shared/**'
       - 'HipsDontLie.Test/**'
+      - 'Dockerfile'
 
 jobs:
   docker-build-and-push:
