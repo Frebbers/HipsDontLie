@@ -32,8 +32,8 @@ FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
 WORKDIR /app
 
 # Environment variable for ASP.NET
-ENV ASPNETCORE_URLS=http://+:80
-ENV ASPNETCORE_ENVIRONMENT=Production
+ENV ASPNETCORE_URLS=http://+:7057;http://+:7191
+#ENV ASPNETCORE_ENVIRONMENT=Production
 
 # Expose frontend/backend
 EXPOSE 7191
