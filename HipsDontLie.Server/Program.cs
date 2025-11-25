@@ -51,7 +51,7 @@ namespace HipsDontLie {
             app.Run(); 
         }
 
-        // --- Helpers ---
+        // --- Helpers --- 
 
         private static async void SeedIdentity(WebApplication app)
         {
