@@ -36,7 +36,11 @@ namespace HipsDontLie {
             ConfigureSwagger(builder);
             ConfigureCors(builder);
             builder.Services.AddControllers();
-
+            Console.WriteLine($"ContentRoot: {builder.Environment.ContentRootPath}");
+            Console.WriteLine($"WebRoot: {builder.Environment.WebRootPath}");
+            if (builder.Environment.ContentRootPath == null) { throw new Exception("ContentRootPath is null."); }
+            if (builder.Environment.WebRootPath == null) { throw new Exception("WebRootPath is null."); }
+            
             var app = builder.Build();
             
             UseSwaggerUI(app);
@@ -50,6 +54,7 @@ namespace HipsDontLie {
             app.MapControllers();
             app.MapFallbackToFile("index.html"); //serve SPA from wwwroot
             app.MapHealthChecks("/healthz");
+
             Console.WriteLine("Configuration sequence finished, starting app...");
             app.Run(); 
         }
