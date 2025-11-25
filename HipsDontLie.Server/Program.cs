@@ -47,8 +47,9 @@ namespace HipsDontLie {
             app.UseAuthorization();
             app.MapControllers();
             app.MapHealthChecks("/healthz");
-
+            Console.WriteLine("Configuration sequence finished, starting app...");
             app.Run();
+            Console.WriteLine("Startup sequence finished, app is running...");
         }
 
         // --- Helpers ---
@@ -242,7 +243,7 @@ namespace HipsDontLie {
                               .AllowAnyHeader()
                               .AllowAnyMethod();
                     }
-                    Console.WriteLine($"starting with env: {env}");
+                    Console.WriteLine($"Using environment: {env}");
                 });
             });
         }
