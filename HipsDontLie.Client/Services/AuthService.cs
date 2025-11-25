@@ -20,7 +20,7 @@ namespace HipsDontLie.Client.Services
         public async Task<bool> LoginAsync(string email, string password)
         {
             var payload = new { email, password };
-            var res = await _http.PostAsJsonAsync("api/auth/login", payload);
+            var res = await _http.PostAsJsonAsync("auth/login", payload);
             if (!res.IsSuccessStatusCode) return false;
 
             var doc = await res.Content.ReadFromJsonAsync<JsonElement>();
@@ -39,7 +39,7 @@ namespace HipsDontLie.Client.Services
         {
             var payload = new { Email = email, Username = userName, Displayname = displayName, Password = password };
 
-            using var res = await _http.PostAsJsonAsync("api/auth/register", payload);
+            using var res = await _http.PostAsJsonAsync("auth/register", payload);
 
             var body = await res.Content.ReadAsStringAsync();
 

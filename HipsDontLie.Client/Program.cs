@@ -25,7 +25,7 @@ builder.Services.AddTransient<ApiRequestHandler>();
 
 var apiBaseUrl = builder.HostEnvironment.IsProduction()
     ? "https://hipsdontlie.live/"
-    : "https://localhost:7191/";           
+    : "https://localhost:7191/api";           
 
 builder.Services.AddHttpClient("Auth", c =>
 {
