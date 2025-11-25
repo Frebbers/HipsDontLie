@@ -46,7 +46,6 @@ namespace HipsDontLie {
             
             UseSwaggerUI(app);
             ConfigureWebSockets(app);
-
             await SeedIdentityAsync(app);
 
             app.UseCors("AllowFrontend");
