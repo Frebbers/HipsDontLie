@@ -1,12 +1,8 @@
 name: Test Project
 on:
-  pull_request:
-    branches:
-      - main
-    paths-ignore:
-     - 'README.md'
-     - 'certs/**'
-     - 'LICENSE'
+  workflow_call:
+  push:
+    branches: [ dev ]
 
 jobs:
   run-tests:
@@ -14,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Docker Compose
         uses: docker/setup-compose-action@v1

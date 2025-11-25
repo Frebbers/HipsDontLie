@@ -1,112 +1,114 @@
 name: Deploy Project
-on: 
-  push:
-    branches: main
-  pull_request:
-    branches: main
+on:
+  workflow_call:
+    inputs:
+      image_tag:
+        description: 'Docker image tag to deploy (optional; defaults to commit SHA from build run)'
+        required: false
+        type: string
+  workflow_dispatch:
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     environment: HDL_AZURE
+    env:
+      IMAGE_TAG: ${{ inputs.image_tag != '' && inputs.image_tag || github.sha }}
     steps:
-    - name: Deploy to server
-      uses: appleboy/ssh-action@v1.2.3
-      with:
-        host: ${{ vars.HOST_DOMAIN }}
-        username: ${{ secrets.SSH_USER }}
-        port: ${{ secrets.SSH_PORT }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        passphrase: ${{ secrets.SSH_KEY_PASS_PHRASE }}
-        command_timeout: 2m
-        script: |
-          # Set error handling for atomicity
-          set -e
-          
-          warn_if_empty() {
-            local name="$1"
-            local value="$2"
-            if [ -z "$value" ]; then
-              echo "WARNING: Environment variable '$name' is not set or empty"
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v1.2.3
+        with:
+          host: ${{ vars.HOST_DOMAIN }}
+          username: ${{ secrets.SSH_USER }}
+          port: ${{ secrets.SSH_PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SSH_KEY_PASS_PHRASE }}
+          command_timeout: 2m
+          script: |
+            set -e
+
+            warn_if_empty() {
+              local name="$1"
+              local value="$2"
+              if [ -z "$value" ]; then
+                echo "WARNING: Environment variable '$name' is not set or empty"
+              fi
+            }
+
+            # Export environment variables (including IMAGE_TAG for compose overrides)
+            export IMAGE_TAG="${IMAGE_TAG}"
+            export JWT_SECRET="${{ secrets.JWT_SECRET }}"
+            export HOST_DOMAIN="${{ vars.HOST_DOMAIN }}"
+            export CERT_NOTIFICATION_EMAIL="${{ secrets.CERT_NOTIFICATION_EMAIL }}"
+
+            # Email settings
+            export EMAIL_VERIFICATION_URL="${{ vars.EMAIL_VERIFICATION_URL }}"
+            export SMTP_SERVER="${{ vars.SMTP_SERVER }}"
+            export SMTP_PORT="${{ vars.SMTP_PORT }}"
+            export SENDER_EMAIL="${{ vars.SMTP_SENDER_EMAIL }}"
+            export SENDER_PASSWORD="${{ secrets.SMTP_SENDER_PASSWORD }}"
+            
+            # OAuth settings
+            export GOOGLE_CLIENT_ID="${{ secrets.GOOGLE_CLIENT_ID }}"
+            export GOOGLE_SECRET="${{ secrets.GOOGLE_CLIENT_SECRET }}"
+
+            # Database settings
+            export MYSQL_DATABASE_NAME="${{ vars.MYSQL_DATABASE_NAME }}"
+            export DB_PASSWORD="${{ secrets.MYSQL_DATABASE_PASSWORD }}"
+            export DB_NAME="${{ vars.MYSQL_DATABASE_NAME }}"
+            export DB_USER="${{ vars.MYSQL_DATABASE_USER_NAME }}"
+            export DB_ROOT_PASSWORD="${{ secrets.MYSQL_ROOT_PASSWORD }}"
+            export DB_CONNECTION_STRING="server=db;port=3306;database=${DB_NAME};user=${DB_USER};password=${DB_PASSWORD};"
+            
+            # MongoDB settings
+            export MONGO_INITDB_ROOT_USERNAME="${{ secrets.MONGO_ROOT_USERNAME }}"
+            export MONGO_INITDB_ROOT_PASSWORD="${{ secrets.MONGO_ROOT_PASSWORD }}"
+            export MONGO_INITDB_DATABASE="${{ vars.MONGO_DATABASE_NAME }}"
+            export MONGO_DATABASE_USERNAME="${{ vars.MONGO_DATABASE_USERNAME }}"
+            export MONGO_DATABASE_PASSWORD="${{ secrets.MONGO_DATABASE_PASSWORD }}"
+            export MongoChat__ConnectionString="mongodb://${MONGO_DATABASE_USERNAME}:${MONGO_DATABASE_PASSWORD}@mongodb:27017/?authSource=admin"
+
+            cd $HOME
+
+            # Warnings
+            warn_if_empty "IMAGE_TAG" "$IMAGE_TAG"
+            warn_if_empty "JWT_SECRET" "$JWT_SECRET"
+            warn_if_empty "HOST_DOMAIN" "$HOST_DOMAIN"
+            warn_if_empty "EMAIL_VERIFICATION_URL" "$EMAIL_VERIFICATION_URL"
+            warn_if_empty "SMTP_SERVER" "$SMTP_SERVER"
+            warn_if_empty "SMTP_PORT" "$SMTP_PORT"
+            warn_if_empty "SENDER_EMAIL" "$SENDER_EMAIL"
+            warn_if_empty "SENDER_PASSWORD" "$SENDER_PASSWORD"
+            warn_if_empty "GOOGLE_CLIENT_ID" "$GOOGLE_CLIENT_ID"
+            warn_if_empty "GOOGLE_SECRET" "$GOOGLE_SECRET"
+            warn_if_empty "CERT_NOTIFICATION_EMAIL" "$CERT_NOTIFICATION_EMAIL"
+            warn_if_empty "MYSQL_DATABASE_NAME" "$MYSQL_DATABASE_NAME"
+            warn_if_empty "DB_PASSWORD" "$DB_PASSWORD"
+            warn_if_empty "DB_NAME" "$DB_NAME"
+            warn_if_empty "DB_USER" "$DB_USER"
+            warn_if_empty "DB_ROOT_PASSWORD" "$DB_ROOT_PASSWORD"
+            warn_if_empty "DB_CONNECTION_STRING" "$DB_CONNECTION_STRING"
+            warn_if_empty "MONGO_INITDB_ROOT_USERNAME" "$MONGO_INITDB_ROOT_USERNAME"
+            warn_if_empty "MONGO_INITDB_ROOT_PASSWORD" "$MONGO_INITDB_ROOT_PASSWORD"
+            warn_if_empty "MONGO_INITDB_DATABASE" "$MONGO_INITDB_DATABASE"
+            warn_if_empty "MongoChat__ConnectionString" "$MongoChat__ConnectionString"
+            warn_if_empty "MONGO_DATABASE_USERNAME" "$MONGO_DATABASE_USERNAME"
+            warn_if_empty "MONGO_DATABASE_PASSWORD" "$MONGO_DATABASE_PASSWORD"
+
+            # Fetch compose file
+            if ! curl -f -o compose.prod.yaml https://raw.githubusercontent.com/Frebbers/HipsDontLie/main/compose.prod.yaml; then
+              echo "Error: Failed to download compose.prod.yaml"
+              exit 1
             fi
-          }
-          # Export environment variables for docker compose
-          export JWT_SECRET="${{ secrets.JWT_SECRET }}"
-          export HOST_DOMAIN="${{ vars.HOST_DOMAIN }}"
-          
-          # Email config
-          export EMAIL_VERIFICATION_URL="${{ vars.EMAIL_VERIFICATION_URL }}"
-          export SMTP_SERVER="${{ vars.SMTP_SERVER }}"
-          export SMTP_PORT="${{ vars.SMTP_PORT }}"
-          export SENDER_EMAIL="${{ vars.SMTP_SENDER_EMAIL }}"
-          export SENDER_PASSWORD="${{ secrets.SMTP_SENDER_PASSWORD }}"
-          
-          # Google auth config
-          export GOOGLE_CLIENT_ID="${{ secrets.GOOGLE_CLIENT_ID }}"
-          export GOOGLE_SECRET="${{ secrets.GOOGLE_CLIENT_SECRET }}"
-          export CERT_NOTIFICATION_EMAIL="${{ secrets.CERT_NOTIFICATION_EMAIL }}" #optional
-          
-          # Database config
-          export MYSQL_DATABASE_NAME="${{ vars.MYSQL_DATABASE_NAME }}"
-          export DB_PASSWORD="${{ secrets.MYSQL_DATABASE_PASSWORD }}"
-          export DB_NAME="${{ vars.MYSQL_DATABASE_NAME }}"
-          export DB_USER="${{ vars.MYSQL_DATABASE_USER_NAME }}"
-          export DB_ROOT_PASSWORD="${{ secrets.MYSQL_ROOT_PASSWORD }}"
-          export DB_CONNECTION_STRING="server=db;port=3306;database=${DB_NAME};user=${DB_USER};password=${DB_PASSWORD};"
-          
-          
-          # MongoDB config
-          export MONGO_INITDB_ROOT_USERNAME="${{ secrets.MONGO_ROOT_USERNAME }}"
-          export MONGO_INITDB_ROOT_PASSWORD="${{ secrets.MONGO_ROOT_PASSWORD }}"
-          export MONGO_INITDB_DATABASE="${{ vars.MONGO_DATABASE_NAME }}"
-          export MONGO_DATABASE_USERNAME="${{ vars.MONGO_DATABASE_USERNAME }}"
-          export MONGO_DATABASE_PASSWORD="${{ secrets.MONGO_DATABASE_PASSWORD }}"
-          export MongoChat__ConnectionString="mongodb://${MONGO_DATABASE_USERNAME}:${MONGO_DATABASE_PASSWORD}@mongodb:27017/?authSource=admin"
 
-          cd $HOME
-          
-          # Warnings for missing values
-          warn_if_empty "JWT_SECRET" "$JWT_SECRET"
-          warn_if_empty "HOST_DOMAIN" "$HOST_DOMAIN"
-          
-          warn_if_empty "EMAIL_VERIFICATION_URL" "$EMAIL_VERIFICATION_URL"
-          warn_if_empty "SMTP_SERVER" "$SMTP_SERVER"
-          warn_if_empty "SMTP_PORT" "$SMTP_PORT"
-          warn_if_empty "SENDER_EMAIL" "$SENDER_EMAIL"
-          warn_if_empty "SENDER_PASSWORD" "$SENDER_PASSWORD"
-          
-          warn_if_empty "GOOGLE_CLIENT_ID" "$GOOGLE_CLIENT_ID"
-          warn_if_empty "GOOGLE_SECRET" "$GOOGLE_SECRET"
-          warn_if_empty "CERT_NOTIFICATION_EMAIL" "$CERT_NOTIFICATION_EMAIL"
-          
-          warn_if_empty "MYSQL_DATABASE_NAME" "$MYSQL_DATABASE_NAME"
-          warn_if_empty "DB_PASSWORD" "$DB_PASSWORD"
-          warn_if_empty "DB_NAME" "$DB_NAME"
-          warn_if_empty "DB_USER" "$DB_USER"
-          warn_if_empty "DB_ROOT_PASSWORD" "$DB_ROOT_PASSWORD"
-          warn_if_empty "DB_CONNECTION_STRING" "$DB_CONNECTION_STRING"
+            # (Optional) If compose uses a placeholder tag, dynamically replace it:
+            # sed -i "s/IMAGE_TAG_PLACEHOLDER/${IMAGE_TAG}/g" compose.prod.yaml
 
-          warn_if_empty "MONGO_INITDB_ROOT_USERNAME" "$MONGO_INITDB_ROOT_USERNAME"
-          warn_if_empty "MONGO_INITDB_ROOT_PASSWORD" "$MONGO_INITDB_ROOT_PASSWORD"
-          warn_if_empty "MONGO_INITDB_DATABASE" "$MONGO_INITDB_DATABASE"
-          warn_if_empty "MongoChat__ConnectionString" "$MongoChat__ConnectionString"
-          warn_if_empty "MONGO_DATABASE_USERNAME" "$MONGO_DATABASE_USERNAME"
-          warn_if_empty "MONGO_DATABASE_PASSWORD" "$MONGO_DATABASE_PASSWORD"
-          
-          # Download the compose.prod.yaml file from the repository
-          if ! curl -f -o compose.prod.yaml https://raw.githubusercontent.com/Frebbers/HipsDontLie/main/compose.prod.yaml; then
-            echo "Error: Failed to download compose.prod.yaml"
-            exit 1
-          fi
-          
-          # Save current app container ID for rollback (if exists)
-          docker compose -f compose.prod.yaml pull app
+            docker compose -f compose.prod.yaml pull app
+            docker compose -f compose.prod.yaml stop app || true
+            docker compose -f compose.prod.yaml rm -f app || true
+            docker compose -f compose.prod.yaml up -d
 
-          
-          # Stop and remove the app container only
-          docker compose -f compose.prod.yaml stop app || true
-          docker compose -f compose.prod.yaml rm -f app || true
-          docker compose -f compose.prod.yaml up -d
-          echo "Waiting for 15 seconds to let the app start before checking its status"
-          sleep 15
-          docker logs hipsdontlie-app --tail 200
-        
+            echo "Waiting for 15 seconds to let the app start before checking its status"
+            sleep 15
+            docker logs hipsdontlie-app --tail 200
