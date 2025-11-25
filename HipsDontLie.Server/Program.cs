@@ -10,6 +10,7 @@ using HipsDontLie.WebSockets;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
@@ -36,7 +37,11 @@ namespace HipsDontLie {
             ConfigureSwagger(builder);
             ConfigureCors(builder);
             builder.Services.AddControllers();
-
+            Console.WriteLine($"ContentRoot: {builder.Environment.ContentRootPath}");
+            Console.WriteLine($"WebRoot: {builder.Environment.WebRootPath}");
+            if (builder.Environment.ContentRootPath == null) { throw new Exception("ContentRootPath is null."); }
+            if (builder.Environment.WebRootPath == null) { throw new Exception("WebRootPath is null."); }
+            
             var app = builder.Build();
             
             UseSwaggerUI(app);
@@ -45,15 +50,20 @@ namespace HipsDontLie {
             await SeedIdentityAsync(app);
 
             app.UseCors("AllowFrontend");
+
+            app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
+            app.MapStaticAssets();
+            app.MapFallbackToFile("index.html"); //serve SPA from wwwroot
             app.MapHealthChecks("/healthz");
 
-            app.Run();
+            Console.WriteLine("Configuration sequence finished, starting app...");
+            app.Run(); 
         }
 
-        // --- Helpers ---
+        // --- Helpers --- 
 
         private static async Task SeedIdentityAsync(WebApplication app)
         {
@@ -244,7 +254,7 @@ namespace HipsDontLie {
                               .AllowAnyHeader()
                               .AllowAnyMethod();
                     }
-                    Console.WriteLine($"starting with env: {env}");
+                    Console.WriteLine($"Using environment: {env}");
                 });
             });
         }

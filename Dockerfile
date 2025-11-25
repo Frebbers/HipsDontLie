@@ -32,12 +32,12 @@ FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
 WORKDIR /app
 
 # Environment variable for ASP.NET
-ENV ASPNETCORE_URLS=http://+:80
-ENV ASPNETCORE_ENVIRONMENT=Production
+ENV ASPNETCORE_URLS=http://+:7057;http://+:7191
+#ENV ASPNETCORE_ENVIRONMENT=Production
 
-# Expose HTTP/HTTPS
-EXPOSE 80
-EXPOSE 443
+# Expose frontend/backend
+EXPOSE 7191
+EXPOSE 7057
 
 # Copy published output from build stage
 COPY --from=build /app/publish .
