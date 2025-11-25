@@ -6,7 +6,7 @@ on:
         description: 'Docker image tag to deploy (optional; defaults to commit SHA from build run)'
         required: false
         type: string
-    workflow_dispatch:
+  workflow_dispatch:
 
 jobs:
   deploy:
