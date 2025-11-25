@@ -43,9 +43,12 @@ namespace HipsDontLie {
             ConfigureWebSockets(app);
             SeedIdentity(app);
             app.UseCors("AllowFrontend");
+            app.UseStaticFiles();
+            app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
+            app.MapFallbackToFile("index.html"); //serve SPA from wwwroot
             app.MapHealthChecks("/healthz");
             Console.WriteLine("Configuration sequence finished, starting app...");
             app.Run(); 
