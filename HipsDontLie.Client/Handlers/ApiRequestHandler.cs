@@ -3,7 +3,7 @@
     public sealed class ApiRequestHandler : DelegatingHandler
     {
         private readonly CustomAuthStateProvider _auth;
-        private static readonly string ApiHost = new Uri("https://localhost:7191/").Host;
+        private static readonly string ApiHost = new Uri("https://hipsdontlie.live/").Host;
 
         public ApiRequestHandler(CustomAuthStateProvider auth) => _auth = auth;
 

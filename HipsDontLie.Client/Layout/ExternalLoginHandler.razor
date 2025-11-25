@@ -24,7 +24,7 @@
             await JS.InvokeVoidAsync("eval", "history.replaceState(null,'', location.pathname + location.search)");
 
             // Exchange the auth code for your token
-            var resp = await Http.PostAsJsonAsync("auth/exchange", new { code });
+            var resp = await Http.PostAsJsonAsync("api/auth/exchange", new { code });
             if (resp.IsSuccessStatusCode)
             {
                 var dto = await resp.Content.ReadFromJsonAsync<TokenDto>();
