@@ -9,7 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     environment: HDL_AZURE
     steps:
-#    - name: Set up SSL certificate
     - name: Deploy to server
       uses: appleboy/ssh-action@v1.2.3
       with:
