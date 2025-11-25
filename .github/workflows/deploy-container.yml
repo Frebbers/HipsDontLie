@@ -103,7 +103,7 @@ jobs:
 #          OLD_CONTAINER_ID=$(docker ps -aq -f name=hipsdontlie-app) || true
           
           # Pull new images for the app service with error handling
-          docker compose -f compose.prod.yaml pull app; then
+          docker compose -f compose.prod.yaml pull app
 
           
           # Stop and remove the app container only
