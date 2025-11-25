@@ -18,8 +18,6 @@ using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.Extensions.FileProviders;
-using System.IO;
 
 namespace HipsDontLie {
     public class Program {
@@ -29,9 +27,6 @@ namespace HipsDontLie {
             if(builder.Configuration == null) {
                 throw new Exception("Configuration does not exist. Check your appsettings.json file.");
             }
-
-            // Ensure web root is wwwroot in the published container
-            builder.Environment.WebRootPath = Path.Combine(builder.Environment.ContentRootPath, "wwwroot");
             
             // Data access setup
             ConfigureDataAccess(builder);
@@ -48,13 +43,7 @@ namespace HipsDontLie {
             ConfigureWebSockets(app);
             SeedIdentity(app);
             app.UseCors("AllowFrontend");
-            
-            // Serve static files explicitly from the configured web root
-            app.UseStaticFiles(new StaticFileOptions {
-                FileProvider = new PhysicalFileProvider(app.Environment.WebRootPath),
-                RequestPath = ""
-            });
-            
+            app.UseStaticFiles();
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
