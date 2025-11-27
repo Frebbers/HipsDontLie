@@ -1,7 +1,7 @@
 name: CI/CD Pipeline
 
 on:
-  push:
+  pull_request:
     branches: [ main ]
     paths:
       - 'HipsDontLie.Client/**'
@@ -9,8 +9,7 @@ on:
       - 'HipsDontLie.Shared/**'
       - 'HipsDontLie.Test/**'
       - 'Dockerfile'
-  pull_request:
-    branches: [ main ]
+
 
 jobs:
   test:
