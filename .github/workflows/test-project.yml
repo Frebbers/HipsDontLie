@@ -3,6 +3,16 @@ on:
   workflow_call:
   push:
     branches: [ dev ]
+  pull_request:
+    branches: [main]
+    paths:
+      - 'HipsDontLie.Client/**'
+      - 'HipsDontLie.Server/**'
+      - 'HipsDontLie.Shared/**'
+      - 'HipsDontLie.Test/**'
+      - 'Dockerfile'
+      - 'compose.yml'
+  
 
 jobs:
   run-tests:
