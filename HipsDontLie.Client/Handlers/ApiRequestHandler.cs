@@ -1,4 +1,6 @@
-﻿namespace HipsDontLie.Client.Handlers
+﻿using System.Net.Http.Headers;
+
+namespace HipsDontLie.Client.Handlers
 {
     public sealed class ApiRequestHandler : DelegatingHandler
     {
@@ -7,18 +9,19 @@
 
         public ApiRequestHandler(CustomAuthStateProvider auth) => _auth = auth;
 
-        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken ct)
+        protected override async Task<HttpResponseMessage> SendAsync(
+            HttpRequestMessage request,
+            CancellationToken cancellationToken)
         {
-            //To avoid we dont attach the token to a malicious url
-            if (request.RequestUri?.Host == ApiHost)
+            var token = await _auth.GetAccessTokenAsync();
+
+            if (!string.IsNullOrWhiteSpace(token))
             {
-                var token = await _auth.GetAccessTokenAsync();
-                if (!string.IsNullOrWhiteSpace(token))
-                    request.Headers.Authorization =
-                        new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                request.Headers.Authorization =
+                    new AuthenticationHeaderValue("Bearer", token);
             }
-            request.Headers.Accept.ParseAdd("application/json");
-            return await base.SendAsync(request, ct);
+
+            return await base.SendAsync(request, cancellationToken);
         }
     }
 }

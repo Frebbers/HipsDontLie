@@ -19,6 +19,8 @@ builder.Services.AddScoped<ResourceService>();
 builder.Services.AddScoped<CustomAuthStateProvider>();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider>(sp => sp.GetRequiredService<CustomAuthStateProvider>());
+builder.Services.AddScoped<WebSocketService>();
+
 
 builder.Services.AddTransient<ApiErrorHandler>();
 builder.Services.AddTransient<ApiRequestHandler>();

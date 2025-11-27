@@ -1,4 +1,7 @@
-﻿@inherits LayoutComponentBase
+﻿@using HipsDontLie.Client.Services
+@inherits LayoutComponentBase
+@inject AuthenticationStateProvider AuthStateProvider
+@inject WebSocketService Ws
 
 <MudLayout>
     <MudAppBar Elevation="1">
@@ -28,6 +31,23 @@
     </MudMainContent>
 </MudLayout>
 @code {
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ConnectIfAuthenticatedAsync();
+    }
+
+    private async Task ConnectIfAuthenticatedAsync()
+    {
+        var state = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = state.User;
+
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            await Ws.ConnectAsync();
+        }
+    }
+
     bool _drawerOpen = true;
 
     void DrawerToggle()
