@@ -1,0 +1,210 @@
+﻿@page "/chat/{ChatId:int}/{OtherUserId:int}"
+@using System.Security.Claims
+@using HipsDontLie.Client.Handlers
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Web
+@using MudBlazor
+@using HipsDontLie.Client.Services
+@using HipsDontLie.Shared.DTO
+@using HipsDontLie.WebSockets.Models
+
+@inject ResourceService ChatService
+@inject WebSocketService Ws
+@inject AuthenticationStateProvider AuthStateProvider
+
+@implements IDisposable
+
+<MudPaper Class="pa-4" Width="50vw" Height="70vh">
+    <MudStack Spacing="2" Style="height:100%;">
+        <MudText Typo="Typo.h5">Chat @ChatId</MudText>
+
+        @if (_isLoading)
+        {
+            <MudStack AlignItems="MudBlazor.AlignItems.Center" JustifyContent="JustifyContent.Center" Style="flex:1;">
+                <MudProgressCircular Indeterminate="true" />
+            </MudStack>
+        }
+        else if (!string.IsNullOrWhiteSpace(_errorMessage))
+        {
+            <MudAlert Severity="Severity.Error">@_errorMessage</MudAlert>
+        }
+        else
+        {
+            <!-- Beskedliste -->
+            <MudPaper Elevation="1" Class="pa-2" Style="flex:1; overflow-y:auto;">
+                <MudChat>
+                    @foreach (var msg in _messages)
+                    {
+                        var pos = msg.SenderId == _currentUserId
+                        ? ChatBubblePosition.End    
+                        : ChatBubblePosition.Start;
+
+                        <MudChatBubble ChatPosition="@pos">
+                            <MudText Typo="Typo.caption" Color="Color.Secondary">
+                                @msg.SenderName
+                            </MudText>
+                            <MudText>@msg.Content</MudText>
+                            <MudText Typo="Typo.overline" Color="Color.Default">
+                                @msg.TimeStamp.ToLocalTime().ToShortTimeString()
+                            </MudText>
+                        </MudChatBubble>
+                    }
+                </MudChat>
+
+                @if (_isSomeoneTyping)
+                {
+                    <MudText Typo="Typo.caption" Color="Color.Info" Class="mt-1">
+                        Someone is typing...
+                    </MudText>
+                }
+            </MudPaper>
+
+            <ChatInput OnSend="HandleSendAsync"
+                       OnTyping="HandleTypingAsync" />
+        }
+    </MudStack>
+</MudPaper>
+
+@code {
+    [Parameter] public int ChatId { get; set; }
+    [Parameter] public int OtherUserId { get; set; }
+
+    private readonly List<WebSockets.Models.ChatMessage> _messages = new();
+
+    private int _currentUserId;
+    private string _currentUsername = "";
+    private bool _isSomeoneTyping;
+    private bool _isLoading = true;
+    private string? _errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var authTask = AuthStateProvider.GetAuthenticationStateAsync();
+            var messagesTask = ChatService.GetChatMessagesAsync(ChatId);
+
+            var authState = await authTask;
+            var user = authState.User;
+
+            if (user.Identity?.IsAuthenticated == true)
+            {
+                var idClaim = user.FindFirst(ClaimTypes.NameIdentifier) ?? user.FindFirst("nameid");
+                if (idClaim != null && int.TryParse(idClaim.Value, out var id))
+                    _currentUserId = id;
+
+                _currentUsername = user.Identity.Name
+                                   ?? user.FindFirst(ClaimTypes.Name)?.Value
+                                   ?? "";
+            }
+
+            var dtoMessages = await messagesTask;
+
+            _messages.Clear();
+            _messages.AddRange(dtoMessages.Select(m => new WebSockets.Models.ChatMessage
+            {
+                MessageId = m.MessageId,
+                SenderId = m.SenderId,
+                SenderName = m.SenderName,
+                Content = m.Content,
+                TimeStamp = m.TimeStamp,
+                ChatId = m.ChatId
+            }));
+
+            Ws.ChatMessageReceived += OnChatMessageReceived;
+            Ws.TypingStarted += OnTypingStarted;
+            Ws.TypingStopped += OnTypingStopped;
+
+            await Ws.ConnectAsync();
+            await Ws.JoinChatAsync(ChatId);
+        }
+        catch (ApiException ex)
+        {
+            _errorMessage = ex.Message;
+        }
+        catch (Exception ex)
+        {
+            _errorMessage = $"Unexpected error: {ex.Message}";
+        }
+        finally
+        {
+            _isLoading = false;
+        }
+    }
+
+    private void OnChatMessageReceived(WebSockets.Models.ChatMessage msg)
+    {
+        if (msg.ChatId != ChatId)
+            return;
+
+        _messages.Add(msg);
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void OnTypingStarted(TypingMessage msg)
+    {
+        if (msg.ChatId != ChatId)
+            return;
+
+        if (msg.UserId != _currentUserId)
+        {
+            _isSomeoneTyping = true;
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private void OnTypingStopped(TypingMessage msg)
+    {
+        if (msg.ChatId != ChatId)
+            return;
+
+        if (msg.UserId != _currentUserId)
+        {
+            _isSomeoneTyping = false;
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async Task HandleSendAsync(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+            return;
+
+        var dto = new SendMessageRequestDTO
+        {
+            Content = text
+        };
+
+        try
+        {
+            await ChatService.SendMessageToUserAsync(OtherUserId, dto);
+
+            await Ws.SendStopTypingAsync(ChatId, _currentUserId, _currentUsername);
+        }
+        catch (ApiException ex)
+        {
+            _errorMessage = ex.Message;
+        }
+    }
+
+    private async Task HandleTypingAsync(bool stop)
+    {
+        if (stop)
+        {
+            await Ws.SendStopTypingAsync(ChatId, _currentUserId, _currentUsername);
+        }
+        else
+        {
+            await Ws.SendTypingAsync(ChatId, _currentUserId, _currentUsername);
+        }
+    }
+
+    public void Dispose()
+    {
+        Ws.ChatMessageReceived -= OnChatMessageReceived;
+        Ws.TypingStarted -= OnTypingStarted;
+        Ws.TypingStopped -= OnTypingStopped;
+
+        _ = Ws.LeaveChatAsync(ChatId);
+    }
+}

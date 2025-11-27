@@ -59,17 +59,15 @@ namespace HipsDontLie.Controllers
         }
 
         [HttpPost("user/{userId}/send")]
-        public async Task<IActionResult> SendMessageToUserAsync(int userId, [FromBody]SendMessageRequestDTO messageDto)
+        public async Task<IActionResult> SendMessageToUserAsync(int userId, [FromBody] SendMessageRequestDTO messageDto)
         {
-            var senderId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var senderId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
 
-            bool success = await _chatService.SendMessageToUserAsync(senderId, userId, messageDto);
-            if (!success)
+            var result = await _chatService.SendMessageToUserAsync(senderId, userId, messageDto);
+            if (result is null)
                 return BadRequest(new { message = "Failed to send message to user/chat." });
 
-            return Created(string.Empty, new { message = "Message sent successfully!" });
+            return Ok(result);
         }
-
-
     }
 }

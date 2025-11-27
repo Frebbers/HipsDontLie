@@ -1,0 +1,129 @@
+﻿@page "/inbox"
+@using System.Security.Claims
+@using HipsDontLie.Client.Handlers
+@using MudBlazor
+@using HipsDontLie.Shared.DTO
+@using HipsDontLie.Client.Services
+
+@inject ResourceService ChatService
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Nav
+
+<MudPaper Class="pa-4" Width="50vw">
+    <MudText Typo="Typo.h5">Inbox</MudText>
+
+    @if (_loading)
+    {
+        <MudProgressCircular Indeterminate="true" />
+    }
+    else if (!string.IsNullOrWhiteSpace(_error))
+    {
+        <MudAlert Severity="Severity.Error">@_error</MudAlert>
+    }
+    else if (_inbox.Count == 0)
+    {
+        <MudText>No conversations yet.</MudText>
+    }
+    else
+    {
+        <MudList T="GetUserInboxResponseDTO">
+            @foreach (var chat in _inbox)
+            {
+                var other = chat.Participants?
+                                .FirstOrDefault(p => p.UserId != _currentUserId)
+                           ?? chat.Participants?
+                                .FirstOrDefault();
+
+                if (other is null)
+                    continue;
+
+                <MudListItem OnClick="@(() => GoToChat(chat.ChatId, other.UserId))">
+                    <MudText>@(other.Name ?? $"User {other.UserId}")</MudText>
+
+                    @if (!string.IsNullOrEmpty(chat.SessionTitle))
+                    {
+                        <MudText Typo="Typo.caption">@chat.SessionTitle</MudText>
+                    }
+                </MudListItem>
+            }
+        </MudList>
+    }
+    <MudButton OnClick="@(() => StartConversationAsync(2))">
+        Message
+    </MudButton>
+
+</MudPaper>
+
+@code {
+    private bool _loading = true;
+    private string? _error;
+    private List<GetUserInboxResponseDTO> _inbox = new();
+    private int _currentUserId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+            var idClaim = user.FindFirst(ClaimTypes.NameIdentifier) ?? user.FindFirst("nameid");
+
+            if (idClaim != null && int.TryParse(idClaim.Value, out var id))
+                _currentUserId = id;
+
+            _inbox = await ChatService.GetInboxAsync();
+        }
+        catch (ApiException ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private void GoToChat(int chatId, int otherUserId)
+    {
+        Nav.NavigateTo($"/chat/{chatId}/{otherUserId}");
+    }
+
+    private async Task StartConversationAsync(int otherUserId)
+    {
+        var dto = new SendMessageRequestDTO
+        {
+            Content = "Hej!"
+        };
+
+        try
+        {
+            await ChatService.SendMessageToUserAsync(otherUserId, dto);
+
+            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+            var idClaim = user.FindFirst(ClaimTypes.NameIdentifier) ?? user.FindFirst("nameid");
+            if (idClaim is null || !int.TryParse(idClaim.Value, out var currentUserId))
+                throw new Exception("Could not resolve current user id from claims.");
+
+            var inbox = await ChatService.GetInboxAsync();
+
+            var chat = inbox.FirstOrDefault(c =>
+                c.Participants != null &&
+                c.Participants.Any(p => p.UserId == currentUserId) &&
+                c.Participants.Any(p => p.UserId == otherUserId));
+
+            if (chat is null)
+                throw new Exception("Chat was not found in inbox after sending first message.");
+
+            Nav.NavigateTo($"/chat/{chat.ChatId}/{otherUserId}");
+        }
+        catch (ApiException ex)
+        {
+            Console.WriteLine($"API error when starting conversation: {ex.StatusCode} - {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Unexpected error when starting conversation: {ex.Message}");
+        }
+    }
+}

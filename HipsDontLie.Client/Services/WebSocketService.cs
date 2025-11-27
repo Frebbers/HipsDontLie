@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
+using HipsDontLie.WebSockets.Models;   // 👈 shared modeller
 using Microsoft.JSInterop;
 
 namespace HipsDontLie.Client.Services
@@ -9,7 +11,7 @@ namespace HipsDontLie.Client.Services
     {
         private readonly IJSRuntime _js;
         private readonly HttpClient _http;
-        private readonly CustomAuthStateProvider _authState; 
+        private readonly CustomAuthStateProvider _authState;
 
         private IJSObjectReference? _module;
         private DotNetObjectReference<WebSocketService>? _dotNetRef;
@@ -17,9 +19,22 @@ namespace HipsDontLie.Client.Services
         private bool _isConnecting;
         public bool IsConnected { get; private set; }
 
+        // Dine gamle events
         public event Action? OnConnected;
         public event Action<int, string>? OnDisconnected;
         public event Action<string>? OnRawMessage;
+
+        // 🔹 Typed events baseret på shared modeller
+        public event Action<ChatMessage>? ChatMessageReceived;
+        public event Action<TypingMessage>? TypingStarted;
+        public event Action<TypingMessage>? TypingStopped;
+        public event Action<PendingJoinRequestMessage>? PendingJoinRequestReceived;
+        public event Action<GroupAcceptedMessage>? GroupAcceptedReceived;
+
+        private static readonly JsonSerializerOptions _jsonOptions = new()
+        {
+            PropertyNameCaseInsensitive = true
+        };
 
         public WebSocketService(
             IJSRuntime js,
@@ -73,27 +88,33 @@ namespace HipsDontLie.Client.Services
             }
         }
 
+        // 🔹 Brug dine shared modeller når du sender
+
         public Task JoinChatAsync(int chatId)
-            => SendAsync(new { type = "join", chatId });
+            => SendAsync(new JoinMessage { ChatId = chatId });
 
         public Task LeaveChatAsync(int chatId)
-            => SendAsync(new { type = "leave", chatId });
+            => SendAsync(new LeaveMessage { ChatId = chatId });
 
-        public Task SendChatMessageAsync(int chatId, string content)
-            => SendAsync(new
+        public Task SendTypingAsync(int chatId, int userId, string? username)
+            => SendAsync(new TypingMessage
             {
-                type = "message",
-                chatId,
-                content
+                ChatId = chatId,
+                UserId = userId,
+                Username = username,
+                Type = "typing"
             });
 
-        public Task SendTypingAsync(int chatId)
-            => SendAsync(new { type = "typing", chatId });
+        public Task SendStopTypingAsync(int chatId, int userId, string? username)
+            => SendAsync(new TypingMessage
+            {
+                ChatId = chatId,
+                UserId = userId,
+                Username = username,
+                Type = "stopTyping"
+            });
 
-        public Task SendStopTypingAsync(int chatId)
-            => SendAsync(new { type = "stopTyping", chatId });
-
-        private async Task SendAsync(object payload)
+        private async Task SendAsync(IWebSocketMessage payload)
         {
             if (_module is null)
                 throw new InvalidOperationException("WebSocket modulet er ikke loadet. Kald ConnectAsync først.");
@@ -119,6 +140,64 @@ namespace HipsDontLie.Client.Services
         public void OnJsMessageReceived(string rawJson)
         {
             OnRawMessage?.Invoke(rawJson);
+
+            try
+            {
+                using var doc = JsonDocument.Parse(rawJson);
+                var root = doc.RootElement;
+
+                if (!root.TryGetProperty("type", out var typeProp))
+                    return;
+
+                var type = typeProp.GetString();
+
+                switch (type)
+                {
+                    case "message":
+                        {
+                            var msg = JsonSerializer.Deserialize<ChatMessage>(rawJson, _jsonOptions);
+                            if (msg is not null)
+                                ChatMessageReceived?.Invoke(msg);
+                            break;
+                        }
+
+                    case "typing":
+                        {
+                            var msg = JsonSerializer.Deserialize<TypingMessage>(rawJson, _jsonOptions);
+                            if (msg is not null)
+                                TypingStarted?.Invoke(msg);
+                            break;
+                        }
+
+                    case "stopTyping":
+                        {
+                            var msg = JsonSerializer.Deserialize<TypingMessage>(rawJson, _jsonOptions);
+                            if (msg is not null)
+                                TypingStopped?.Invoke(msg);
+                            break;
+                        }
+
+                    case "pending.join.request":
+                        {
+                            var msg = JsonSerializer.Deserialize<PendingJoinRequestMessage>(rawJson, _jsonOptions);
+                            if (msg is not null)
+                                PendingJoinRequestReceived?.Invoke(msg);
+                            break;
+                        }
+
+                    case "group.accepted":
+                        {
+                            var msg = JsonSerializer.Deserialize<GroupAcceptedMessage>(rawJson, _jsonOptions);
+                            if (msg is not null)
+                                GroupAcceptedReceived?.Invoke(msg);
+                            break;
+                        }
+                }
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine($"Failed to parse WS message: {ex.Message}");
+            }
         }
 
         public async ValueTask DisposeAsync()

@@ -34,6 +34,11 @@ namespace HipsDontLie.Client.Services
                    ?? new ApiResponseMessage("Unknown response from UpdateProfile");
         }
 
+        public async Task<int> GetUserIdByEmail(string email, CancellationToken ct = default)
+        {
+            return await _http.GetFromJsonAsync<int>($"api/Users/profile/e-mail/{email}", ct);
+        }
+
         public async Task<ApiResponseMessage> DeleteUser(CancellationToken ct = default) {
             using var res = await _http.DeleteAsync("api/auth/remove-user", ct);
             await _authStateProvider.LogoutAsync();
@@ -124,7 +129,34 @@ namespace HipsDontLie.Client.Services
         #endregion
 
         #region Chat
-        // TO-DO
+
+        public async Task<List<GetUserInboxResponseDTO>> GetInboxAsync(CancellationToken ct = default)
+        {
+            return await _http.GetFromJsonAsync<List<GetUserInboxResponseDTO>>("api/Chats/inbox", ct)
+                   ?? new List<GetUserInboxResponseDTO>();
+        }
+
+        public async Task<List<GetMessagesInChatResponseDTO>> GetChatMessagesAsync(
+            int chatId,
+            CancellationToken ct = default)
+        {
+            return await _http.GetFromJsonAsync<List<GetMessagesInChatResponseDTO>>(
+                       $"api/Chats/{chatId}/messages", ct)
+                   ?? new List<GetMessagesInChatResponseDTO>();
+        }
+
+        public async Task<SendMessageResultDTO> SendMessageToUserAsync(
+            int userId,
+            SendMessageRequestDTO msg,
+            CancellationToken ct = default)
+        {
+            using var res = await _http.PostAsJsonAsync($"api/Chats/user/{userId}/send", msg, ct);
+            res.EnsureSuccessStatusCode();
+
+            return await res.Content.ReadFromJsonAsync<SendMessageResultDTO>(cancellationToken: ct)
+                   ?? throw new Exception("Empty response from SendMessageToUser");
+        }
+
         #endregion
     }
 }

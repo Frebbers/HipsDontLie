@@ -1,0 +1,94 @@
+﻿@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
+@using MudBlazor
+
+<MudPaper Class="pa-2" Style="width:100%;">
+    <MudTextField @bind-Value="_message"
+                  Placeholder="Type a message..."
+                  Immediate="true"
+                  OnKeyDown="HandleKeyDown"
+                  OnInput="HandleInput"
+                  Variant="MudBlazor.Variant.Outlined"
+                  Class="w-100" />
+</MudPaper>
+
+@code {
+    [Parameter] public EventCallback<string> OnSend { get; set; }
+    [Parameter] public EventCallback<bool> OnTyping { get; set; }
+
+    private string _message = string.Empty;
+
+    private System.Timers.Timer? _stopTypingTimer;
+    private DateTime _lastTypingSent = DateTime.MinValue;
+
+    protected override void OnInitialized()
+    {
+        _stopTypingTimer = new System.Timers.Timer(3000);
+        _stopTypingTimer.AutoReset = false;
+        _stopTypingTimer.Elapsed += async (_, _) =>
+        {
+            if (OnTyping.HasDelegate)
+            {
+                await InvokeAsync(() => OnTyping.InvokeAsync(true)); 
+            }
+        };
+    }
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await SendAsync();
+        }
+    }
+
+    private async Task HandleInput(ChangeEventArgs e)
+    {
+        var text = e?.Value?.ToString() ?? string.Empty;
+        _message = text;
+
+        var now = DateTime.UtcNow;
+
+        if (OnTyping.HasDelegate && (now - _lastTypingSent).TotalMilliseconds > 1000)
+        {
+            await OnTyping.InvokeAsync(false);
+            _lastTypingSent = now;
+        }
+
+        if (_stopTypingTimer is not null)
+        {
+            _stopTypingTimer.Stop();
+            _stopTypingTimer.Start();
+        }
+    }
+
+    private async Task SendAsync()
+    {
+        var trimmed = _message.Trim();
+        if (string.IsNullOrEmpty(trimmed))
+            return;
+
+        if (OnSend.HasDelegate)
+        {
+            await OnSend.InvokeAsync(trimmed);
+        }
+
+        _message = string.Empty;
+
+        if (OnTyping.HasDelegate)
+        {
+            await OnTyping.InvokeAsync(true);
+        }
+
+        _stopTypingTimer?.Stop();
+    }
+
+    public void Dispose()
+    {
+        if (_stopTypingTimer is not null)
+        {
+            _stopTypingTimer.Stop();
+            _stopTypingTimer.Dispose();
+        }
+    }
+}

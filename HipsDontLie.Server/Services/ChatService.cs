@@ -88,7 +88,10 @@ namespace HipsDontLie.Services
             return true;
         }
 
-        public async Task<bool> SendMessageToUserAsync(int senderId, int receiverId, SendMessageRequestDTO messageDto)
+        public async Task<SendMessageResultDTO?> SendMessageToUserAsync(
+            int senderId,
+            int receiverId,
+            SendMessageRequestDTO messageDto)
         {
             var chat = await _chatRepository.GetPrivateChatBetweenUsersAsync(senderId, receiverId);
 
@@ -97,14 +100,14 @@ namespace HipsDontLie.Services
                 chat = new Chat
                 {
                     UserChats = new List<UserChat>
-                    {
-                        new UserChat { UserId = senderId },
-                        new UserChat { UserId = receiverId }
-                    }
+            {
+                new UserChat { UserId = senderId },
+                new UserChat { UserId = receiverId }
+            }
                 };
 
                 var created = await _chatRepository.CreatePrivateChatAsync(chat);
-                if (!created) return false;
+                if (!created) return null;
             }
 
             var message = new Message
@@ -131,7 +134,12 @@ namespace HipsDontLie.Services
             };
 
             await _webSocketEventHandler.BroadcastMessageAsync(dto, chat.ChatId);
-            return true;
+
+            return new SendMessageResultDTO
+            {
+                ChatId = chat.ChatId,
+                Message = dto
+            };
         }
     }
 }

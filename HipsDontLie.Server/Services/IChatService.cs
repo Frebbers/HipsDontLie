@@ -7,6 +7,10 @@ namespace HipsDontLie.Services
         Task<List<GetMessagesInChatResponseDTO>> GetMessagesByChatIdAsync(int chatId, int userId);
         Task<List<GetUserInboxResponseDTO>> GetUserInboxAsync(int userId);
         Task<bool> SendMessageToSessionAsync(int sessionId, int userId, SendMessageRequestDTO messageDto);
-        Task<bool> SendMessageToUserAsync(int senderId, int receiverId, SendMessageRequestDTO messageDto);
+        //Task<bool> SendMessageToUserAsync(int senderId, int receiverId, SendMessageRequestDTO messageDto);
+        Task<SendMessageResultDTO?> SendMessageToUserAsync(
+            int senderId,
+            int receiverId,
+            SendMessageRequestDTO messageDto);
     }
 }
