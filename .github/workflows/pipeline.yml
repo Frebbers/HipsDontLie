@@ -11,13 +11,13 @@ on:
       - 'Dockerfile'
 
 jobs:
-  test:
-    name: Run tests
-    uses: ./.github/workflows/test-project.yml
+#   test: we don't run test here anymore because we are running tests in PR's
+#     name: Run tests
+#     uses: ./.github/workflows/test-project.yml
 
   build:
     name: Build and push image
-    needs: test
+    # needs: test
     uses: ./.github/workflows/docker-image.yml
     with:
       push: ${{ github.event_name == 'push' }}
