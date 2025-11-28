@@ -88,16 +88,9 @@
     {
         isNavigating = true;
 
-        string url;
-
-        if (Nav.BaseUri.Contains("localhost"))
-        {
-            url = "https://localhost:7191/api/auth/external/Google?returnUrl=/signin-external";
-        }
-        else
-        {
-            url = "https://hipsdontlie.live/api/auth/external/Google?returnUrl=/signin-external";
-        }
+        var url = Nav.BaseUri.Contains("localhost")
+        ? "https://localhost:7191/api/auth/external/Google?returnUrl=/signin-external"
+        : "https://hipsdontlie.live/api/auth/external/Google?returnUrl=/signin-external";
 
         Nav.NavigateTo(url, forceLoad: true);
     }
