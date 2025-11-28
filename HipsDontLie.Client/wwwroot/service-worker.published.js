@@ -38,6 +38,19 @@ async function onActivate(event) {
 }
 
 async function onFetch(event) {
+    if (event.request.method !== 'GET') {
+        return fetch(event.request);
+    }
+
+    const url = new URL(event.request.url);
+
+    if (event.request.mode === 'navigate' &&
+        (url.pathname.startsWith('/api/auth/')
+            || url.pathname === '/signin-google'
+            || url.pathname === '/signin-external')) {
+        return fetch(event.request);
+    }
+
     let cachedResponse = null;
     if (event.request.method === 'GET') {
         // For all navigation requests, try to serve index.html from cache,
