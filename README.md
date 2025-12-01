@@ -1,20 +1,20 @@
 # Project HDL
 This repository is a fork of the Project GameTogether backend using a Blazor based front end. https://github.com/frebbers/gametogether-backend
 
-# How to deploy this project
+## How to deploy this project
 
 There are two ways of deploying HipsDontLie. Using Github Actions (recommended) and manually, using a .env file. Regardless of which one you choose, you must set up your nginx siteconf manually, as the swag container will only handle SSL certificates manually.
 
-# Prerequisites
+## Prerequisites
 * 64 bit Linux system with SSH public key authorization enabled
 * Docker
 * non-root docker user with ssh privileges and an ssh public key
 * UFW (optional but recommended)
 
-# Method 1: Automatic deployment with GitHub Actions
+## Method 1: Automatic deployment with GitHub Actions
 If you want to customize your HipsDontLie instance with, for instance, your own branding, it is recommended to fork this repository and add your environment variables to GitHub actions to deploy.
 
-## Step 1: Set up GitHub Actions variables
+### Step 1: Set up GitHub Actions variables
 * DOCKERHUB_USERNAME
 * HDL_AZURE
 * EMAIL_VERIFICATION_URL
@@ -29,7 +29,7 @@ If you want to customize your HipsDontLie instance with, for instance, your own 
 * HDL_AZURE
 * SMTP_SERVER
 
-## Step 2: Set up GitHub Actions secrets
+### Step 2: Set up GitHub Actions secrets
 
 * DOCKERHUB_TOKEN
 * GOOGLE_CLIENT_ID
@@ -46,21 +46,22 @@ If you want to customize your HipsDontLie instance with, for instance, your own 
 * SSH_PRIVATE_KEY
 * SSH_USER
 
-## Step 3: Trigger deployment
+### Step 3: Trigger deployment
 
 Make any change to any of the directories beginning with HipsDontLie to trigger deployment. Watch your runner automatically deploy the project! 
 
-# Method 2: Manual Deployment with Docker Compose
+## Method 2: Manual Deployment with Docker Compose
 
 If you don't want to fork the Github Repository and just run it as-is, follow these steps.
 
-## Step 1: Clone the project
+### Step 1: Clone the project
 ```git clone https://github.com/Frebbers/HipsDontLie```
+```cd hipsdontlie```
 
-## Step 2: Create your env file
+### Step 2: Create your env file
 ```nano .env```
 
-## Step 3: Populate your env file
+### Step 3: Populate your env file
 Use this template to populate your .env file
 ```
 # JWT settings
@@ -102,7 +103,7 @@ MONGO_DATABASE_PASSWORD=your_mongo_database_password_here
 # Format: mongodb://user:password@host:port/database?authSource=admin
 MongoChat__ConnectionString=mongodb://MONGO_DATABASE_USERNAME:MONGO_DATABASE_PASSWORD@mongodb:27017/MONGO_INITDB_DATABASE?authSource=admin
 ```
-## Step 5: Start HDL
+### Step 5: Start HDL
 ```docker compose -f compose.prod.yaml up -d```
 You can now access HDL at whatever port you configured in your siteconf file.
 
