@@ -4,7 +4,14 @@
 @using HipsDontLie.Shared.DTO
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize]
-
+<style>
+    @@media (max-width: 600px) {
+        .mud-container {
+            padding-left: 0;
+            padding-right: 0;
+        }
+    }
+</style>
 @if (isLoading)
 {
     <div class="d-flex justify-center mt-4">

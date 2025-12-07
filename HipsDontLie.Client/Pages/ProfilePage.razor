@@ -90,12 +90,12 @@ else {
                 </MudCardActions>
             }
             else {
-                <MudCardActions Class="d-flex">
+                <MudCardActions Class="d-flex" Style="justify-content: center; align-self: center;">
                     <MudTextField @bind-Value="Profile.Description"
                                   Label="About Me"
                                   Variant="MudBlazor.Variant.Outlined"
                                   Lines="3"
-                                  Style="width:300px; justify-content: center; align-items: center;" />
+                                  Style="width:300px;" />
                 </MudCardActions>
                 <MudCardActions Class="d-flex justify-center">
                     <MudButton Disabled="@isSaving" Color="Color.Primary"
