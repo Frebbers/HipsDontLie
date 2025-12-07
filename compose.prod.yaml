@@ -15,7 +15,11 @@ services:
     networks:
         - app-network
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://app/healthz"]
+      test: ["CMD", "curl", "-f", "http://localhost:7191/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
     environment:
       ASPNETCORE_ENVIRONMENT: "Production"
       DOTNET_RUNNING_IN_CONTAINER: "true"
