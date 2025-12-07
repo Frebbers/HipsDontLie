@@ -112,7 +112,7 @@ jobs:
             echo "Waiting for 15 seconds to let the app start before checking its status"
             sleep 15
             docker logs hipsdontlie-app --tail 200
-            if ! docker ps --filter "name=app" --filter "health=healthy" --format '{{.ID}}' | grep -q .; then
+            if ! docker ps --filter "name=hipsdontlie-app" --filter "health=healthy" --format '{{.ID}}' | grep -q .; then
               echo "Error: 'app' container is not healthy"
               exit 1
             fi
