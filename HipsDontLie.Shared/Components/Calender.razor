@@ -2,7 +2,20 @@
 @using Microsoft.AspNetCore.Authorization
 @inject Radzen.DialogService DialogService
 
-<RadzenScheduler @ref=@scheduler SlotRender=@OnSlotRender style="height: 768px;" TItem="AppointmentDTO" Data=@Appointments StartProperty="Start" EndProperty="End" ShowHeader=@showHeader
+<style>
+    @@media (max-width: 600px) {
+        .scheduler {
+            height: 65vh !important;
+        }
+    }
+
+    .scheduler {
+        height: 80vh;
+    }
+
+</style>
+
+<RadzenScheduler @ref=@scheduler SlotRender=@OnSlotRender class="scheduler" TItem="AppointmentDTO" Data=@Appointments StartProperty="Start" EndProperty="End" ShowHeader=@showHeader
                  TextProperty="Text" SelectedIndex="2"
     SlotSelect=@OnSlotSelect AppointmentSelect=@OnAppointmentSelect AppointmentRender=@OnAppointmentRender DaySelect="@OnDaySelect"
     AppointmentMove=@OnAppointmentMove >

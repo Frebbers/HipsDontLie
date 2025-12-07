@@ -6,17 +6,32 @@
         <MudText Typo="Typo.h5" Class="ml-3">Hips Dont Lie</MudText>
         <MudSpacer />
         <MudIconButton Icon="" Color="Color.Inherit" Edge="Edge.End" />
-        <MudMenu>
-            <ActivatorContent>
-                <MudAvatar>
-                    <MudImage Src="icon-512.png" />
-                </MudAvatar>
-            </ActivatorContent>
-            <ChildContent>
-                <MudMenuItem Label="Profile" Href="/profile" />
-            </ChildContent>
-        </MudMenu>
-        <LoginDisplay />
+        <AuthorizeView Context="auth">
+            <Authorized>
+            <MudMenu>
+                <ActivatorContent>
+                        <MudAvatar Size="MudBlazor.Size.Large" Color="Color.Dark">
+                            @{
+                                var username = auth.User.Identity.Name ?? string.Empty;
+                                var initial = !string.IsNullOrWhiteSpace(username)
+                                ? char.ToUpper(username[0])
+                                : '?';
+                            }
+                            @initial
+                        </MudAvatar>
+                </ActivatorContent>
+                <ChildContent>
+                    <MudMenuItem Label="Profile" Href="/profile" />
+                    <MudMenuItem Style="padding:0;">
+                        <LoginDisplay />
+                    </MudMenuItem>
+                </ChildContent>
+            </MudMenu>
+            </Authorized>
+            <NotAuthorized>
+                <LoginDisplay />
+            </NotAuthorized>
+        </AuthorizeView>
     </MudAppBar>
     <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
         <NavMenu />
