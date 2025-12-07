@@ -9,10 +9,6 @@
                         <MudText Typo="Typo.h3" Class="mb-2">
                             Welcome, @auth.User.Identity?.Name!
                         </MudText>
-                        <MudText Typo="Typo.subtitle1" Class="mb-4">
-                            Something Something... nice welcoming message!
-                        </MudText>
-
                         <MudStack Row="true" Spacing="1" Class="mb-3">
                             <AuthorizeView Roles="Instructor">
                                 <MudChip T="string"
@@ -33,13 +29,12 @@
                             </AuthorizeView>
                         </MudStack>
 
+                        <MudText Typo="Typo.subtitle1" Class="mb-4">
+                            Welcome to HipsDontLie — your platform for structured, community-driven training.
+                            Browse courses, join groups, track your schedule, and progress alongside others at your own pace.
+                        </MudText>
+
                         <MudStack Spacing="2">
-                            <MudButton Href="/courses"
-                                       Color="Color.Primary"
-                                       Variant="MudBlazor.Variant.Filled"
-                                       StartIcon="@Icons.Material.Filled.Group">
-                                Browse courses
-                            </MudButton>
                             <MudButton Href="/profile"
                                        Color="Color.Secondary"
                                        Variant="MudBlazor.Variant.Outlined"
@@ -79,23 +74,20 @@
         <AuthorizeView Context="auth2">
             <Authorized>
                 <MudItem xs="12" md="5">
-                    <MudGrid Spacing="2">
-                        <MudItem xs="12" sm="6">
+                    <MudGrid Justify="Justify.SpaceAround" Style="height: 100%;" Spacing="2">
+                        <MudItem xs="12">
                             <MudPaper Elevation="6" Class="home-feature-card">
                                 <MudIcon Icon="@Icons.Material.Filled.Search" Size="Size.Large" />
-                                <MudText Typo="Typo.h6" Class="mt-2 mb-1">Find courses</MudText>
+                                <MudText Typo="Typo.h6" Class="mt-2 mb-1">
+                                    <MudButton Href="/courses"
+                                               Color="Color.Primary"
+                                               Variant="MudBlazor.Variant.Text"
+                                               Style="padding: .2em 0px .2em 0px; font-size 1rem;">
+                                        Find Courses
+                                    </MudButton>
+                                </MudText>
                                 <MudText Typo="Typo.body2" Class="home-muted">
                                     Search for courses that match your interests and schedule.
-                                </MudText>
-                            </MudPaper>
-                        </MudItem>
-
-                        <MudItem xs="12" sm="6">
-                            <MudPaper Elevation="6" Class="home-feature-card">
-                                <MudIcon Icon="@Icons.Material.Filled.AccessibleForward" Size="Size.Large" />
-                                <MudText Typo="Typo.h6" Class="mt-2 mb-1">TO-DO</MudText>
-                                <MudText Typo="Typo.body2" Class="home-muted">
-                                    Maybe we can put chat information in this card.
                                 </MudText>
                             </MudPaper>
                         </MudItem>
@@ -104,16 +96,17 @@
                             <MudItem xs="12" sm="6">
                                 <MudPaper Elevation="6" Class="home-feature-card">
                                     <MudIcon Icon="@Icons.Material.Filled.AddCircleOutline" Size="Size.Large" />
-                                    <MudText Typo="Typo.h6" Class="mt-2 mb-1">Create a course</MudText>
+                                    <MudText Typo="Typo.h6" Class="mt-2 mb-1">
+                                        <MudButton Href="/courses/create"
+                                                   Color="Color.Primary"
+                                                   Variant="MudBlazor.Variant.Text"
+                                                   Style="padding: .2em 0px .2em 0px; font-size 1rem;">
+                                            Create a Course
+                                        </MudButton>
+                                       </MudText>
                                     <MudText Typo="Typo.body2" Class="home-muted">
                                         Set up a new course and invite participants.
                                     </MudText>
-                                    <MudButton Href="/courses/create"
-                                               Color="Color.Primary"
-                                               Variant="MudBlazor.Variant.Text"
-                                               Class="mt-2">
-                                        Create a course
-                                    </MudButton>
                                 </MudPaper>
                             </MudItem>
                         </AuthorizeView>
@@ -122,16 +115,18 @@
                             <MudItem xs="12" sm="@(auth2.User.IsInRole("Participant") && !auth2.User.IsInRole("Instructor") ? 12 : 6)">
                                 <MudPaper Elevation="6" Class="home-feature-card">
                                     <MudIcon Icon="@Icons.Material.Filled.Favorite" Size="Size.Large" />
-                                    <MudText Typo="Typo.h6" Class="mt-2 mb-1">My courses</MudText>
+                                    <MudText Typo="Typo.h6" Class="mt-2 mb-1">
+                                        <MudButton Href="/mycourses"
+                                                   Color="Color.Primary"
+                                                   Variant="MudBlazor.Variant.Text"
+                                                   Style="padding: .2em 0px .2em 0px; font-size 1rem;">
+                                            My Courses
+                                        </MudButton>
+                                        </MudText>
                                     <MudText Typo="Typo.body2" Class="home-muted">
                                         Get an overview of the courses you have joined.
                                     </MudText>
-                                    <MudButton Href="/mycourses"
-                                               Color="Color.Primary"
-                                               Variant="MudBlazor.Variant.Text"
-                                               Class="mt-2">
-                                        View my courses
-                                    </MudButton>
+                                    
                                 </MudPaper>
                             </MudItem>
                         </AuthorizeView>
@@ -173,5 +168,11 @@
 
     .home-muted {
         opacity: 0.8;
+    }
+
+    @@media (max-width: 600px) {
+        .main-card p {
+            font-size: 14px;
+        }
     }
 </style>
