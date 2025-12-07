@@ -17,6 +17,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
+using MySqlConnector;
 using System.Security.Claims;
 using System.Text;
 
@@ -66,9 +67,33 @@ namespace HipsDontLie {
 
         private static async Task SeedIdentityAsync(WebApplication app)
         {
-            using var scope = app.Services.CreateScope();
-            await IdentitySeeder.SeedAsync(scope.ServiceProvider);
-        }
+		try {
+		    using var scope = app.Services.CreateScope();
+			await IdentitySeeder.SeedAsync(scope.ServiceProvider);
+            }
+            catch (MySqlException ex)
+            {
+                if (ex.ErrorCode == MySqlErrorCode.UnableToConnectToHost)
+                {
+                    Console.WriteLine("Database connection error during identity seeding.");
+					//print the connection string without password
+                    var connectionString = app.Configuration.GetConnectionString("DefaultConnection");
+                    if (connectionString == null)
+                    {
+                        Console.WriteLine("Connection string 'DefaultConnection' is null.");
+                        throw;
+					}
+					var builder = new MySqlConnectionStringBuilder(connectionString)
+                    {
+                        Password = "HIDDEN" // Mask the password
+                    };
+                    Console.WriteLine($"Connection String: {builder.ConnectionString}");
+				}
+				Console.WriteLine($"MySQL error during identity seeding: {ex.Message}");
+                throw; // Re-throw the exception after logging
+			}
+
+		}
 
         private static void ConfigureDataAccess(WebApplicationBuilder builder) {
             // DbContext
