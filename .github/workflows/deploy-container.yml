@@ -1,8 +1,10 @@
 name: Deploy Project
-on:
+on: 
   push:
     branches: [ main ]
-    paths: compose.prod.yml
+    paths: 
+    - compose.prod.yml
+    - .github/workflows/deploy-container.yml
   workflow_call:
     inputs:
       image_tag:
