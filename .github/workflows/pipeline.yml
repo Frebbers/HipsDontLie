@@ -10,7 +10,6 @@ on:
       - 'HipsDontLie.Test/**'
       - 'Dockerfile'
       - '.github/workflows/pipeline.yml'
-      - '.github/workflows/deploy-container.yml'
       - '.github/workflows/docker-image.yml'
       
 
