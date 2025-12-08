@@ -40,7 +40,7 @@ jobs:
         with:
           name: test-results
           path: |
-            backend/test-results/
+            test-results
 
       - name: Fail workflow if any tests failed
         run: |
