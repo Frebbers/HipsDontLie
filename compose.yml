@@ -99,8 +99,8 @@ services:
       - app-network
     entrypoint: ["dotnet", "test", "HipsDontLie.Test/HipsDontLie.Test.csproj"]
     restart: "no"
-    command: dotnet test --logger "trx;LogFileName=test-results.trx" --results-directory /src/test-results
-
+    command: dotnet test --logger:"trx;LogFileName=test-results.trx" --results-directory:/src/test-results
+    
   # nginx:
   #   image: nginx:alpine
   #   container_name: hipsdontlie-nginx
