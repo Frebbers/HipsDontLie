@@ -58,7 +58,7 @@ else {
     {
         isLoading = true;
         try {
-            GroupList = await ResourceService.GetAllGroups();
+            GroupList = await ResourceService.GetUserGroups();
             Appointments = FetchAppointments();
         }
         catch (ApiException ex) {
