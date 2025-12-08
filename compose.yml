@@ -87,7 +87,7 @@ services:
     container_name: hipsdontlie-tests
     working_dir: /src
     volumes:
-      - test-results:/src/test-results
+      - ./test-results:/src/test-results
     environment:
       <<: *app-env
     depends_on:
