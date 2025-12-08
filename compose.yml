@@ -87,7 +87,7 @@ services:
     container_name: hipsdontlie-tests
     working_dir: /src
     volumes:
-      - ./:/src
+      - ./HipsDontLie.Client/test-results:/src/test-results
     environment:
       <<: *app-env
     depends_on:
@@ -99,6 +99,7 @@ services:
       - app-network
     entrypoint: ["dotnet", "test", "HipsDontLie.Test/HipsDontLie.Test.csproj"]
     restart: "no"
+    command: dotnet test --logger "trx;LogFileName=test-results.trx" --results-directory /src/test-results
 
   # nginx:
   #   image: nginx:alpine
