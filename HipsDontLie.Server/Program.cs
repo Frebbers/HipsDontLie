@@ -19,7 +19,7 @@ using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using MySqlConnector;
 using System.Security.Claims;
-using System.Text; 
+using System.Text;
 
 namespace HipsDontLie {
     public class Program {
